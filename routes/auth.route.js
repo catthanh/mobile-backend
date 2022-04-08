@@ -2,12 +2,14 @@ const express = require("express");
 const router = express.Router();
 const createError = require("http-errors");
 const User = require("../models/User.model");
+const Refresh = require("../models/Refresh.model");
 const { authSchema } = require("../helpers/schema_validation");
 const {
     signAccessToken,
     signRefreshToken,
     verifyRefreshToken,
 } = require("../helpers/jwt_helper");
+const { default: mongoose } = require("mongoose");
 
 router.post("/register", async (req, res, next) => {
     console.log(req.body);
@@ -51,7 +53,17 @@ router.post("/refresh-token", async (req, res, next) => {
         if (!refreshtoken)
             throw createError.BadRequest("Refresh token is required");
 
-        const userId = await verifyRefreshToken(refreshtoken);
+        const { userId, jti } = await verifyRefreshToken(refreshtoken);
+        const refresh = await Refresh.findOne({ jti });
+        if (!refresh) throw createError.Unauthorized("Invalid refresh token");
+        if (refresh.userId.toHexString() !== userId)
+            throw createError.Unauthorized("Invalid refresh token");
+        if (refresh.expiresAt < Date.now())
+            throw createError.Unauthorized("Refresh token expired");
+        if (refresh.blocked)
+            throw createError.Unauthorized("Refresh token blocked");
+        refresh.blockToken();
+
         const accesstoken = await signAccessToken(userId);
         const newRefreshtoken = await signRefreshToken(userId);
         res.send({ accesstoken, refreshtoken: newRefreshtoken });
@@ -62,7 +74,23 @@ router.post("/refresh-token", async (req, res, next) => {
     }
 });
 router.delete("/logout", async (req, res, next) => {
-    res.send("logout route");
+    try {
+        const { refreshtoken } = req.body;
+        if (!refreshtoken)
+            throw createError.BadRequest("Refresh token is required");
+
+        const { userId, jti } = await verifyRefreshToken(refreshtoken);
+        const refresh = await Refresh.findOne({
+            jti: new mongoose.Types.ObjectId(jti),
+        });
+        if (!refresh) throw createError.Unauthorized("Invalid refresh token");
+        if (refresh.userId.toHexString() !== userId)
+            throw createError.Unauthorized("Invalid refresh token");
+        User.deleteOne({ userId });
+        res.sendStatus(204);
+    } catch (error) {
+        next(error);
+    }
 });
 
 module.exports = router;

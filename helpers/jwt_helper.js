@@ -10,7 +10,7 @@ module.exports = {
 
             const secret = process.env.ACCESS_TOKEN_SECRET;
             const options = {
-                expiresIn: "1d",
+                expiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN,
                 issuer: "catthanh dep trai vo doi",
                 audience: userId,
             };
@@ -43,16 +43,22 @@ module.exports = {
     signRefreshToken: (userId) => {
         return new Promise((resolve, reject) => {
             const payload = {};
-            const jti = new mongoose.Types.ObjectId().toHexString();
+            const jti = new mongoose.Types.ObjectId();
             const secret = process.env.REFRESH_TOKEN_SECRET;
             const options = {
-                jwtid: jti,
-                expiresIn: "1y",
+                jwtid: jti.toHexString(),
+                expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN,
                 issuer: "catthanh dep trai vo doi",
                 audience: userId,
             };
 
-            const token = jwt.sign(payload, secret, options, (err, token) => {
+            const token = jwt.sign(payload, secret, options);
+            const refresh = new Refresh({
+                jti: jti,
+                userId: new mongoose.Types.ObjectId(userId),
+                token: token,
+            });
+            refresh.save((err) => {
                 if (err) {
                     console.log(err);
                     reject(CreateError.InternalServerError());
@@ -69,7 +75,8 @@ module.exports = {
                     return reject(CreateError.Unauthorized());
                 }
                 const userId = payload.aud;
-                resolve(userId);
+                const jti = payload.jti;
+                resolve({ userId, jti });
             });
         });
     },
