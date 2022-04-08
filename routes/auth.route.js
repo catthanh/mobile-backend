@@ -1,0 +1,68 @@
+const express = require("express");
+const router = express.Router();
+const createError = require("http-errors");
+const User = require("../models/User.model");
+const { authSchema } = require("../helpers/schema_validation");
+const {
+    signAccessToken,
+    signRefreshToken,
+    verifyRefreshToken,
+} = require("../helpers/jwt_helper");
+
+router.post("/register", async (req, res, next) => {
+    console.log(req.body);
+    try {
+        const result = await authSchema.validateAsync(req.body);
+        console.log(result);
+
+        const doesExist = await User.findOne({ email: result.email });
+        if (doesExist)
+            throw createError.Conflict(`${result.email} already exists`);
+        const user = new User(result);
+        const savedUser = await user.save();
+        const accesstoken = await signAccessToken(savedUser.id);
+        const refreshtoken = await signRefreshToken(savedUser.id);
+        res.send({ accesstoken, refreshtoken });
+    } catch (error) {
+        if (error.isJoi === true) error.status = 422;
+        next(error);
+    }
+});
+router.post("/login", async (req, res, next) => {
+    try {
+        const result = await authSchema.validateAsync(req.body);
+        const user = await User.findOne({ email: result.email });
+        if (!user) throw createError.NotFound("User not found");
+        const isValidPassword = await user.isValidPassword(result.password);
+        if (!isValidPassword)
+            throw createError.Unauthorized("Invalid password");
+        const accesstoken = await signAccessToken(user.id);
+        const refreshtoken = await signRefreshToken(user.id);
+        res.send({ accesstoken, refreshtoken });
+    } catch (error) {
+        if (error.isJoi === true)
+            next(createError.BadRequest("Invalid username or password"));
+        next(error);
+    }
+});
+router.post("/refresh-token", async (req, res, next) => {
+    try {
+        const { refreshtoken } = req.body;
+        if (!refreshtoken)
+            throw createError.BadRequest("Refresh token is required");
+
+        const userId = await verifyRefreshToken(refreshtoken);
+        const accesstoken = await signAccessToken(userId);
+        const newRefreshtoken = await signRefreshToken(userId);
+        res.send({ accesstoken, refreshtoken: newRefreshtoken });
+    } catch (error) {
+        if (error.isJoi === true)
+            next(createError.BadRequest("Invalid refresh token"));
+        next(error);
+    }
+});
+router.delete("/logout", async (req, res, next) => {
+    res.send("logout route");
+});
+
+module.exports = router;
