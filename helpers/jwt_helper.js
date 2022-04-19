@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
-const mongoose = require("mongoose");
+const { v4: uuidv4 } = require("uuid");
 const CreateError = require("http-errors");
-const Refresh = require("../models/Refresh.model");
+const Refresh = require("../models/").Refresh;
 
 module.exports = {
     signAccessToken: (userId) => {
@@ -40,29 +40,28 @@ module.exports = {
             next();
         });
     },
-    signRefreshToken: (userId) => {
+    signRefreshToken: (userId, previousToken) => {
         return new Promise((resolve, reject) => {
+            console.log(userId);
             const payload = {};
-            const jti = new mongoose.Types.ObjectId();
+            const jti = uuidv4();
             const secret = process.env.REFRESH_TOKEN_SECRET;
             const options = {
-                jwtid: jti.toHexString(),
+                jwtid: jti,
                 expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN,
                 issuer: "catthanh dep trai vo doi",
                 audience: userId,
             };
 
             const token = jwt.sign(payload, secret, options);
-            const refresh = new Refresh({
-                jti: jti,
-                userId: new mongoose.Types.ObjectId(userId),
-                token: token,
-            });
-            refresh.save((err) => {
-                if (err) {
-                    console.log(err);
-                    reject(CreateError.InternalServerError());
-                }
+
+            const refresh = Refresh.create({
+                jti,
+                token,
+                userId: userId,
+                previousToken,
+                expiresAt: Date.now() + 30 * 24 * 60 * 60 * 1000,
+            }).then((refresh) => {
                 resolve(token);
             });
         });

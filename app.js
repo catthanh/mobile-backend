@@ -4,8 +4,8 @@ const createError = require("http-errors");
 const AuthRoute = require("./routes/auth.route");
 const { verifyAccessToken } = require("./helpers/jwt_helper");
 require("dotenv").config();
-require("./helpers/init_mongodb");
-
+//require("./helpers/init_mongodb");
+const db = require("./models");
 const app = express();
 
 app.use(morgan("dev"));
@@ -30,6 +30,8 @@ app.use(async (err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+db.sequelize.sync({ alter: true }).then((req) => {
+    app.listen(PORT, () => {
+        console.log(`Server is running on port ${PORT}`);
+    });
 });

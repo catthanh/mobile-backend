@@ -1,13 +1,14 @@
 const createError = require("http-errors");
-const User = require("../models/User.model");
-const Refresh = require("../models/Refresh.model");
-const { authSchema } = require("../helpers/schema_validation");
+//const User = require("../mongo_old/User.model");
+const User = require("../models").User;
+// const Refresh = require("../mongo_old/Refresh.model");
+const Refresh = require("../models/").Refresh;
+const { authSchema, logInSchema } = require("../helpers/schema_validation");
 const {
     signAccessToken,
     signRefreshToken,
     verifyRefreshToken,
 } = require("../helpers/jwt_helper");
-const mongoose = require("mongoose");
 module.exports = {
     register: async (req, res, next) => {
         console.log(req.body);
@@ -15,13 +16,16 @@ module.exports = {
             const result = await authSchema.validateAsync(req.body);
             console.log(result);
 
-            const doesExist = await User.findOne({ email: result.email });
+            const doesExist = await User.findOne({
+                where: { username: result.username },
+            });
             if (doesExist)
                 throw createError.Conflict(`${result.email} already exists`);
-            const user = new User(result);
-            const savedUser = await user.save();
-            const accesstoken = await signAccessToken(savedUser.id);
-            const refreshtoken = await signRefreshToken(savedUser.id);
+            const user = await User.create(result);
+            const userId = "" + user.toJSON().id;
+            console.log(userId);
+            const accesstoken = await signAccessToken(userId);
+            const refreshtoken = await signRefreshToken(userId, null);
             res.send({ accesstoken, refreshtoken });
         } catch (error) {
             if (error.isJoi === true) error.status = 422;
@@ -31,14 +35,17 @@ module.exports = {
     login: async (req, res, next) => {
         console.log(req.body);
         try {
-            const result = await authSchema.validateAsync(req.body);
-            const user = await User.findOne({ email: result.email });
+            const result = await logInSchema.validateAsync(req.body);
+            const user = await User.findOne({
+                where: { username: result.username },
+            });
             if (!user) throw createError.NotFound("User not found");
             const isValidPassword = await user.isValidPassword(result.password);
             if (!isValidPassword)
                 throw createError.Unauthorized("Invalid password");
-            const accesstoken = await signAccessToken(user.id);
-            const refreshtoken = await signRefreshToken(user.id);
+            const userId = "" + user.toJSON().id;
+            const accesstoken = await signAccessToken(userId);
+            const refreshtoken = await signRefreshToken(userId);
             res.send({ accesstoken, refreshtoken });
         } catch (error) {
             if (error.isJoi === true)
@@ -48,15 +55,15 @@ module.exports = {
     },
     refreshToken: async (req, res, next) => {
         try {
-            const { refreshtoken } = req.body;
-            if (!refreshtoken)
+            const oldRefreshToken = req.body.refreshtoken;
+            if (!oldRefreshToken)
                 throw createError.BadRequest("Refresh token is required");
 
-            const { userId, jti } = await verifyRefreshToken(refreshtoken);
-            const refresh = await Refresh.findOne({ jti });
+            const { userId, jti } = await verifyRefreshToken(oldRefreshToken);
+
+            const refresh = await Refresh.findOne({ where: { jti } });
+            console.log(refresh.toJSON().userId, userId);
             if (!refresh)
-                throw createError.Unauthorized("Invalid refresh token");
-            if (refresh.userId.toHexString() !== userId)
                 throw createError.Unauthorized("Invalid refresh token");
             if (refresh.expiresAt < Date.now())
                 throw createError.Unauthorized("Refresh token expired");
@@ -65,7 +72,10 @@ module.exports = {
             refresh.blockToken();
 
             const accesstoken = await signAccessToken(userId);
-            const newRefreshtoken = await signRefreshToken(userId);
+            const newRefreshtoken = await signRefreshToken(
+                userId,
+                oldRefreshToken
+            );
             res.send({ accesstoken, refreshtoken: newRefreshtoken });
         } catch (error) {
             if (error.isJoi === true)
@@ -81,13 +91,11 @@ module.exports = {
 
             const { userId, jti } = await verifyRefreshToken(refreshtoken);
             const refresh = await Refresh.findOne({
-                jti: new mongoose.Types.ObjectId(jti),
+                jti: jti,
             });
             if (!refresh)
                 throw createError.Unauthorized("Invalid refresh token");
-            if (refresh.userId.toHexString() !== userId)
-                throw createError.Unauthorized("Invalid refresh token");
-            User.deleteOne({ userId });
+            Refresh.destroy({ where: { jti } });
             res.sendStatus(204);
         } catch (error) {
             next(error);

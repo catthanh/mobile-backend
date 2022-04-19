@@ -1,30 +1,63 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+"use strict";
+const { Model, Sequelize } = require("sequelize");
+module.exports = (sequelize, DataTypes) => {
+    class Refresh extends Model {
+        /**
+         * Helper method for defining associations.
+         * This method is not a part of Sequelize lifecycle.
+         * The `models/index` file will call this method automatically.
+         */
+        static associate(models) {
+            // define association here
+        }
+        blockToken() {
+            this.blocked = true;
+            return this.save();
+        }
+    }
+    Refresh.init(
+        {
+            id: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                autoIncrement: true,
+                primaryKey: true,
+            },
+            jti: {
+                type: DataTypes.UUID,
+                allowNull: false,
+                defaultValue: DataTypes.UUIDV4,
+            },
+            userId: {
+                type: DataTypes.INTEGER,
+                autoIncrement: false,
+                primaryKey: false,
+                defaultValue: null,
+            },
+            previousToken: {
+                type: DataTypes.STRING,
+                defaultValue: null,
+            },
+            token: {
+                type: DataTypes.STRING,
+                allowNull: false,
+                autoIncrement: false,
+                primaryKey: false,
+            },
+            expiresAt: {
+                type: DataTypes.DATE,
+                allowNull: false,
+                autoIncrement: false,
+                primaryKey: false,
+                defaultValue: DataTypes.NOW,
+            },
+        },
 
-RefreshSchema = new Schema({
-    jti: {
-        type: mongoose.Types.ObjectId,
-        required: true,
-    },
-    userId: {
-        type: mongoose.Types.ObjectId,
-        required: true,
-    },
-    token: {
-        type: String,
-        required: true,
-    },
-    createdAt: {
-        type: Date,
-        expires: process.env.REFRESH_TOKEN_EXPIRES_IN,
-        default: Date.now,
-    },
-    blocked: { type: Boolean, default: false },
-});
-
-RefreshSchema.methods.blockToken = function () {
-    this.blocked = true;
-    return this.save();
+        {
+            sequelize,
+            modelName: "Refresh",
+            tableName: "refreshes",
+        }
+    );
+    return Refresh;
 };
-
-module.exports = mongoose.model("Refresh", RefreshSchema);

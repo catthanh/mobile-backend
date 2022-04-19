@@ -6,7 +6,7 @@ POST  http://localhost:3000/auth/login/
 Content-Type: application/json
 
 {
-    "email": "tesdssst",
+    "username": "tesdsssst",
     "password": "fdsfadfst"
 }
 
@@ -15,8 +15,9 @@ POST http://localhost:3000/auth/register/
 Content-Type: application/json
 
 {
-    "email": "tesdsssst",
-    "password": "fdsfadfst"
+    "username": "tesdsssst",
+    "password": "fdsfadfst",
+    "name": "tesdsssst"
 }
 
 ### Refresh token route
@@ -24,7 +25,7 @@ POST http://localhost:3000/auth/refresh-token/
 Content-Type: application/json
 
 {
-    "refreshtoken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NDk0NzE4MTAsImV4cCI6MTY1MjA2MzgxMCwiYXVkIjoiNjI0Yzc0NTU0YmMwNmM3OWYxYjgxODA0IiwiaXNzIjoiY2F0dGhhbmggZGVwIHRyYWkgdm8gZG9pIiwianRpIjoiNjI1MGYxNDJhOTQ4ODZmZDc0NWIzZWNlIn0.DVw6UG6-oSzgboIf1UgERNtWzJwzIvZIKGyd5ZRrvoQ"
+    "refreshtoken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NTAzNzQ4NTYsImV4cCI6MTY1Mjk2Njg1NiwiYXVkIjoiMSIsImlzcyI6ImNhdHRoYW5oIGRlcCB0cmFpIHZvIGRvaSIsImp0aSI6ImZhN2VlZmQ2LWQwZjMtNDMzZi04MzkzLWY1YjRjZTAwNzc0NCJ9.W0Fy3z-NY46ISJMAKQBTebN_0_z5Hwn-gkDuHu1luoQ"
 }
 
 ### Logout route
@@ -32,6 +33,6 @@ DELETE http://localhost:3000/auth/logout/
 Content-Type: application/json
 
 {
-    "refreshtoken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NDk0NzE4MTAsImV4cCI6MTY1MjA2MzgxMCwiYXVkIjoiNjI0Yzc0NTU0YmMwNmM3OWYxYjgxODA0IiwiaXNzIjoiY2F0dGhhbmggZGVwIHRyYWkgdm8gZG9pIiwianRpIjoiNjI1MGYxNDJhOTQ4ODZmZDc0NWIzZWNlIn0.DVw6UG6-oSzgboIf1UgERNtWzJwzIvZIKGyd5ZRrvoQ"
+    "refreshtoken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NTAzNzQ4NTYsImV4cCI6MTY1Mjk2Njg1NiwiYXVkIjoiMSIsImlzcyI6ImNhdHRoYW5oIGRlcCB0cmFpIHZvIGRvaSIsImp0aSI6ImZhN2VlZmQ2LWQwZjMtNDMzZi04MzkzLWY1YjRjZTAwNzc0NCJ9.W0Fy3z-NY46ISJMAKQBTebN_0_z5Hwn-gkDuHu1luoQ"
 }
 
