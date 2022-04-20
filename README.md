@@ -59,44 +59,44 @@
 
 ## DONE
 
-[x] authencation
-[x] sequelize model
-[x] sequelize associations
-[x] sync model with cloud database
+-   [x] authencation
+-   [x] sequelize model
+-   [x] sequelize associations
+-   [x] sync model with cloud database
 
 ## TODO
 
-[] encrypt password
-[] thêm thông tin đăng kí
-tên tuổi địa chỉ ...
-[] lưu trữ ảnh món ăn ?
-[] api nhà hàng:
+-   [ ] encrypt password
+-   [ ] thêm thông tin đăng kí
+        tên tuổi địa chỉ ...
+-   [ ] lưu trữ ảnh món ăn ?
+-   [ ] api nhà hàng:
 
-          [] thêm món ăn
-          [] xóa món ăn
-          [] cập nhật món ăn
-          [] thêm chi nhánh
-          [] xóa chi nhánh
-          [] cập nhật chi nhánh
-          [] nhận đơn hàng
-          [] xem đơn hàng
-          [] xem đánh giá
-          [] thêm voucher
-          [] xóa voucher
-          [] cập nhật voucher
-          [] xem voucher
-          [] thêm vai trò
-          [] xóa vai trò
-          [] cập nhật vai trò
+    -   [ ] thêm món ăn
+    -   [ ] xóa món ăn
+    -   [ ] cập nhật món ăn
+    -   [ ] thêm chi nhánh
+    -   [ ] xóa chi nhánh
+    -   [ ] cập nhật chi nhánh
+    -   [ ] nhận đơn hàng
+    -   [ ] xem đơn hàng
+    -   [ ] xem đánh giá
+    -   [ ] thêm voucher
+    -   [ ] xóa voucher
+    -   [ ] cập nhật voucher
+    -   [ ] xem voucher
+    -   [ ] thêm vai trò
+    -   [ ] xóa vai trò
+    -   [ ] cập nhật vai trò
 
-[] api người dùng:
+-   [ ] api người dùng:
 
-          [] thêm đánh giá
-          [] xóa đánh giá
-          [] cập nhật đánh giá
+    -   [ ] thêm đánh giá
+    -   [ ] xóa đánh giá
+    -   [ ] cập nhật đánh giá
 
-          [] thêm đơn hàng
-          [] xóa đơn hàng
-          [] cập nhật đơn hàng
-          [] thêm món ăn vào đơn hàng
-          [] xóa món ăn khỏi đơn hàng
+    -   [ ] thêm đơn hàng
+    -   [ ] xóa đơn hàng
+    -   [ ] cập nhật đơn hàng
+    -   [ ] thêm món ăn vào đơn hàng
+    -   [ ] xóa món ăn khỏi đơn hàng
