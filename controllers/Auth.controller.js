@@ -1,7 +1,5 @@
 const createError = require("http-errors");
-//const User = require("../mongo_old/User.model");
 const User = require("../models").User;
-// const Refresh = require("../mongo_old/Refresh.model");
 const Refresh = require("../models/").Refresh;
 const { authSchema, logInSchema } = require("../helpers/schema_validation");
 const {

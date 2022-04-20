@@ -1,9 +1,9 @@
 {
     "development": {
-      "username": "leduyson",
-      "password": "leduyson123",
-      "database": "mobile_shopeefood",
-      "host": "uet-project.chl7pg7c351r.ap-southeast-1.rds.amazonaws.com",
+      "username": "led***on",
+      "password": "led***123",
+      "database": "mobile_sh***",
+      "host": "uet-project.xxxxx.amazonaws.com",
       "dialect": "mysql"
     },
     "test": {

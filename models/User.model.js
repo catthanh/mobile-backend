@@ -10,6 +10,19 @@ module.exports = (sequelize, DataTypes) => {
          */
         static associate(models) {
             // define association here
+            this.hasMany(models.Review, {
+                foreignKey: "idUser",
+                as: "reviews",
+            });
+            this.hasMany(models.Order, {
+                foreignKey: "idUser",
+                as: "orders",
+            });
+            this.belongsToMany(models.Role, {
+                through: "user_role",
+                as: "roles",
+                foreignKey: "idUser",
+            });
         }
         async isValidPassword(password) {
             return await bcrypt.compare(password, this.password);
