@@ -41,6 +41,7 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false,
                 autoIncrement: false,
                 primaryKey: false,
+                unique: true
             },
             address: {
                 type: DataTypes.STRING,
