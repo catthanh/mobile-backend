@@ -2,7 +2,7 @@ const morgan = require("morgan");
 const express = require("express");
 const createError = require("http-errors");
 const AuthRoute = require("./routes/auth.route");
-const ResRoute = require("./routes/Restaurant.route");
+const RestaurantRoute = require("./routes/Restaurant.route");
 const { verifyAccessToken } = require("./helpers/jwt_helper");
 require("dotenv").config();
 //require("./helpers/init_mongodb");
@@ -17,7 +17,7 @@ app.get("/", verifyAccessToken, async (req, res, next) => {
     res.send("Hello World");
 });
 app.use("/auth", AuthRoute);
-app.use("/restaurant", ResRoute);
+app.use("/restaurant", verifyAccessToken, RestaurantRoute);
 app.use(async (req, res, next) => {
     next(createError.NotFound());
 });
