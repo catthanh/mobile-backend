@@ -32,11 +32,11 @@ app.use(async (err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 3000;
-// db.sequelize.sync({ alter: false }).then((req) => {
-//     app.listen(PORT, () => {
-//         console.log(`Server is running on port ${PORT}`);
-//     });
-// });
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+db.sequelize.sync({ alter: false }).then((req) => {
+    app.listen(PORT, () => {
+        console.log(`Server is running on port ${PORT}`);
+    });
 });
+// app.listen(PORT, () => {
+//     console.log(`Server is running on port ${PORT}`);
+// });
