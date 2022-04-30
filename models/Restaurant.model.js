@@ -24,8 +24,7 @@ module.exports = (sequelize, DataTypes) => {
             this.hasMany(models.Voucher, {
                 foreignKey: "idRes",
                 as: "vouchers",
-                });
-                
+            });
         }
     }
     Restaurant.init(
@@ -41,7 +40,6 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false,
                 autoIncrement: false,
                 primaryKey: false,
-                unique: true
             },
             address: {
                 type: DataTypes.STRING,

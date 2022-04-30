@@ -16,7 +16,7 @@ Content-Type: application/json
 
 {
     "username": "tesdsssst",
-    "password": "fdsfadfst",
+    "password": "fst",
     "name": "tesdsssst"
 }
 
@@ -25,7 +25,7 @@ POST http://localhost:3000/auth/refresh-token/
 Content-Type: application/json
 
 {
-    "refreshtoken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NTAzNzQ4NTYsImV4cCI6MTY1Mjk2Njg1NiwiYXVkIjoiMSIsImlzcyI6ImNhdHRoYW5oIGRlcCB0cmFpIHZvIGRvaSIsImp0aSI6ImZhN2VlZmQ2LWQwZjMtNDMzZi04MzkzLWY1YjRjZTAwNzc0NCJ9.W0Fy3z-NY46ISJMAKQBTebN_0_z5Hwn-gkDuHu1luoQ"
+    "refreshtoken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NTEzMDcyNjEsImV4cCI6MTY1Mzg5OTI2MSwiYXVkIjoiMjA3NyIsImlzcyI6ImNhdHRoYW5oIGRlcCB0cmFpIHZvIGRvaSIsImp0aSI6ImI1Zjc5NmJlLTRiMDgtNGM4OC1iYWE1LTIwNmZjY2JiMTY2MiJ9.eLnI8xfnqvV8W6VRm4gd8udF2tJzZ3aYCOsQFmGQBkA"
 }
 
 ### Logout route

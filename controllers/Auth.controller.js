@@ -18,7 +18,7 @@ module.exports = {
                 where: { username: result.username },
             });
             if (doesExist)
-                throw createError.Conflict(`${result.email} already exists`);
+                throw createError.Conflict(`${result.username} already exists`);
             const user = await User.create(result);
             const userId = "" + user.toJSON().id;
             console.log(userId);
@@ -60,7 +60,7 @@ module.exports = {
             const { userId, jti } = await verifyRefreshToken(oldRefreshToken);
 
             const refresh = await Refresh.findOne({ where: { jti } });
-            console.log(refresh.toJSON().userId, userId);
+            console.log(refresh);
             if (!refresh)
                 throw createError.Unauthorized("Invalid refresh token");
             if (refresh.expiresAt < Date.now())

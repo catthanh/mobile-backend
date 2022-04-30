@@ -51,6 +51,13 @@ module.exports = (sequelize, DataTypes) => {
                 primaryKey: false,
                 defaultValue: DataTypes.NOW,
             },
+            blocked: {
+                type: DataTypes.BOOLEAN,
+                allowNull: false,
+                autoIncrement: false,
+                primaryKey: false,
+                defaultValue: false,
+            },
         },
 
         {
