@@ -25,12 +25,12 @@ const restaurantAddReqSchema = Joi.object({
     address: Joi.string().required()
 })
 const restaurantModifyReqSchema = Joi.object({
-    id: JoiObjectId().required(),
+    id: Joi.number().required(),
     name: Joi.string(),
     address: Joi.string()
 })
 const restaurantRemoveReqSchema = Joi.object({
-    id: JoiObjectId().required(),
+    id: Joi.number().required(),
 })
 
 /****************
@@ -42,16 +42,17 @@ const foodGetReqSchema = Joi.object({
     pageSize: Joi.number().min(1)
 })
 const foodAddReqSchema = Joi.object({
+    idRes: Joi.number().required,
     name: Joi.string().required(),
-    address: Joi.string().required()
+    price: Joi.number().required()
 })
 const foodModifyReqSchema = Joi.object({
-    id: JoiObjectId().required(),
-    name: Joi.string(),
-    address: Joi.string()
+    id: Joi.number().required(),
+    name: Joi.string().required(),
+    price: Joi.number().required()
 })
 const foodRemoveReqSchema = Joi.object({
-    id: JoiObjectId().required(),
+    id: Joi.number().required(),
 })
 module.exports = { 
     authSchema, 

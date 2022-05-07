@@ -56,8 +56,9 @@ app.use(express.urlencoded({ extended: true }));
 app.get("/", verifyAccessToken, async (req, res, next) => {
     res.send("Hello World");
 });
+
 app.use("/auth", AuthRoute);
-app.use("/restaurant", verifyAccessToken, RestaurantRoute);
+app.use("/restaurant", RestaurantRoute);
 app.use(async (req, res, next) => {
     next(createError.NotFound());
 });
@@ -77,6 +78,7 @@ const PORT = process.env.PORT || 3000;
 //         console.log(`Server is running on port ${PORT}`);
 //     });
 // });
+
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
