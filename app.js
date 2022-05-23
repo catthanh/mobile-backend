@@ -58,7 +58,7 @@ app.get("/", verifyAccessToken, async (req, res, next) => {
 });
 
 app.use("/auth", AuthRoute);
-app.use("/restaurant",verifyAccessToken, RestaurantRoute);
+app.use("/restaurant", RestaurantRoute);
 app.use(async (req, res, next) => {
     next(createError.NotFound());
 });

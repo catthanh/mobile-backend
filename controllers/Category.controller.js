@@ -1,29 +1,28 @@
 const createError = require('http-errors');
 
-const Restaurant = require('../models').Restaurant
+const Category = require('../models').Category
 const { 
-    restaurantAddReqSchema,
-    restaurantGetReqSchema, 
-    restaurantModifyReqSchema, 
-    restaurantRemoveReqSchema 
+    CategoryAddReqSchema,
+    CategoryGetReqSchema, 
+    CategoryModifyReqSchema, 
+    CategoryRemoveReqSchema 
 } = require('../helpers/schema_validation')
 
 const internalError = createError.internalError
 module.exports = {
     get: async (req, res, next) => {
         try {
-            await restaurantGetReqSchema.validateAsync(req.query)
 
             if(req.query?.id){ 
-                const restaurants = await Restaurant.findByPk(req.query?.id)
-                res.send(restaurants)
+                const Categories = await Category.findByPk(req.query?.id)
+                res.send(Categories)
             } else {
                 const {pageNumber = 1, pageSize = 100} = req.query
-                const restaurants = await Restaurant.findAndCountAll({
+                const Categories = await Category.findAndCountAll({
                     offset: (pageNumber-1)*pageSize,
                     limit: pageSize*1
                 })
-                res.send(restaurants)
+                res.send(Categories)
             }
         } catch (error) {
             if (error.isJoi === true)
@@ -33,9 +32,9 @@ module.exports = {
     },
     add: async (req, res, next) => {
         try {
-            await restaurantAddReqSchema.validateAsync(req.body)
-            const { idUser } = req.payload
-            const newRes = await Restaurant.create({...req.body, idUser: idUser})
+            await CategoryAddReqSchema.validateAsync(req.body)
+            
+            const newRes = await Category.create({...req.body})
             res.send(newRes[0])
         } catch (error) {
             if (error.isJoi === true)
@@ -45,14 +44,14 @@ module.exports = {
     },
     modify: async (req, res, next) => {
         try {
-            await restaurantModifyReqSchema.validateAsync(req.body)
-            const { idUser } = req.payload
+            await CategoryModifyReqSchema.validateAsync(req.body)
+            
             const {id, ...rest} = req.body
-            const res = await Restaurant.findByPk(req.query?.id)
-            if(res.idUser != idUser)
-                next(createError.Unauthorized)
-
-            res.update({...rest})
+            const newRes = await Category.update({...rest},{
+                where: {
+                    id: id
+                }
+            })
             res.send(newRes[0])
         } catch (error) {
             if (error.isJoi === true)
@@ -62,18 +61,12 @@ module.exports = {
     },
     remove: async (req, res, next) => {
         try {
-            await restaurantRemoveReqSchema.validateAsync(req.body)
-            const { idUser } = req.payload
-            const res = await Restaurant.findByPk(req.query?.id)
-            if(res.idUser != idUser)
-                next(createError.Unauthorized)
-
-            res.destroy()
-            // const newRes = await Restaurant.destroy({
-            //     where: {
-            //         id: req.body?.id
-            //     }
-            // })
+            await CategoryRemoveReqSchema.validateAsync(req.body)
+            const newRes = await Category.destroy({
+                where: {
+                    id: req.body?.id
+                }
+            })
             res.send(newRes[0])
         } catch (error) {
             if (error.isJoi === true)
