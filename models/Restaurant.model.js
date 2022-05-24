@@ -25,6 +25,10 @@ module.exports = (sequelize, DataTypes) => {
                 foreignKey: "idRes",
                 as: "vouchers",
             });
+            this.belongsTo(models.User, {
+                foreignKey: "idUser",
+                as: "users",
+            });
         }
     }
     Restaurant.init(
@@ -34,6 +38,11 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false,
                 autoIncrement: true,
                 primaryKey: true,
+            },
+            idUser: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                primaryKey: false
             },
             name: {
                 type: DataTypes.STRING,

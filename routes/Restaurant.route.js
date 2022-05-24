@@ -3,7 +3,7 @@ const router = express.Router();
 const RestaurantController = require("../controllers/Restaurant.controller");
 const FoodRoute = require("./Food.route");
 // const CategoryRoute = require("./Category.route")
-// const VoucherRoute = require("./Voucher.route")
+const VoucherRoute = require("./Voucher.route")
 /**
  * @swagger
  * tags:

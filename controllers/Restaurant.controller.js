@@ -10,6 +10,10 @@ const {
 
 const internalError = createError.internalError
 module.exports = {
+    /**
+     * tested
+     * phuc
+     */
     get: async (req, res, next) => {
         try {
             await restaurantGetReqSchema.validateAsync(req.query)
@@ -31,12 +35,16 @@ module.exports = {
             next(internalError);
         }
     },
+    /**
+     * tested
+     * phuc
+     */
     add: async (req, res, next) => {
         try {
             await restaurantAddReqSchema.validateAsync(req.body)
-            const { idUser } = req.payload
-            const newRes = await Restaurant.create({...req.body, idUser: idUser})
-            res.send(newRes[0])
+            const { aud: idUser } = req.payload
+            const result = await Restaurant.create({...req.body, idUser: idUser})
+            res.send(result)
         } catch (error) {
             if (error.isJoi === true)
                 next(createError.BadRequest())
@@ -46,14 +54,14 @@ module.exports = {
     modify: async (req, res, next) => {
         try {
             await restaurantModifyReqSchema.validateAsync(req.body)
-            const { idUser } = req.payload
+            const { aud: idUser } = req.payload
             const {id, ...rest} = req.body
-            const res = await Restaurant.findByPk(req.query?.id)
-            if(res.idUser != idUser)
+            const result = await Restaurant.findByPk(req.query?.id)
+            if(result.idUser != idUser)
                 next(createError.Unauthorized)
 
-            res.update({...rest})
-            res.send(newRes[0])
+            result.update({...rest})
+            res.send(result)
         } catch (error) {
             if (error.isJoi === true)
                 next(createError.BadRequest());
@@ -63,7 +71,7 @@ module.exports = {
     remove: async (req, res, next) => {
         try {
             await restaurantRemoveReqSchema.validateAsync(req.body)
-            const { idUser } = req.payload
+            const { aud: idUser } = req.payload
             const res = await Restaurant.findByPk(req.query?.id)
             if(res.idUser != idUser)
                 next(createError.Unauthorized)

@@ -23,13 +23,10 @@ const restaurantGetReqSchema = Joi.object({
 const restaurantAddReqSchema = Joi.object({
     name: Joi.string().required(),
     address: Joi.string().required(),
-    categoory: Joi.array().required()
+    category: Joi.array().required()
 })
 const restaurantModifyReqSchema = Joi.object({
-    id: Joi.number().required(),
-    name: Joi.string(),
-    address: Joi.string(),
-    categoory: Joi.array().required()
+    id: Joi.number().required()
 })
 const restaurantRemoveReqSchema = Joi.object({
     id: Joi.number().required(),

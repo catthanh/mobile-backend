@@ -34,7 +34,7 @@ module.exports = {
     },
     add: async (req, res, next) => {
         try {
-            await voucherAddReqSchema.validateAsyn  c(req.body)
+            await voucherAddReqSchema.validateAsync(req.body)
             
             const result = await Voucher.create({...req.body})
             res.send(result[0])
