@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const RestaurantController = require("../controllers/Restaurant.controller");
-const FoodRoute = require("../routes/Food.route");
-
+const FoodRoute = require("./Food.route");
+// const CategoryRoute = require("./Category.route")
+const VoucherRoute = require("./Voucher.route")
 /**
  * @swagger
  * tags:
@@ -109,5 +110,6 @@ router.put("/", RestaurantController.modify);
 router.delete("/", RestaurantController.remove);
 
 router.use('/food', FoodRoute)
-
+// router.use('/category', CategoryRoute)
+router.use('/voucher', VoucherRoute)
 module.exports = router;

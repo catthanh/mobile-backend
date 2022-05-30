@@ -22,12 +22,11 @@ const restaurantGetReqSchema = Joi.object({
 })
 const restaurantAddReqSchema = Joi.object({
     name: Joi.string().required(),
-    address: Joi.string().required()
+    address: Joi.string().required(),
+    category: Joi.array().required()
 })
 const restaurantModifyReqSchema = Joi.object({
-    id: Joi.number().required(),
-    name: Joi.string(),
-    address: Joi.string()
+    id: Joi.number().required()
 })
 const restaurantRemoveReqSchema = Joi.object({
     id: Joi.number().required(),
@@ -54,6 +53,21 @@ const foodModifyReqSchema = Joi.object({
 const foodRemoveReqSchema = Joi.object({
     id: Joi.number().required(),
 })
+/*******************
+ * Voucher section *
+ *******************/
+ const voucherGetReqSchema = Joi.object({
+    idRes: Joi.number()
+})
+const voucherAddReqSchema = Joi.object({
+    idRes: Joi.number().required,
+    name: Joi.string().required(),
+    paymentMethod: Joi.string().required(),
+    totalPay: Joi.number().required()
+})
+const voucherRemoveReqSchema = Joi.object({
+    id: Joi.number().required(),
+})
 module.exports = { 
     authSchema, 
     logInSchema, 
@@ -66,5 +80,9 @@ module.exports = {
     foodGetReqSchema,
     foodAddReqSchema,
     foodModifyReqSchema,
-    foodRemoveReqSchema
+    foodRemoveReqSchema,
+
+    voucherGetReqSchema,
+    voucherAddReqSchema,
+    voucherRemoveReqSchema
 };
