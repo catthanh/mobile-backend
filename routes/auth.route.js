@@ -193,7 +193,7 @@ router.post("/refresh-token", AuthController.refreshToken);
 /**
  * @swagger
  * /auth/logout:
- *   delete:
+ *   post:
  *     description: Delete access token
  *     tags: [Authentication]
  *     requestBody:
@@ -213,6 +213,6 @@ router.post("/refresh-token", AuthController.refreshToken);
  *         content:
  *
  */
-router.delete("/logout", AuthController.logout);
+router.post("/logout", AuthController.logout);
 
 module.exports = router;
