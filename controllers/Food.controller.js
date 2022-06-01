@@ -37,9 +37,16 @@ module.exports = {
     add: async (req, res, next) => {
         try {
             await foodAddReqSchema.validateAsync(req.body)
-            
-            const newRes = await Food.create({...req.body})
-            res.send(newRes[0])
+            const { aud: idUser } = req.payload
+            const restaurant = await Restaurant.findByPk(req.body?.idRes)
+            if(!restaurant)
+                next(createError.NotFound())
+            else if(restaurant?.idUser != idUser)
+                next(createError.Unauthorized())
+            else {
+                const result = await Food.create({...req.body})
+                res.send(result)
+            }
         } catch (error) {
             if (error.isJoi === true)
                 next(createError.BadRequest())
@@ -49,13 +56,20 @@ module.exports = {
     modify: async (req, res, next) => {
         try {
             await foodModifyReqSchema.validateAsync(req.body)
-            
-            const {id, ...rest} = req.body
-            const newFood = await Food.update({...rest},{
-                where: {
-                    id: id
-                }
-            })
+            const { aud: idUser } = req.payload
+            const restaurant = await Restaurant.findByPk(req.body?.idRes)
+            if(!restaurant)
+                next(createError.NotFound())
+            else if(restaurant?.idUser != idUser)
+                next(createError.Unauthorized())
+            else {
+                const {id, ...rest} = req.body
+                const newFood = await Food.update({...rest},{
+                    where: {
+                        id: id
+                    }
+                })
+            }
             res.send(newFood[0])
         } catch (error) {
             if (error.isJoi === true)

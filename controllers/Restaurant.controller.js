@@ -1,4 +1,6 @@
 const createError = require('http-errors');
+const { options } = require('joi');
+const { restaurantOwner } = require('../helpers/permission');
 
 const Restaurant = require('../models').Restaurant
 const { 
@@ -41,7 +43,7 @@ module.exports = {
      */
     add: async (req, res, next) => {
         try {
-            await restaurantAddReqSchema.validateAsync(req.body)
+            await restaurantAddReqSchema.validateAsync(req.body, {allowUnknown: true})
             const { aud: idUser } = req.payload
             const result = await Restaurant.create({...req.body, idUser: idUser})
             res.send(result)
@@ -51,39 +53,46 @@ module.exports = {
             next(internalError);
         }
     },
+    /**
+     * tested
+     * phuc
+     */
     modify: async (req, res, next) => {
         try {
-            await restaurantModifyReqSchema.validateAsync(req.body)
+            await restaurantModifyReqSchema.validateAsync(req.body, {allowUnknown: true})
             const { aud: idUser } = req.payload
             const {id, ...rest} = req.body
-            const result = await Restaurant.findByPk(req.query?.id)
-            if(result.idUser != idUser)
-                next(createError.Unauthorized)
-
-            result.update({...rest})
-            res.send(result)
+            const restaurant = restaurantOwner(idUser, req.body?.idRes)
+            if(restaurant){
+                restaurant.update({...rest})
+                res.send(restaurant)
+            } else {
+                next(createError.Unauthorized())
+            }
         } catch (error) {
+            console.log(error)
             if (error.isJoi === true)
                 next(createError.BadRequest());
             next(internalError);
         }
     },
+    /**
+     * tested
+     * phuc
+     */
     remove: async (req, res, next) => {
         try {
             await restaurantRemoveReqSchema.validateAsync(req.body)
             const { aud: idUser } = req.payload
-            const res = await Restaurant.findByPk(req.query?.id)
-            if(res.idUser != idUser)
-                next(createError.Unauthorized)
-
-            res.destroy()
-            // const newRes = await Restaurant.destroy({
-            //     where: {
-            //         id: req.body?.id
-            //     }
-            // })
-            res.send(newRes[0])
+            const restaurant = restaurantOwner(idUser, req.body?.idRes)
+            if(restaurant){
+                restaurant.destroy()
+                res.send(restaurant)
+            } else {
+                next(createError.Unauthorized())
+            }
         } catch (error) {
+            console.log(error)
             if (error.isJoi === true)
                 next(createError.BadRequest());
             next(internalError);
