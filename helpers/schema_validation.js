@@ -47,6 +47,7 @@ const foodAddReqSchema = Joi.object({
 })
 const foodModifyReqSchema = Joi.object({
     id: Joi.number().required(),
+    idRes: Joi.number().required(),
     name: Joi.string().required(),
     price: Joi.number().required()
 })

@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const RestaurantController = require("../controllers/Restaurant.controller");
+const { restaurantOwner } = require("../helpers/permission");
 const FoodRoute = require("./Food.route");
 // const CategoryRoute = require("./Category.route")
 const VoucherRoute = require("./Voucher.route")
@@ -69,7 +70,7 @@ router.get("/", RestaurantController.get);
  *          type: string   
  *       		
  */
-router.post("/", RestaurantController.add);
+router.post("/", restaurantOwner, RestaurantController.add);
 /**
  * @swagger
  * /restaurant:
@@ -93,7 +94,7 @@ router.post("/", RestaurantController.add);
  *          type: string   
  *       		
  */
-router.put("/", RestaurantController.modify);
+router.put("/", restaurantOwner, RestaurantController.modify);
 /**
  * @swagger
  * /restaurant:
@@ -107,7 +108,7 @@ router.put("/", RestaurantController.modify);
  *          type: integer
  *       		
  */
-router.delete("/", RestaurantController.remove);
+router.delete("/", restaurantOwner, RestaurantController.remove);
 
 router.use('/food', FoodRoute)
 // router.use('/category', CategoryRoute)

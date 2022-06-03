@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const VoucherController = require("../controllers/Voucher.controller");
+const { restaurantOwner } = require("../helpers/permission");
 
 
 /**
@@ -60,7 +61,7 @@ router.get("/", VoucherController.get);
  *          type: integer     
  *       		
  */
-router.post("/", VoucherController.add);
+router.post("/", restaurantOwner, VoucherController.add);
 /**
  * @swagger
  * /restaurant/Voucher:
@@ -74,6 +75,6 @@ router.post("/", VoucherController.add);
  *          type: integer    
  *       		
  */
-router.delete("/", VoucherController.remove);
+router.delete("/", restaurantOwner, VoucherController.remove);
 
 module.exports = router;

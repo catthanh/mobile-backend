@@ -37,16 +37,9 @@ module.exports = {
     add: async (req, res, next) => {
         try {
             await foodAddReqSchema.validateAsync(req.body)
-            const { aud: idUser } = req.payload
-            const restaurant = await Restaurant.findByPk(req.body?.idRes)
-            if(!restaurant)
-                next(createError.NotFound())
-            else if(restaurant?.idUser != idUser)
-                next(createError.Unauthorized())
-            else {
-                const result = await Food.create({...req.body})
-                res.send(result)
-            }
+            const { restaurant } = req.payload(!restaurant)
+            const result = await Food.create({...req.body})
+            res.send(result)
         } catch (error) {
             if (error.isJoi === true)
                 next(createError.BadRequest())
@@ -56,21 +49,10 @@ module.exports = {
     modify: async (req, res, next) => {
         try {
             await foodModifyReqSchema.validateAsync(req.body)
-            const { aud: idUser } = req.payload
-            const restaurant = await Restaurant.findByPk(req.body?.idRes)
-            if(!restaurant)
-                next(createError.NotFound())
-            else if(restaurant?.idUser != idUser)
-                next(createError.Unauthorized())
-            else {
-                const {id, ...rest} = req.body
-                const newFood = await Food.update({...rest},{
-                    where: {
-                        id: id
-                    }
-                })
-            }
-            res.send(newFood[0])
+            const { food } = req.payload
+            const {id, ...rest} = req.body
+            const result = await food.update({...rest});
+            res.send(result[0])
         } catch (error) {
             if (error.isJoi === true)
                 next(createError.BadRequest());
@@ -80,12 +62,9 @@ module.exports = {
     remove: async (req, res, next) => {
         try {
             await foodRemoveReqSchema.validateAsync(req.body)
-            const newRes = await Food.destroy({
-                where: {
-                    id: req.body?.id
-                }
-            })
-            res.send(newRes[0])
+            const { food } = req.payload;
+            const result = await food.destroy();
+            res.send(result[0]);
         } catch (error) {
             if (error.isJoi === true)
                 next(createError.BadRequest());

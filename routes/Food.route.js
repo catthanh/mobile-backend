@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const FoodController = require("../controllers/Food.controller");
+const { restaurantOwner, foodOfRestaurant } = require("../helpers/permission");
 
 
 /**
@@ -84,7 +85,7 @@ router.post("/", FoodController.add);
  *          type: integer     
  *       		
  */
-router.put("/", FoodController.modify);
+router.put("/", restaurantOwner, foodOfRestaurant, FoodController.modify);
 /**
  * @swagger
  * /restaurant/food:
@@ -98,6 +99,6 @@ router.put("/", FoodController.modify);
  *          type: integer    
  *       		
  */
-router.delete("/", FoodController.remove);
+router.delete("/", restaurantOwner, foodOfRestaurant, FoodController.remove);
 
 module.exports = router;

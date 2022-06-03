@@ -10,7 +10,7 @@ const {
     restaurantRemoveReqSchema 
 } = require('../helpers/schema_validation')
 
-const internalError = createError.internalError
+const internalError = createError.internalError();
 module.exports = {
     /**
      * tested
@@ -60,9 +60,7 @@ module.exports = {
     modify: async (req, res, next) => {
         try {
             await restaurantModifyReqSchema.validateAsync(req.body, {allowUnknown: true})
-            const { aud: idUser } = req.payload
-            const {id, ...rest} = req.body
-            const restaurant = restaurantOwner(idUser, req.body?.idRes)
+            const { restaurant } = req.payload
             if(restaurant){
                 restaurant.update({...rest})
                 res.send(restaurant)
@@ -83,8 +81,7 @@ module.exports = {
     remove: async (req, res, next) => {
         try {
             await restaurantRemoveReqSchema.validateAsync(req.body)
-            const { aud: idUser } = req.payload
-            const restaurant = restaurantOwner(idUser, req.body?.idRes)
+            const { restaurant } = req.payload
             if(restaurant){
                 restaurant.destroy()
                 res.send(restaurant)
