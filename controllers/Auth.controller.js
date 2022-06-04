@@ -1,6 +1,6 @@
 const createError = require("http-errors");
 const User = require("../models").User;
-const Refresh = require("../models/").Refresh;
+const Refresh = require("../models").Refresh;
 const { authSchema, logInSchema } = require("../helpers/schema_validation");
 const {
     signAccessToken,

@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const { v4: uuidv4 } = require("uuid");
 const CreateError = require("http-errors");
-const Refresh = require("../models/").Refresh;
+const Refresh = require("../models").Refresh;
 
 module.exports = {
     signAccessToken: (userId) => {

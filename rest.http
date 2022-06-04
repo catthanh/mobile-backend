@@ -6,8 +6,8 @@ POST  http://localhost:3000/auth/login/
 Content-Type: application/json
 
 {
-    "username": "tesdsssst",
-    "password": "fdsfadfst"
+    "username": "testuser",
+    "password": "testuser"
 }
 
 ### Register route
