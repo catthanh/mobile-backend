@@ -41,7 +41,7 @@ const foodGetReqSchema = Joi.object({
     pageSize: Joi.number().min(1)
 })
 const foodAddReqSchema = Joi.object({
-    idRes: Joi.number().required,
+    idRes: Joi.number().required(),
     name: Joi.string().required(),
     price: Joi.number().required()
 })
@@ -58,10 +58,10 @@ const foodRemoveReqSchema = Joi.object({
  * Voucher section *
  *******************/
  const voucherGetReqSchema = Joi.object({
-    idRes: Joi.number()
+    idRes: Joi.number().required()
 })
 const voucherAddReqSchema = Joi.object({
-    idRes: Joi.number().required,
+    idRes: Joi.number().required(),
     name: Joi.string().required(),
     paymentMethod: Joi.string().required(),
     totalPay: Joi.number().required()
@@ -90,6 +90,16 @@ const userUpdateInfoSchema = Joi.object({
     updateValue: Joi.string().required()
 })
 
+/********************
+ * Category section *
+ ********************/
+const categoryGetReqSchema = Joi.object({
+    idRes: Joi.number().required()
+})
+const categoryAddReqSchema = Joi.object({
+    idRes: Joi.number().required(),
+    name: Joi.string().required(),
+})
 module.exports = { 
     authSchema, 
     logInSchema, 
@@ -110,5 +120,8 @@ module.exports = {
 
     jwtPayloadSchema,
     userGetFavouriteSchema,
-    userUpdateInfoSchema
+    userUpdateInfoSchema,
+    
+    categoryGetReqSchema,
+    categoryAddReqSchema
 };
