@@ -141,128 +141,50 @@ module.exports = function initModels(sequelize) {
         foreignKey: "idVoucher",
         otherKey: "idOrder",
     });
-    ResCuisine.belongsTo(Cuisine, {
-        as: "idCuisine_cuisine",
-        foreignKey: "idCuisine",
-    });
-    Cuisine.hasMany(ResCuisine, {
-        as: "res_cuisines",
-        foreignKey: "idCuisine",
-    });
-    OrderFood.belongsTo(Food, { as: "idFood_food", foreignKey: "idFood" });
-    Food.hasMany(OrderFood, { as: "order_foods", foreignKey: "idFood" });
-    ResFuitable.belongsTo(Fuitable, {
-        as: "idFuitable_fuitable",
-        foreignKey: "idFuitable",
-    });
-    Fuitable.hasMany(ResFuitable, {
-        as: "res_fuitables",
-        foreignKey: "idFuitable",
-    });
-    ResCategory.belongsTo(LocationCategory, {
-        as: "idCategory_location_category",
-        foreignKey: "idCategory",
-    });
-    LocationCategory.hasMany(ResCategory, {
-        as: "res_categories",
-        foreignKey: "idCategory",
-    });
-    OrderFood.belongsTo(Order, { as: "idOrder_order", foreignKey: "idOrder" });
-    Order.hasMany(OrderFood, { as: "order_foods", foreignKey: "idOrder" });
-    OrderVoucher.belongsTo(Order, {
-        as: "idOrder_order",
-        foreignKey: "idOrder",
-    });
-    Order.hasMany(OrderVoucher, {
-        as: "order_vouchers",
-        foreignKey: "idOrder",
-    });
-    Food.belongsTo(Restaurant, { as: "idRes_restaurant", foreignKey: "idRes" });
-    Restaurant.hasMany(Food, { as: "foods", foreignKey: "idRes" });
-    Order.belongsTo(Restaurant, {
-        as: "idRes_restaurant",
-        foreignKey: "idRes",
-    });
-    Restaurant.hasMany(Order, { as: "orders", foreignKey: "idRes" });
-    ResCategory.belongsTo(Restaurant, {
-        as: "idRes_restaurant",
-        foreignKey: "idRes",
-    });
-    Restaurant.hasMany(ResCategory, {
-        as: "res_categories",
-        foreignKey: "idRes",
-    });
-    ResCuisine.belongsTo(Restaurant, {
-        as: "idRes_restaurant",
-        foreignKey: "idRes",
-    });
-    Restaurant.hasMany(ResCuisine, { as: "res_cuisines", foreignKey: "idRes" });
-    ResFuitable.belongsTo(Restaurant, {
-        as: "idRes_restaurant",
-        foreignKey: "idRes",
-    });
-    Restaurant.hasMany(ResFuitable, {
-        as: "res_fuitables",
-        foreignKey: "idRes",
-    });
-    ResServingTime.belongsTo(Restaurant, {
-        as: "idRes_restaurant",
-        foreignKey: "idRes",
-    });
-    Restaurant.hasMany(ResServingTime, {
-        as: "res_serving_times",
-        foreignKey: "idRes",
-    });
-    ResSuitable.belongsTo(Restaurant, {
-        as: "idRes_restaurant",
-        foreignKey: "idRes",
-    });
-    Restaurant.hasMany(ResSuitable, {
-        as: "res_suitables",
-        foreignKey: "idRes",
-    });
-    Review.belongsTo(Restaurant, {
-        as: "idRes_restaurant",
-        foreignKey: "idRes",
-    });
-    Restaurant.hasMany(Review, { as: "reviews", foreignKey: "idRes" });
-    Voucher.belongsTo(Restaurant, {
-        as: "idRes_restaurant",
-        foreignKey: "idRes",
-    });
-    Restaurant.hasMany(Voucher, { as: "vouchers", foreignKey: "idRes" });
-    UserRole.belongsTo(Role, { as: "idRole_role", foreignKey: "idRole" });
-    Role.hasMany(UserRole, { as: "user_roles", foreignKey: "idRole" });
-    ResServingTime.belongsTo(ServingTime, {
-        as: "idServingTime_serving_time",
-        foreignKey: "idServingTime",
-    });
-    ServingTime.hasMany(ResServingTime, {
-        as: "res_serving_times",
-        foreignKey: "idServingTime",
-    });
-    ResSuitable.belongsTo(Suitable, {
-        as: "idSuitable_suitable",
-        foreignKey: "idSuitable",
-    });
-    Suitable.hasMany(ResSuitable, {
-        as: "res_suitables",
-        foreignKey: "idSuitable",
-    });
-    Order.belongsTo(User, { as: "idUser_user", foreignKey: "idUser" });
-    User.hasMany(Order, { as: "orders", foreignKey: "idUser" });
-    Review.belongsTo(User, { as: "idUser_user", foreignKey: "idUser" });
-    User.hasMany(Review, { as: "reviews", foreignKey: "idUser" });
-    UserRole.belongsTo(User, { as: "idUser_user", foreignKey: "idUser" });
-    User.hasMany(UserRole, { as: "user_roles", foreignKey: "idUser" });
-    OrderVoucher.belongsTo(Voucher, {
-        as: "idVoucher_voucher",
-        foreignKey: "idVoucher",
-    });
-    Voucher.hasMany(OrderVoucher, {
-        as: "order_vouchers",
-        foreignKey: "idVoucher",
-    });
+    ResCuisine.belongsTo(Cuisine, { foreignKey: "idCuisine" });
+    Cuisine.hasMany(ResCuisine, { foreignKey: "idCuisine" });
+    OrderFood.belongsTo(Food, { foreignKey: "idFood" });
+    Food.hasMany(OrderFood, { foreignKey: "idFood" });
+    ResFuitable.belongsTo(Fuitable, { foreignKey: "idFuitable" });
+    Fuitable.hasMany(ResFuitable, { foreignKey: "idFuitable" });
+    ResCategory.belongsTo(LocationCategory, { foreignKey: "idCategory" });
+    LocationCategory.hasMany(ResCategory, { foreignKey: "idCategory" });
+    OrderFood.belongsTo(Order, { foreignKey: "idOrder" });
+    Order.hasMany(OrderFood, { foreignKey: "idOrder" });
+    OrderVoucher.belongsTo(Order, { foreignKey: "idOrder" });
+    Order.hasMany(OrderVoucher, { foreignKey: "idOrder" });
+    Food.belongsTo(Restaurant, { foreignKey: "idRes" });
+    Restaurant.hasMany(Food, { foreignKey: "idRes" });
+    Order.belongsTo(Restaurant, { foreignKey: "idRes" });
+    Restaurant.hasMany(Order, { foreignKey: "idRes" });
+    ResCategory.belongsTo(Restaurant, { foreignKey: "idRes" });
+    Restaurant.hasMany(ResCategory, { foreignKey: "idRes" });
+    ResCuisine.belongsTo(Restaurant, { foreignKey: "idRes" });
+    Restaurant.hasMany(ResCuisine, { foreignKey: "idRes" });
+    ResFuitable.belongsTo(Restaurant, { foreignKey: "idRes" });
+    Restaurant.hasMany(ResFuitable, { foreignKey: "idRes" });
+    ResServingTime.belongsTo(Restaurant, { foreignKey: "idRes" });
+    Restaurant.hasMany(ResServingTime, { foreignKey: "idRes" });
+    ResSuitable.belongsTo(Restaurant, { foreignKey: "idRes" });
+    Restaurant.hasMany(ResSuitable, { foreignKey: "idRes" });
+    Review.belongsTo(Restaurant, { foreignKey: "idRes" });
+    Restaurant.hasMany(Review, { foreignKey: "idRes" });
+    Voucher.belongsTo(Restaurant, { foreignKey: "idRes" });
+    Restaurant.hasMany(Voucher, { foreignKey: "idRes" });
+    UserRole.belongsTo(Role, { foreignKey: "idRole" });
+    Role.hasMany(UserRole, { foreignKey: "idRole" });
+    ResServingTime.belongsTo(ServingTime, { foreignKey: "idServingTime" });
+    ServingTime.hasMany(ResServingTime, { foreignKey: "idServingTime" });
+    ResSuitable.belongsTo(Suitable, { foreignKey: "idSuitable" });
+    Suitable.hasMany(ResSuitable, { foreignKey: "idSuitable" });
+    Order.belongsTo(User, { foreignKey: "idUser" });
+    User.hasMany(Order, { foreignKey: "idUser" });
+    Review.belongsTo(User, { foreignKey: "idUser" });
+    User.hasMany(Review, { foreignKey: "idUser" });
+    UserRole.belongsTo(User, { foreignKey: "idUser" });
+    User.hasMany(UserRole, { foreignKey: "idUser" });
+    OrderVoucher.belongsTo(Voucher, { foreignKey: "idVoucher" });
+    Voucher.hasMany(OrderVoucher, { foreignKey: "idVoucher" });
 
     return {
         Cuisine,
