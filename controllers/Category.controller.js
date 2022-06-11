@@ -14,7 +14,10 @@ module.exports = {
         try {
             await categoryGetReqSchema.validateAsync(req.query)
             const categories = await Restaurant.findByPk(req.query?.idRes, {
-                include: 'fuitables'  
+                include: {
+                    model: 'fuitables',
+                    as: 'idFuitable_fuitables'
+                }
             })
             res.send(categories);
         } catch (error) {
