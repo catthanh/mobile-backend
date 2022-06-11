@@ -21,6 +21,7 @@ const _Suitable = require("./Suitable.js");
 const _UserRole = require("./UserRole.js");
 const _User = require("./User.js");
 const _Voucher = require("./Voucher.js");
+const _Favourite = require("./Favourite.js");
 
 module.exports = function initModels(sequelize) {
     const Cuisine = _Cuisine.init(sequelize, DataTypes);
@@ -44,6 +45,7 @@ module.exports = function initModels(sequelize) {
     const UserRole = _UserRole.init(sequelize, DataTypes);
     const User = _User.init(sequelize, DataTypes);
     const Voucher = _Voucher.init(sequelize, DataTypes);
+    const Favourite = _Favourite.init(sequelize, DataTypes);
 
     Cuisine.belongsToMany(Restaurant, {
         as: "idRes_restaurants_res_cuisines",
@@ -168,6 +170,7 @@ module.exports = function initModels(sequelize) {
     ResSuitable.belongsTo(Restaurant, { foreignKey: "idRes" });
     Restaurant.hasMany(ResSuitable, { foreignKey: "idRes" });
     Review.belongsTo(Restaurant, { foreignKey: "idRes" });
+    Favourite.belongsTo(Restaurant, { foreignKey: "idRes" });
     Restaurant.hasMany(Review, { foreignKey: "idRes" });
     Voucher.belongsTo(Restaurant, { foreignKey: "idRes" });
     Restaurant.hasMany(Voucher, { foreignKey: "idRes" });
@@ -180,6 +183,7 @@ module.exports = function initModels(sequelize) {
     Order.belongsTo(User, { foreignKey: "idUser" });
     User.hasMany(Order, { foreignKey: "idUser" });
     Review.belongsTo(User, { foreignKey: "idUser" });
+    Favourite.belongsTo(User, { foreignKey: "idUser" });
     User.hasMany(Review, { foreignKey: "idUser" });
     UserRole.belongsTo(User, { foreignKey: "idUser" });
     User.hasMany(UserRole, { foreignKey: "idUser" });
@@ -208,5 +212,6 @@ module.exports = function initModels(sequelize) {
         UserRole,
         User,
         Voucher,
+        Favourite,
     };
 };
