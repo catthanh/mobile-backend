@@ -43,6 +43,10 @@ module.exports = class User extends Model {
                     type: DataTypes.DATE,
                     allowNull: true,
                 },
+                job: {
+                    type: DataTypes.STRING(255),
+                    allowNull: true,
+                },
             },
             {
                 sequelize,
