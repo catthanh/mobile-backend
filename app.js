@@ -6,6 +6,7 @@ const swaggerUi = require("swagger-ui-express");
 const createError = require("http-errors");
 const AuthRoute = require("./routes/auth.route");
 const RestaurantRoute = require("./routes/Restaurant.route");
+const UserRoute = require("./routes/User.route");
 const { verifyAccessToken } = require("./helpers/jwt_helper");
 require("dotenv").config();
 const db = require("./models");
@@ -59,9 +60,12 @@ app.get("/", verifyAccessToken, async (req, res, next) => {
 
 app.use("/auth", AuthRoute);
 app.use("/restaurant",verifyAccessToken, RestaurantRoute);
+app.use("/user", verifyAccessToken, UserRoute);
+
 app.use(async (req, res, next) => {
     next(createError.NotFound());
 });
+
 app.use(async (err, req, res, next) => {
     res.status(err.status || 500);
     res.json({
