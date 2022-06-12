@@ -20,7 +20,7 @@ module.exports = {
                 const vouchers = await Restaurant.findByPk(req.query?.idRes, {
                     include: Voucher
                 })
-                res.send(vouchers?.vouchers || [])
+                res.send(vouchers?.Vouchers || [])
             } else {
                 const {pageNumber = 1, pageSize = 100} = req.query
                 const vouchers = await Voucher.findAndCountAll({
@@ -41,6 +41,15 @@ module.exports = {
     add: async (req, res, next) => {
         try {
             await voucherAddReqSchema.validateAsync(req.body)
+
+            // const restaurants = await Restaurant.findAll();
+
+            // let index = 1;
+            // restaurants.forEach(async (e) => {
+            //     const tmp = await Voucher.create({...req.body, name: req.body.name + index});
+            //     await e.addVoucher(tmp);
+            //     index++;
+            // });
             const [voucher, isCreated] = await Voucher.findOrCreate({
                 where: {...req.body},
                 default: {...req.body}
@@ -73,4 +82,5 @@ module.exports = {
             next(internalError);
         }
     },
+
 };

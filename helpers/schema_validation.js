@@ -101,6 +101,15 @@ const categoryAddReqSchema = Joi.object({
     idRes: Joi.number().required(),
     name: Joi.string().required(),
 })
+/*****************
+ * Order section *
+ *****************/
+const orderGetReqSchema = Joi.object({
+    idRes: Joi.number().required()
+})
+const orderUpdateReqSchema = Joi.object({
+    idRes: Joi.number().required()
+})
 module.exports = { 
     authSchema, 
     logInSchema, 
@@ -122,7 +131,10 @@ module.exports = {
     jwtPayloadSchema,
     userGetFavouriteSchema,
     userUpdateInfoSchema,
-    
+
     categoryGetReqSchema,
-    categoryAddReqSchema
+    categoryAddReqSchema,
+
+    orderGetReqSchema,
+    orderUpdateReqSchema
 };
