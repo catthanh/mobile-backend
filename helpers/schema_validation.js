@@ -69,6 +69,27 @@ const voucherAddReqSchema = Joi.object({
 const voucherRemoveReqSchema = Joi.object({
     id: Joi.number().required(),
 })
+
+/*******************
+ * User section *
+ *******************/
+const jwtPayloadSchema = Joi.object({
+    iss: Joi.string(),
+    iat: Joi.number(),
+    exp: Joi.number(),
+    aud: Joi.number().required()
+})
+
+const userGetFavouriteSchema = Joi.object({
+    lat: Joi.number().required(),
+    long: Joi.number().required()
+})
+
+const userUpdateInfoSchema = Joi.object({
+    column: Joi.string().required(),
+    updateValue: Joi.string().required()
+})
+
 module.exports = { 
     authSchema, 
     logInSchema, 
@@ -85,5 +106,9 @@ module.exports = {
 
     voucherGetReqSchema,
     voucherAddReqSchema,
-    voucherRemoveReqSchema
+    voucherRemoveReqSchema,
+
+    jwtPayloadSchema,
+    userGetFavouriteSchema,
+    userUpdateInfoSchema
 };
