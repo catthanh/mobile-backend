@@ -41,7 +41,8 @@ module.exports = {
                     "orderStatus": element.status,
                     "updateTime": new Date(element.updatedAt).toLocaleString('en-GB'),
                     "restaurantName": element.Restaurant.name,
-                    "restaurantImage": element.Restaurant.coverImageLink
+                    "restaurantImage": element.Restaurant.coverImageLink,
+                    "restaurantId": element.Restaurant.id
                 };
 
                 orders[index] = returnElement;
@@ -91,7 +92,8 @@ module.exports = {
                     "Distance": distance.toFixed(1),
                     "shippingTime": totalTime,
                     "restaurantName": element.Restaurant.name,
-                    "restaurantImage": element.Restaurant.coverImageLink
+                    "restaurantImage": element.Restaurant.coverImageLink,
+                    "restaurantId": element.Restaurant.id
                 };
 
                 favourites[index] = returnElement;
