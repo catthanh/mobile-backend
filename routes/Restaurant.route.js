@@ -70,7 +70,7 @@ router.get('/', RestaurantController.get);
  *          type: string
  *
  */
-router.post('/', restaurantOwner, RestaurantController.add);
+router.post('/', RestaurantController.add);
 /**
  * @swagger
  * /restaurant:

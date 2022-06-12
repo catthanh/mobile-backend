@@ -17,9 +17,9 @@ module.exports = {
             await foodGetReqSchema.validateAsync(req.query)
             if(req.query?.idRes){
                 const foods = await Restaurant.findByPk(req.query?.idRes, {
-                    include: 'foods'
+                    include: Food
                 })
-                res.send(foods?.foods)
+                res.send(foods?.Food);
             } else {
                 const {pageNumber = 1, pageSize = 100} = req.query
                 const foods = await Food.findAndCountAll({

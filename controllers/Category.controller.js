@@ -6,7 +6,7 @@ const {
     categoryGetReqSchema, 
     // CategoryModifyReqSchema, 
     // CategoryRemoveReqSchema 
-} = require('../helpers/schema_validation')
+} = require('../helpers/schema_validation');
 
 const internalError = createError.internalError
 module.exports = {
@@ -14,13 +14,14 @@ module.exports = {
         try {
             await categoryGetReqSchema.validateAsync(req.query)
             const categories = await Restaurant.findByPk(req.query?.idRes, {
-                include: {
-                    model: 'fuitables',
-                    as: 'idFuitable_fuitables'
-                }
-            })
-            res.send(categories);
-        } catch (error) {
+                include: 'fuitable_restaurant'
+            });
+            const result = categories['fuitable_restaurant'].map(e => {
+                const { ResFuitable, ...rest } = e.toJSON();
+                return rest;
+            });
+            res.send(result);
+        } catch (error) {   
             if (error.isJoi === true)
                 next(createError.BadRequest())
             next(internalError);
@@ -29,9 +30,24 @@ module.exports = {
     add: async (req, res, next) => {
         try {
             await categoryAddReqSchema.validateAsync(req.body)
-            
-            const result = await Fuitable.create({...req.body});    
-            res.send(result[0]);
+            const { idRes, name } = req.body;
+            const [category, _] = await Fuitable.findOrCreate({
+                where: {
+                    name: name
+                },
+                default: {
+                    name: name
+                }
+            })
+            const restaurant = await Restaurant.findByPk(idRes);
+            await category.addRestaurant_fuitable(restaurant);
+
+            const result = await Fuitable.findOne({
+                where: {
+                    name: name
+                }
+            })
+            res.send(result)
         } catch (error) {
             if (error.isJoi === true)
                 next(createError.BadRequest())

@@ -58,7 +58,7 @@ const foodRemoveReqSchema = Joi.object({
  * Voucher section *
  *******************/
  const voucherGetReqSchema = Joi.object({
-    idRes: Joi.number().required()
+    idRes: Joi.number()
 })
 const voucherAddReqSchema = Joi.object({
     idRes: Joi.number().required(),
@@ -68,6 +68,7 @@ const voucherAddReqSchema = Joi.object({
 })
 const voucherRemoveReqSchema = Joi.object({
     id: Joi.number().required(),
+    idRes: Joi.number().required()
 })
 
 /*******************

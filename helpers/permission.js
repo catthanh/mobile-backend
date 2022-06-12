@@ -20,6 +20,7 @@ module.exports = {
         ...req.payload,
         restaurant: restaurant,
       };
+      next();
     } catch (error) {
       next(createError.internalError);
     }
@@ -39,6 +40,7 @@ module.exports = {
         ...req.payload,
         food: food,
       };
+      next();
     } catch (error) {
       next(createError.internalError);
     }

@@ -13,6 +13,7 @@ module.exports = class Fuitable extends Model {
                 },
                 name: {
                     type: DataTypes.STRING(255),
+                    unique: true,
                     allowNull: false,
                 },
             },
