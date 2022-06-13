@@ -7,6 +7,7 @@ const createError = require("http-errors");
 const AuthRoute = require("./routes/auth.route");
 const RestaurantRoute = require("./routes/Restaurant.route");
 const UserRoute = require("./routes/User.route");
+const HpRoute = require("./routes/HomePage.route");
 const { verifyAccessToken } = require("./helpers/jwt_helper");
 require("dotenv").config();
 const db = require("./models");
@@ -61,6 +62,7 @@ app.get("/", verifyAccessToken, async (req, res, next) => {
 app.use("/auth", AuthRoute);
 app.use("/restaurant",verifyAccessToken, RestaurantRoute);
 app.use("/user", verifyAccessToken, UserRoute);
+app.use("/homepage", HpRoute);
 
 app.use(async (req, res, next) => {
     next(createError.NotFound());
