@@ -232,27 +232,27 @@ module.exports = {
      */
 
   getFilteredRestaurants: async (req, res, next) => {
-      try {
-          await restaurantGetByFiltered.validateAsync(req.query, {
-              allowUnknown: true,
-          });
+    try {
+        await restaurantGetByFiltered.validateAsync(req.query, {
+            allowUnknown: true,
+        });
 
-          const filter = req.query.filter
+        const filter = req.query.filter
 
-          var restaurantResults = null;
-          if(filter == "location") {
-              restaurantResults = await getRestaurantbyDistance(req, res, next);
-          } else if (filter == "id") {
-              restaurantResults = await getRestaurantsbyId(req, res, next);
-          }
+        var restaurantResults = null;
+        if(filter == "location") {
+            restaurantResults = await getRestaurantbyDistance(req, res, next);
+        } else if (filter == "id") {
+            restaurantResults = await getRestaurantsbyId(req, res, next);
+        }
 
-          res.send(restaurantResults);
+        res.send(restaurantResults);
 
-      } catch (error) {
-          if (error.isJoi === true) next(createError.BadRequest());
-          console.log(error);
-          next(internalError);
-      }
+    } catch (error) {
+        if (error.isJoi === true) next(createError.BadRequest());
+        console.log(error);
+        next(internalError);
+    }
   }
 
 };
