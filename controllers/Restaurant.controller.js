@@ -29,7 +29,9 @@ const getRestaurantbyDistance = async (req, res, next) => {
             allowUnknown: true,
         });
 
-        const userLoc = [req.query.userLat, req.query.userLong];
+        const userId = req.payload.aud;
+        var userLoc = await Utilizer.getUserCurrentLocation(userId);
+        userLoc = [userLoc.latitude, userLoc.longtitude];
         
         const restaurantResults = await Restaurant.findAll({
             attributes: ['id', 'name', 'coverImageLink', 'address', 'avgRating', 'latitude', 'longtitude', 'preparationTime', 'groupName'],
@@ -71,6 +73,8 @@ const getRestaurantbyDistance = async (req, res, next) => {
             restaurantResults[index] = returnElement;
         })
 
+        restaurantResults.sort((a, b) => (parseFloat(a.Distance) > parseFloat(b.Distance) ? 1 : -1));
+
         return restaurantResults;
         
     } catch (error) {
@@ -90,7 +94,10 @@ const getRestaurantsbyId = async (req, res, next) => {
             allowUnknown: true,
         });
         
-        const userLoc = [req.query.userLat, req.query.userLong];
+        const userId = req.payload.aud;
+        var userLoc = await Utilizer.getUserCurrentLocation(userId);
+        userLoc = [userLoc.latitude, userLoc.longtitude];
+
         const restaurantsId = req.query.restaurantsId.split(",");
 
         const restaurantResults = await Restaurant.findAll({

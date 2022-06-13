@@ -10,7 +10,9 @@ const Voucher = require("../models").Voucher;
 const {
     jwtPayloadSchema,
     userGetFavouriteSchema,
-    userUpdateInfoSchema
+    userUpdateInfoSchema,
+    userUpdateAddressInfoSchema,
+    userSaveCurrentAddressSchema
 } = require("../helpers/schema_validation");
 const Utilizer = require("../helpers/utils");
 
@@ -63,9 +65,11 @@ module.exports = {
      */
     getFavouritesList: async (req, res, next) => {
         try {
-            const queryParams = await userGetFavouriteSchema.validateAsync(req.query);
-            const userLoc = [queryParams.lat, queryParams.long] 
+            await userGetFavouriteSchema.validateAsync(req.query);
+
             const userId = req.payload.aud;
+            var userLoc = await Utilizer.getUserCurrentLocation(userId);
+            userLoc = [userLoc.latitude, userLoc.longtitude];
 
             const favourites = await Favourite.findAll({
                 attributes: ['idRes', 'idUser'],
@@ -153,33 +157,53 @@ module.exports = {
 
             var updateData = {};
 
-            if(reqBody.column != "address") {
-                updateData[reqBody.column] = reqBody.updateValue;
+            updateData[reqBody.column] = reqBody.updateValue;
 
-                User.update(
-                    updateData,
-                    { 
-                        where: { id: userId } 
-                    }
-                );
-            } else if(reqBody.column == "address") {
-                const user = await User.findOne({
-                    attributes: ["id", "address"],
-                    where: {id: userId},
-                })
-                
-                updateData[reqBody.updateKey] = reqBody.updateValue;
-                user.address = {...user.address, ...updateData}
+            User.update(
+                updateData,
+                { 
+                    where: { id: userId } 
+                }
+            );
 
-                User.update(
-                    {
-                        address: user.address
-                    },
-                    { 
-                        where: { id: userId } 
-                    }
-                );
-            }
+            res.sendStatus(200);
+            
+        } catch (error) {
+            if (error.isJoi === true) next(createError.BadRequest());
+            console.log(error);
+            next(internalError);
+        }
+    },
+    /**
+     * tested
+     * son
+     */
+    updateAddressInfo: async (req, res, next) => {
+        try {
+            const reqBody = await userUpdateAddressInfoSchema.validateAsync(req.body, {
+                allowUnknown: true,
+            });
+
+            const userId = req.payload.aud;
+
+            var updateData = {};
+
+            const user = await User.findOne({
+                attributes: ["id", "address"],
+                where: {id: userId},
+            })
+            
+            updateData[reqBody.updateKey] = reqBody.updateValue;
+            user.address = {...user.address, ...updateData}
+
+            User.update(
+                {
+                    address: user.address
+                },
+                { 
+                    where: { id: userId } 
+                }
+            );
 
             res.sendStatus(200);
             
@@ -213,7 +237,32 @@ module.exports = {
             console.log(error);
             next(internalError);
         }
-    }
-    
+    },
+    /**
+     * tested
+     * son
+     */
+    saveCurrentUserLocation: async (req, res, next) => {
+        try {
+            await userSaveCurrentAddressSchema.validateAsync(req.body);
+            
+            const userId = req.payload.aud;
 
+            const user = User.update(
+                {
+                    currentAddress: req.body
+                },
+                { 
+                    where: { id: userId } 
+                }
+            );
+
+            res.send(200);
+            
+        } catch (error) {
+            if (error.isJoi === true) next(createError.BadRequest());
+            console.log(error);
+            next(internalError);
+        }
+    },
 };

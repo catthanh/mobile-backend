@@ -27,7 +27,10 @@ module.exports = {
             const limit = req.body.pageSize;
             const offset = (req.body.pageNumber - 1) * limit;
             const searchValue = req.body.searchValue;
-            const userLoc = [req.body.userLat, req.body.userLong];
+
+            const userId = req.payload.aud;
+            var userLoc = await Utilizer.getUserCurrentLocation(userId);
+            userLoc = [userLoc.latitude, userLoc.longtitude];
             
             const restaurantResults = await Restaurant.findAll({
                 attributes: { 
