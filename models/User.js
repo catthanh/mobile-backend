@@ -47,6 +47,14 @@ module.exports = class User extends Model {
                     type: DataTypes.STRING(255),
                     allowNull: true,
                 },
+                address: {
+                    type: DataTypes.JSON,
+                    allowNull: true,
+                },
+                currentAddress: {
+                    type: DataTypes.JSON,
+                    allowNull: true,
+                },
             },
             {
                 sequelize,

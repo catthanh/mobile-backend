@@ -111,6 +111,10 @@ module.exports = class Restaurant extends Model {
                     type: DataTypes.STRING(255),
                     allowNull: true,
                 },
+                groupName: {
+                    type: DataTypes.STRING(255),
+                    allowNull: true,
+                },
             },
             {
                 sequelize,
