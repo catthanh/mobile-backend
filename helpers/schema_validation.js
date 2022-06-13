@@ -37,14 +37,10 @@ const restaurantGetByFiltered = Joi.object({
 })
 
 const restaurantGetByDistance = Joi.object({
-    userLat: Joi.number().required(),
-    userLong: Joi.number().required()
 })
 
 const restaurantGetByIdSchema = Joi.object({
     restaurantsId: Joi.string().required(),
-    userLat: Joi.number().required(),
-    userLong: Joi.number().required()
 })
 
 /****************
@@ -96,14 +92,22 @@ const jwtPayloadSchema = Joi.object({
 })
 
 const userGetFavouriteSchema = Joi.object({
-    lat: Joi.number().required(),
-    long: Joi.number().required()
 })
 
 const userUpdateInfoSchema = Joi.object({
     column: Joi.string().required(),
     updateValue: Joi.string().required(),
-    updateKey: Joi.string(),
+})
+
+const userUpdateAddressInfoSchema = Joi.object({
+    updateKey: Joi.string().required(),
+    updateValue: Joi.object().required(),
+})
+
+const userSaveCurrentAddressSchema = Joi.object({
+    address: Joi.string().required(),
+    latitude: Joi.number().required(),
+    longtitude: Joi.number().required()
 })
 
 /*******************
@@ -111,8 +115,6 @@ const userUpdateInfoSchema = Joi.object({
  *******************/
 const homePageSearchSchema = Joi.object({
     searchValue: Joi.string().required(),
-    userLat: Joi.number().required(),
-    userLong: Joi.number().required(),
     pageNumber: Joi.number().min(1),
     pageSize: Joi.number().min(1)
 })
@@ -141,6 +143,8 @@ module.exports = {
     jwtPayloadSchema,
     userGetFavouriteSchema,
     userUpdateInfoSchema,
+    userUpdateAddressInfoSchema,
+    userSaveCurrentAddressSchema,
 
     homePageSearchSchema,
     
