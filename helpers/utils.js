@@ -1,3 +1,4 @@
+const User = require("../models").User;
 
 module.exports = {
     calDistanceByLatLong: (userLocation, targetLocation) => {
@@ -41,12 +42,20 @@ module.exports = {
     getShippingTime: (distance, prepareTime) => {
         const re = new RegExp('[0-9]');
 
-        console.log(prepareTime);
         // calculate total time to ship
         var prepareTime = prepareTime ? prepareTime.match(re) : 0;
         prepareTime = prepareTime ? prepareTime?.[0] : 0;
         const totalTime = parseInt(prepareTime) + parseInt(distance) * 2;
 
         return totalTime;
+    },
+
+    getUserCurrentLocation: async (userId) => {
+        const user = await User.findOne({
+            attributes: ["currentAddress"],
+            where: {id: userId},
+        })
+
+        return user.dataValues.currentAddress;
     }
 };
