@@ -26,4 +26,27 @@ module.exports = {
         // calculate the result
         return parseFloat(c * r);
     },
+
+    getCurrentTime: () => {
+        const date = new Date();
+
+        var hour = date.getHours();
+        hour = (hour < 10 ? "0" : "") + hour;
+        var minutes  = date.getMinutes();
+        minutes = (minutes < 10 ? "0" : "") + minutes;
+
+        return `${hour}:${minutes}:00`;
+    },
+
+    getShippingTime: (distance, prepareTime) => {
+        const re = new RegExp('[0-9]');
+
+        console.log(prepareTime);
+        // calculate total time to ship
+        var prepareTime = prepareTime ? prepareTime.match(re) : 0;
+        prepareTime = prepareTime ? prepareTime?.[0] : 0;
+        const totalTime = parseInt(prepareTime) + parseInt(distance) * 2;
+
+        return totalTime;
+    }
 };
