@@ -5,6 +5,7 @@ const Restaurant = require("../models").Restaurant;
 const Order = require("../models").Order;
 const Favourite = require("../models").Favourite;
 const User = require("../models").User;
+const Voucher = require("../models").Voucher;
 
 const {
     jwtPayloadSchema,
@@ -62,8 +63,6 @@ module.exports = {
      */
     getFavouritesList: async (req, res, next) => {
         try {
-            const re = new RegExp('[0-9]');
-
             const queryParams = await userGetFavouriteSchema.validateAsync(req.query);
             const userLoc = [queryParams.lat, queryParams.long] 
             const userId = req.payload.aud;
@@ -72,10 +71,16 @@ module.exports = {
                 attributes: ['idRes', 'idUser'],
                 where: {idUser: userId},
                 include: [{
-                    model: Restaurant,
-                    required: true,
-                    attributes: ['id', 'name', 'avgRating', 'latitude', 'longtitude', 'coverImageLink', 'preparationTime']
-                }],
+                        model: Restaurant,
+                        required: true,
+                        attributes: ['id', 'name', 'avgRating', 'latitude', 'longtitude', 'coverImageLink', 'preparationTime'],
+                        include: {
+                            model: Voucher,
+                            required: true,
+                            attributes: ['id', 'idRes', 'name']
+                        }
+                    }
+                ],
                 order: [['updatedAt', 'DESC']]
             })
             
@@ -84,16 +89,15 @@ module.exports = {
                 const distance = Utilizer.calDistanceByLatLong(userLoc, targetLoc);
 
                 // calculate total time to ship
-                var prepareTime = element.Restaurant.preparationTime.match(re);
-                prepareTime = prepareTime ? prepareTime?.[0] : 0;
-                const totalTime = parseInt(prepareTime) + parseInt(distance) * 2;
+                const totalTime = Utilizer.getShippingTime(distance, element.Restaurant.preparationTime);
 
                 returnElement = {
                     "Distance": distance.toFixed(1),
                     "shippingTime": totalTime,
                     "restaurantName": element.Restaurant.name,
                     "restaurantImage": element.Restaurant.coverImageLink,
-                    "restaurantId": element.Restaurant.id
+                    "restaurantId": element.Restaurant.id,
+                    "Vouchers": element.Restaurant.Vouchers
                 };
 
                 favourites[index] = returnElement;
@@ -141,19 +145,41 @@ module.exports = {
      */
     updateInfo: async (req, res, next) => {
         try {
-            const reqBody = await userUpdateInfoSchema.validateAsync(req.body);
+            const reqBody = await userUpdateInfoSchema.validateAsync(req.body, {
+                allowUnknown: true,
+            });
 
             const userId = req.payload.aud;
 
             var updateData = {};
-            updateData[reqBody.column] = reqBody.updateValue;
 
-            User.update(
-                updateData,
-                { 
-                    where: { id: userId } 
-                }
-              );
+            if(reqBody.column != "address") {
+                updateData[reqBody.column] = reqBody.updateValue;
+
+                User.update(
+                    updateData,
+                    { 
+                        where: { id: userId } 
+                    }
+                );
+            } else if(reqBody.column == "address") {
+                const user = await User.findOne({
+                    attributes: ["id", "address"],
+                    where: {id: userId},
+                })
+                
+                updateData[reqBody.updateKey] = reqBody.updateValue;
+                user.address = {...user.address, ...updateData}
+
+                User.update(
+                    {
+                        address: user.address
+                    },
+                    { 
+                        where: { id: userId } 
+                    }
+                );
+            }
 
             res.sendStatus(200);
             
@@ -162,6 +188,32 @@ module.exports = {
             console.log(error);
             next(internalError);
         }
+    },
+    /**
+     * tested
+     * son
+     */
+    get: async (req, res, next) => {
+        try {
+            await jwtPayloadSchema.validateAsync(req.payload);
+            
+            const userId = req.payload.aud;
+
+            const user = await User.findOne({
+                attributes: {
+                    exclude: ['password', 'createdAt', 'updatedAt']
+                },
+                where: {id: userId},
+            })
+
+            res.send(user);
+            
+        } catch (error) {
+            if (error.isJoi === true) next(createError.BadRequest());
+            console.log(error);
+            next(internalError);
+        }
     }
+    
 
 };
