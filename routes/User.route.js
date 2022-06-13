@@ -12,4 +12,9 @@ router.get("/profile", UserController.profile);
 
 router.put("/update-info", UserController.updateInfo);
 
+router.put("/update-info/address", UserController.updateAddressInfo);
+
+router.put("/location", UserController.saveCurrentUserLocation);
+
+
 module.exports = router;
