@@ -16,5 +16,7 @@ router.put("/update-info/address", UserController.updateAddressInfo);
 
 router.put("/location", UserController.saveCurrentUserLocation);
 
+router.get("/search/history", UserController.getSearchHistory);
+
 
 module.exports = router;
