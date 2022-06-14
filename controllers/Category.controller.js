@@ -1,9 +1,15 @@
+const _sequelize = require("sequelize");
+const { Model, Sequelize } = _sequelize;
+
 const createError = require('http-errors');
 const Fuitable = require('../models').Fuitable;
 const Restaurant = require('../models').Restaurant;
+const ResFuitable = require('../models').ResFuitable;
+
 const { 
     categoryAddReqSchema,
     categoryGetReqSchema, 
+    categoryGetPopularSchema,
     // CategoryModifyReqSchema, 
     // CategoryRemoveReqSchema 
 } = require('../helpers/schema_validation');
@@ -54,5 +60,33 @@ module.exports = {
             next(internalError);
         }
     },
-    
+    getPopularCategory: async (req, res, next) => {
+        try {
+            await categoryGetPopularSchema.validateAsync(req.query);
+
+            const results = await ResFuitable.findAll({
+                include: [{
+                        model: Fuitable,
+                        attributes: ["id", "name", "imageLink"],
+                        required: true
+                    }
+                ],
+                attributes: [[Sequelize.fn('count', Sequelize.col('ResFuitable.idRes')), 'count']],
+                group: ['ResFuitable.idFuitable'],
+                order: [[Sequelize.col("count"), "DESC"]],
+                limit: parseInt(req.query.limit)
+            })
+            
+            results.forEach((element, index) => {
+                results[index] = element.Fuitable;
+            })
+            
+            res.send(results);
+        } catch (error) {   
+            if (error.isJoi === true)
+                next(createError.BadRequest());
+            console.log(error);
+            next(internalError);
+        }
+    },
 };
