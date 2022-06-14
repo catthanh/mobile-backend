@@ -6,13 +6,15 @@ const Order = require("../models").Order;
 const Favourite = require("../models").Favourite;
 const User = require("../models").User;
 const Voucher = require("../models").Voucher;
+const UserSearchHistory = require("../models").UserSearchHistory;
 
 const {
     jwtPayloadSchema,
     userGetFavouriteSchema,
     userUpdateInfoSchema,
     userUpdateAddressInfoSchema,
-    userSaveCurrentAddressSchema
+    userSaveCurrentAddressSchema,
+    userGetSearchHistorySchema
 } = require("../helpers/schema_validation");
 const Utilizer = require("../helpers/utils");
 
@@ -258,6 +260,33 @@ module.exports = {
             );
 
             res.send(200);
+            
+        } catch (error) {
+            if (error.isJoi === true) next(createError.BadRequest());
+            console.log(error);
+            next(internalError);
+        }
+    },
+    /**
+     * tested
+     * son
+     */
+    getSearchHistory: async (req, res, next) => {
+        try {
+            await userGetSearchHistorySchema.validateAsync(req.query);
+            
+            const userId = req.payload.aud;
+
+            const searchHistories = await UserSearchHistory.findAll({
+                attributes: ["idUser", "searchText"],
+                where: {
+                    idUser: userId,
+                },
+                limit: parseInt(req.query.limit),
+                order: [['createdAt', 'DESC']]
+            });
+
+            res.send(searchHistories);
             
         } catch (error) {
             if (error.isJoi === true) next(createError.BadRequest());
