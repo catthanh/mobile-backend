@@ -111,13 +111,18 @@ const userSaveCurrentAddressSchema = Joi.object({
     longtitude: Joi.number().required()
 })
 
+const userGetSearchHistorySchema = Joi.object({
+    limit: Joi.number().required()
+})
+
 /*******************
  * Homepage section *
  *******************/
 const homePageSearchSchema = Joi.object({
     searchValue: Joi.string().required(),
     pageNumber: Joi.number().min(1),
-    pageSize: Joi.number().min(1)
+    pageSize: Joi.number().min(1),
+    isSearch: Joi.boolean().required()
 })
 
 /********************
@@ -130,6 +135,10 @@ const categoryAddReqSchema = Joi.object({
     idRes: Joi.number().required(),
     name: Joi.string().required(),
 })
+const categoryGetPopularSchema = Joi.object({
+    limit: Joi.number().required(),
+})
+
 /*****************
  * Order section *
  *****************/
@@ -165,11 +174,13 @@ module.exports = {
     userUpdateInfoSchema,
     userUpdateAddressInfoSchema,
     userSaveCurrentAddressSchema,
+    userGetSearchHistorySchema,
 
     homePageSearchSchema,
     
     categoryGetReqSchema,
     categoryAddReqSchema,
+    categoryGetPopularSchema,
 
     orderGetReqSchema,
     orderUpdateReqSchema
