@@ -225,12 +225,18 @@ module.exports = {
             
             const userId = req.payload.aud;
 
-            const user = await User.findOne({
+            var user = await User.findOne({
                 attributes: {
                     exclude: ['password', 'createdAt', 'updatedAt']
                 },
                 where: {id: userId},
             })
+
+            user = user.dataValues;
+            user = {
+                ...user,
+                "address": Object.entries(user.address).map((e) => ( { [e[0]]: e[1] } ))
+            };
 
             res.send(user);
             
