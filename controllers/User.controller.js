@@ -235,7 +235,7 @@ module.exports = {
             user = user.dataValues;
             user = {
                 ...user,
-                "address": Object.keys(user.address).map((key) => [key, user.address[key]])
+                "address": Object.entries(user.address).map((e) => ( { "type": e[0], ...e[1] } ))
             };
 
             res.send(user);
@@ -255,10 +255,31 @@ module.exports = {
             await userSaveCurrentAddressSchema.validateAsync(req.body);
             
             const userId = req.payload.aud;
-
-            const user = User.update(
+            
+            // update current address
+            const user = await User.update(
                 {
                     currentAddress: req.body
+                },
+                { 
+                    where: { id: userId } 
+                }
+            );
+
+            // update current address in address fields
+            var updateData = {};
+
+            const userResult = await User.findOne({
+                attributes: ["id", "address"],
+                where: {id: userId},
+            })
+            
+            updateData["currentAddress"] = req.body;
+            userResult.address = {...userResult.address, ...updateData}
+
+            User.update(
+                {
+                    address: userResult.address
                 },
                 { 
                     where: { id: userId } 
