@@ -235,7 +235,7 @@ module.exports = {
             user = user.dataValues;
             user = {
                 ...user,
-                "address": Object.entries(user.address).map((e) => ( { [e[0]]: e[1] } ))
+                "address": Object.keys(user.address).map((key) => [key, user.address[key]])
             };
 
             res.send(user);
