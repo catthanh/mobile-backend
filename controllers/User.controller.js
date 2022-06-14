@@ -227,7 +227,7 @@ module.exports = {
 
             var user = await User.findOne({
                 attributes: {
-                    exclude: ['password', 'createdAt', 'updatedAt']
+                    exclude: ['password', 'createdAt', 'updatedAt', "currentAddress"]
                 },
                 where: {id: userId},
             })
