@@ -16,6 +16,10 @@ module.exports = class Fuitable extends Model {
                     unique: true,
                     allowNull: false,
                 },
+                imageLink: {
+                    type: DataTypes.STRING(255),
+                    allowNull: true,
+                },
             },
             {
                 sequelize,

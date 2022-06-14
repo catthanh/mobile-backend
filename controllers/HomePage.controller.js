@@ -4,8 +4,7 @@ const _sequelize = require('sequelize');
 const { Model, Sequelize } = _sequelize;
 
 const Restaurant = require("../models").Restaurant;
-const Voucher = require("../models").Voucher;
-const Food = require("../models").Food;
+const UserSearchHistory = require("../models").UserSearchHistory;
 
 const {
     jwtPayloadSchema,
@@ -15,6 +14,36 @@ const {
 const Utilizer = require("../helpers/utils");
 
 const internalError = createError.InternalServerError;
+
+/**
+ * tested
+ * son
+ */
+const saveSearchResults = async (userId, searchValue) => {
+    try {
+        await UserSearchHistory.findOrCreate({
+            where: {
+                idUser: userId,
+                searchText: searchValue,
+            },
+            defaults: {
+                idUser: userId,
+                searchText: searchValue,
+            }
+        }).then((results) => {
+            const created = results[1];
+
+            if (!created) { // false if author already exists and was not created.
+                console.log('Already exists');
+            };
+        })
+
+    } catch (error) {
+        console.log(error);
+        throw internalError;
+    }
+};
+
 module.exports = {
     /**
      * tested
@@ -27,10 +56,15 @@ module.exports = {
             const limit = req.body.pageSize;
             const offset = (req.body.pageNumber - 1) * limit;
             const searchValue = req.body.searchValue;
+            const isSearch = req.body.isSearch;
 
             const userId = req.payload.aud;
             var userLoc = await Utilizer.getUserCurrentLocation(userId);
             userLoc = [userLoc.latitude, userLoc.longtitude];
+
+            if(isSearch) {
+                saveSearchResults(userId, searchValue);
+            }
             
             const restaurantResults = await Restaurant.findAll({
                 attributes: { 
@@ -93,5 +127,5 @@ module.exports = {
             console.log(error);
             next(internalError);
         }
-    }
+    },
 };

@@ -22,6 +22,7 @@ const _UserRole = require("./UserRole.js");
 const _User = require("./User.js");
 const _Voucher = require("./Voucher.js");
 const _Favourite = require("./Favourite.js");
+const _UserSearchHistory = require("./UserSearchHistory.js");
 
 module.exports = function initModels(sequelize) {
     const Cuisine = _Cuisine.init(sequelize, DataTypes);
@@ -46,6 +47,7 @@ module.exports = function initModels(sequelize) {
     const User = _User.init(sequelize, DataTypes);
     const Voucher = _Voucher.init(sequelize, DataTypes);
     const Favourite = _Favourite.init(sequelize, DataTypes);
+    const UserSearchHistory = _UserSearchHistory.init(sequelize, DataTypes);
 
     Cuisine.belongsToMany(Restaurant, {
         as: "restaurant_cuisine",
@@ -184,11 +186,14 @@ module.exports = function initModels(sequelize) {
     User.hasMany(Order, { foreignKey: "idUser" });
     Review.belongsTo(User, { foreignKey: "idUser" });
     Favourite.belongsTo(User, { foreignKey: "idUser" });
+    User.hasMany(Favourite, { foreignKey: "idUser" });
     User.hasMany(Review, { foreignKey: "idUser" });
     UserRole.belongsTo(User, { foreignKey: "idUser" });
     User.hasMany(UserRole, { foreignKey: "idUser" });
     OrderVoucher.belongsTo(Voucher, { foreignKey: "idVoucher" });
     Voucher.hasMany(OrderVoucher, { foreignKey: "idVoucher" });
+    UserSearchHistory.belongsTo(User, { foreignKey: "idUser" });
+    User.hasMany(UserSearchHistory, { foreignKey: "idUser" });
 
     return {
         Cuisine,
@@ -213,5 +218,6 @@ module.exports = function initModels(sequelize) {
         User,
         Voucher,
         Favourite,
+        UserSearchHistory,
     };
 };

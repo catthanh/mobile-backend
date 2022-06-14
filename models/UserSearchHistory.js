@@ -1,7 +1,7 @@
 const _sequelize = require("sequelize");
 const { Model, Sequelize } = _sequelize;
 
-module.exports = class Favourite extends Model {
+module.exports = class UserSearchHistory extends Model {
     static init(sequelize, DataTypes) {
         return super.init(
             {
@@ -11,21 +11,18 @@ module.exports = class Favourite extends Model {
                     allowNull: false,
                     primaryKey: true,
                 },
-                idRes: {
-                    type: DataTypes.INTEGER,
-                    allowNull: true,
-                    references: {
-                        model: "restaurants",
-                        key: "id",
-                    },
-                },
                 idUser: {
                     type: DataTypes.INTEGER,
-                    allowNull: true,
+                    allowNull: false,
+                    primaryKey: true,
                     references: {
                         model: "users",
                         key: "id",
                     },
+                },
+                searchText: {
+                    type: DataTypes.STRING(255),
+                    allowNull: true,
                 },
                 createdAt: {
                     type: DataTypes.DATE,
@@ -39,7 +36,7 @@ module.exports = class Favourite extends Model {
             },
             {
                 sequelize,
-                tableName: "favourites",
+                tableName: "user_search_history",
                 timestamps: true,
                 indexes: [
                     {
@@ -47,11 +44,6 @@ module.exports = class Favourite extends Model {
                         unique: true,
                         using: "BTREE",
                         fields: [{ name: "id" }],
-                    },
-                    {
-                        name: "idRes",
-                        using: "BTREE",
-                        fields: [{ name: "idRes" }],
                     },
                     {
                         name: "idUser",
