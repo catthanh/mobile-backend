@@ -43,6 +43,10 @@ const restaurantGetByIdSchema = Joi.object({
     restaurantsId: Joi.string().required(),
 })
 
+const restaurantGetDetailsSchema = Joi.object({
+    id: Joi.number().required(),
+})
+
 /****************
  * Food section *
  ****************/
@@ -108,7 +112,11 @@ const userUpdateAddressInfoSchema = Joi.object({
 const userSaveCurrentAddressSchema = Joi.object({
     address: Joi.string().required(),
     latitude: Joi.number().required(),
-    longitude: Joi.number().required()
+    longitude: Joi.number().required(),
+    building: Joi.string(),
+    phoneNumber: Joi.string(),
+    port: Joi.string(),
+    userNote: Joi.string(),
 })
 
 const userGetSearchHistorySchema = Joi.object({
@@ -159,6 +167,7 @@ module.exports = {
     restaurantGetByIdSchema,
     restaurantGetByDistance,
     restaurantGetByFiltered,
+    restaurantGetDetailsSchema,
 
     foodGetReqSchema,
     foodAddReqSchema,

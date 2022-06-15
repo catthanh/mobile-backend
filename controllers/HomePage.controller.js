@@ -60,7 +60,7 @@ module.exports = {
 
             const userId = req.payload.aud;
             var userLoc = await Utilizer.getUserCurrentLocation(userId);
-            userLoc = [userLoc.latitude, userLoc.longtitude];
+            userLoc = [userLoc.latitude, userLoc.longitude];
 
             if(isSearch) {
                 saveSearchResults(userId, searchValue);

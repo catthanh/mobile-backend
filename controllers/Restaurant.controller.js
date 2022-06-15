@@ -4,6 +4,8 @@ const { restaurantOwner } = require("../helpers/permission");
 
 const Restaurant = require("../models").Restaurant;
 const Voucher = require("../models").Voucher;
+const Favourite = require("../models").Favourite;
+const Food = require("../models").Food;
 
 const {
     restaurantAddReqSchema,
@@ -12,7 +14,8 @@ const {
     restaurantRemoveReqSchema,
     restaurantGetByIdSchema,
     restaurantGetByDistance,
-    restaurantGetByFiltered
+    restaurantGetByFiltered,
+    restaurantGetDetailsSchema
 } = require("../helpers/schema_validation");
 
 const Utilizer = require("../helpers/utils");
@@ -31,7 +34,7 @@ const getRestaurantbyDistance = async (req, res, next) => {
 
         const userId = req.payload.aud;
         var userLoc = await Utilizer.getUserCurrentLocation(userId);
-        userLoc = [userLoc.latitude, userLoc.longtitude];
+        userLoc = [userLoc.latitude, userLoc.longitude];
         
         const restaurantResults = await Restaurant.findAll({
             attributes: ['id', 'name', 'coverImageLink', 'address', 'avgRating', 'latitude', 'longtitude', 'preparationTime', 'groupName'],
@@ -96,7 +99,7 @@ const getRestaurantsbyId = async (req, res, next) => {
         
         const userId = req.payload.aud;
         var userLoc = await Utilizer.getUserCurrentLocation(userId);
-        userLoc = [userLoc.latitude, userLoc.longtitude];
+        userLoc = [userLoc.latitude, userLoc.longitude];
 
         const restaurantsId = req.query.restaurantsId.split(",");
 
@@ -226,11 +229,11 @@ module.exports = {
       next(internalError);
     }
   },
-    /**
+
+  /**
      * tested
      * son
      */
-
   getFilteredRestaurants: async (req, res, next) => {
     try {
         await restaurantGetByFiltered.validateAsync(req.query, {
@@ -253,6 +256,79 @@ module.exports = {
         console.log(error);
         next(internalError);
     }
-  }
+  },
+  /**
+   * tested
+   * son
+   */
+  getResDetails: async (req, res, next) => {
+    try {
+        await restaurantGetDetailsSchema.validateAsync(req.params)
+        
+        const userId = req.payload.aud;
+        const resId = req.params.id;
+        var userLoc = await Utilizer.getUserCurrentLocation(userId);
+        userLoc = [userLoc.latitude, userLoc.longitude];
+
+        var resResult = await Restaurant.findOne({
+          attributes: ["id", "name", "address", "latitude", "longtitude", "avgRating", "totalReviews", "coverImageLink", "preparationTime"],
+          where: { id: resId },
+          include: [{
+            model: Food,
+            attributes: {
+              exclude: ["createdAt", "updatedAt", "idRes", "prepareTime"]
+            }
+          }]
+        });
+        resResult = resResult.dataValues;
+
+        // check user like this restaurant
+        const favResult = await Favourite.findOne({
+          where: {
+            idUser: userId, 
+            idRes: resId
+          }
+        }).then(token => token !== null)
+        .then(isExist => isExist);
+
+        // format return results
+        const targetLoc = [resResult.latitude, resResult.longtitude];
+        resResult.Distance = Utilizer.calDistanceByLatLong(userLoc, targetLoc).toFixed(1);
+        resResult.shippingTime = Utilizer.getShippingTime(resResult.Distance, resResult.preparationTime);
+        resResult.totalOrders = resResult.totalReviews + Math.floor(Math.random() * 400);
+        resResult.isLike = favResult;
+
+        delete resResult["longtitude"];
+        delete resResult["latitude"];
+        delete resResult["preparationTime"];
+
+        res.send(resResult);
+
+    } catch (error) {
+        if (error.isJoi === true) next(createError.BadRequest());
+        console.log(error);
+        next(internalError);
+    }
+  },
+
+  /**
+   * tested
+   * son
+   */
+   getResReviews: async (req, res, next) => {
+    try {
+        await restaurantGetDetailsSchema.validateAsync(req.params)
+        
+        const userId = req.payload.aud;
+        const resId = req.params.id;
+
+        
+
+    } catch (error) {
+        if (error.isJoi === true) next(createError.BadRequest());
+        console.log(error);
+        next(internalError);
+    }
+  },
 
 };
