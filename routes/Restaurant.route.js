@@ -112,6 +112,8 @@ router.put('/', restaurantOwner, RestaurantController.modify);
 router.delete('/', restaurantOwner, RestaurantController.remove);
 
 router.get('/:id/details', RestaurantController.getResDetails);
+router.get('/:id/reviews', RestaurantController.getResReviews);
+router.get("/:id/merchant-info", RestaurantController.getMerchantInfo);
 
 router.use('/food', FoodRoute);
 router.use('/category', CategoryRoute);

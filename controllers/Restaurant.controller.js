@@ -2,10 +2,16 @@ const createError = require("http-errors");
 const { options } = require("joi");
 const { restaurantOwner } = require("../helpers/permission");
 
+const _sequelize = require("sequelize");
+const { Model, Sequelize } = _sequelize;
+const Op = Sequelize.Op;
+
 const Restaurant = require("../models").Restaurant;
 const Voucher = require("../models").Voucher;
 const Favourite = require("../models").Favourite;
 const Food = require("../models").Food;
+const Review = require("../models").Review;
+const User = require("../models").User;
 
 const {
     restaurantAddReqSchema,
@@ -301,6 +307,9 @@ module.exports = {
         resResult.Distance = Utilizer.calDistanceByLatLong(userLoc, targetLoc).toFixed(1);
         resResult.shippingTime = parseInt(Utilizer.getShippingTime(resResult.Distance, resResult.preparationTime));
         resResult.totalOrders = resResult.totalReviews + Math.floor(Math.random() * 400);
+        resResult.totalReviews = resResult.totalReviews > 100 ? `${Math.floor(resResult.totalReviews / 100) * 100}+` : resResult.totalReviews.toString(); 
+        resResult.totalOrders = resResult.totalOrders > 100 ? `${Math.floor(resResult.totalOrders / 100) * 100}+` : resResult.totalOrders.toString(); 
+
         resResult.isLike = favResult;
 
         delete resResult["longtitude"];
@@ -327,6 +336,41 @@ module.exports = {
         const userId = req.payload.aud;
         const resId = req.params.id;
 
+        var results = await Review.findAll({
+          attributes: {
+            exclude: ["createdAt", "idRes"]
+          },
+          where: {
+            idRes: resId,
+            description: {
+              [Op.not]: null
+            }
+          },
+          include: {
+            model: User,
+            attributes: ["name"]
+          },
+          raw: true,
+          nest: true,
+        })
+
+        if (!results) {
+          return next(createError(404, "Restaurant not found"));
+        }
+
+        results.forEach((element, index) => {
+          returnElement = {
+            ...element,
+            "userName": element.User.name
+          };
+
+          delete returnElement["User"];
+
+          results[index] = returnElement;
+        });
+        
+        res.send(results);
+
 
     } catch (error) {
         if (error.isJoi === true) next(createError.BadRequest());
@@ -335,4 +379,34 @@ module.exports = {
     }
   },
 
+  /**
+   * tested
+   * son
+   */
+   getMerchantInfo: async (req, res, next) => {
+    try {
+        await restaurantGetDetailsSchema.validateAsync(req.params)
+        
+        const userId = req.payload.aud;
+        const resId = req.params.id;
+
+        var results = await Restaurant.findOne({
+          attributes: ["id", "address", "openTime", "closeTime"],
+          where: {
+            id: resId
+          }
+        })    
+
+        if(!results) {
+          console.log("Restaurant not found");
+        }
+        
+        res.send(results);
+
+    } catch (error) {
+        if (error.isJoi === true) next(createError.BadRequest());
+        console.log(error);
+        next(internalError);
+    }
+  },
 };
