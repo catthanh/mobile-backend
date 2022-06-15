@@ -5,6 +5,7 @@ const { restaurantOwner } = require('../helpers/permission');
 const FoodRoute = require('./Food.route');
 const CategoryRoute = require('./Category.route');
 const VoucherRoute = require('./Voucher.route');
+const { route } = require('./User.route');
 /**
  * @swagger
  * tags:
@@ -109,6 +110,8 @@ router.put('/', restaurantOwner, RestaurantController.modify);
  *
  */
 router.delete('/', restaurantOwner, RestaurantController.remove);
+
+router.get('/:id', RestaurantController.getResDetails);
 
 router.use('/food', FoodRoute);
 router.use('/category', CategoryRoute);
