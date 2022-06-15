@@ -19,28 +19,29 @@ router.put("/location", UserController.saveCurrentUserLocation);
 
 router.get("/search/history", UserController.getSearchHistory);
 
-router.get("/restaurant", UserOrderController.getRestaurantDetails);
+router.get("/restaurantfood", UserOrderController.getRestaurantDetails);
 router.post(
     "/order/",
     UserOrderController.createOrder,
     UserOrderController.getOrderDetail
 );
 router.put(
-    "/order/",
+    "/order/:id",
     UserOrderController.updateOrder,
     UserOrderController.getOrderDetail
 );
+router.delete("/order/:id", UserOrderController.deleteOrder);
 router.put(
-    "/order/confirm",
+    "/order/confirm/:id",
     UserOrderController.confirmOrder,
     UserOrderController.getOrderDetail
 );
 router.put(
-    "/order/cancel",
+    "/order/cancel/:id",
     UserOrderController.cancelOrder,
     UserOrderController.getOrderDetail
 );
 // router.get("/orders", UserOrderController.getOrderList);
-router.get("/order", UserOrderController.getOrderDetail);
+router.get("/order/:id", UserOrderController.getOrderDetail);
 
 module.exports = router;

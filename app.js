@@ -60,11 +60,14 @@ app.get("/", verifyAccessToken, async (req, res, next) => {
 });
 
 app.use("/auth", AuthRoute);
-app.use("/restaurant",verifyAccessToken, RestaurantRoute);
+app.use("/restaurant", verifyAccessToken, RestaurantRoute);
 app.use("/user", verifyAccessToken, UserRoute);
 app.use("/homepage", verifyAccessToken, HpRoute);
 
-app.use(async (req, res, next) => {
+app.use((err, req, res, next) => {
+    if (err) {
+        next(err);
+    }
     next(createError.NotFound());
 });
 

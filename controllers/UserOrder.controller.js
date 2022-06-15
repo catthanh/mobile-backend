@@ -16,7 +16,10 @@ const internalError = createError.internalError;
 /**
  *
  * Order status {"Pending", "Confirmed", "Cancelled", "Preparing", "Delivering", "Completed"}
+ * trigger notification to restaurant when order status is "Confirmed" or "Cancellled"
+ *
  */
+
 module.exports = {
     getRestaurantDetails: async (req, res, next) => {
         try {
@@ -40,7 +43,6 @@ module.exports = {
             // // validate
             // await orderGetReqSchema.validateAsync(req.query);
             const idUser = req.payload.aud;
-
             const { idRes, foods, discount } = req.body;
             // {
             //     idRes: 1,
@@ -100,7 +102,7 @@ module.exports = {
             );
 
             // res.send(order);
-            req.body.idOrder = order.toJSON().id;
+            req.params.id = order.toJSON().id;
 
             next();
             // const order_ = await db.Order.findOne({
@@ -146,7 +148,7 @@ module.exports = {
         try {
             // await orderGetReqSchema.validateAsync(req.query);
             // const { idUser } = req.payload;
-            const { idOrder } = req.body;
+            const idOrder = req.params.id;
 
             const order = await Order.findOne({
                 where: {
@@ -158,6 +160,9 @@ module.exports = {
                     as: "food_order",
                 },
             });
+            if (!order) {
+                return next(createError(404, "Order not found"));
+            }
             let order_ = order.toJSON();
             order_.foods = order_.food_order;
             delete order_.food_order;
@@ -172,14 +177,46 @@ module.exports = {
             next(internalError);
         }
     },
-    /**
-     * TODO:
-     * trigger notification to restaurant
-     */
+    deleteOrder: async (req, res, next) => {
+        try {
+            // await orderGetReqSchema.validateAsync(req.query);
+            const idUser = req.payload.aud;
+            const idOrder = req.params.id;
+            const order = await Order.findOne({
+                where: {
+                    id: req.params.id,
+                },
+                include: {
+                    model: db.Food,
+                    through: db.OrderFood,
+                    as: "food_order",
+                },
+            });
+            if (!order) {
+                return next(createError(404, "Order not found"));
+            }
+            foods = order.toJSON().food_order;
+            console.log(foods);
+            for (let i = 0; i < foods.length; i++) {
+                await db.OrderFood.destroy({
+                    where: {
+                        idOrder: idOrder,
+                        idFood: foods[i].id,
+                    },
+                });
+            }
+            await order.destroy();
+            res.send({ message: "Order deleted" });
+        } catch (error) {
+            console.log(error);
+            if (error.isJoi === true) next(createError.BadRequest());
+            next(internalError);
+        }
+    },
     confirmOrder: async (req, res, next) => {
         try {
             // await orderGetReqSchema.validateAsync(req.query);
-            const { idOrder } = req.body;
+            const idOrder = req.params.id;
             const order = await Order.findOne({
                 where: {
                     id: idOrder,
@@ -205,7 +242,7 @@ module.exports = {
     cancelOrder: async (req, res, next) => {
         try {
             // await orderGetReqSchema.validateAsync(req.query);
-            const { idOrder } = req.body;
+            const idOrder = req.params.id;
             const order = await Order.findOne({
                 where: {
                     id: idOrder,
