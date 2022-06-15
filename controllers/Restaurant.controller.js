@@ -280,6 +280,11 @@ module.exports = {
             }
           }]
         });
+
+        if (!resResult) {
+          return next(createError(404, "Restaurant not found"));
+         }
+
         resResult = resResult.dataValues;
 
         // check user like this restaurant
@@ -322,7 +327,7 @@ module.exports = {
         const userId = req.payload.aud;
         const resId = req.params.id;
 
-        
+
 
     } catch (error) {
         if (error.isJoi === true) next(createError.BadRequest());
