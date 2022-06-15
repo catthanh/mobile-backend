@@ -23,10 +23,12 @@ const internalError = createError.internalError;
 module.exports = {
     getRestaurantDetails: async (req, res, next) => {
         try {
-            const { idRes } = req.body;
+            const idRes = req.params.id;
 
             const res_ = await Restaurant.findOne({
-                where: 1,
+                where: {
+                    id: idRes,
+                },
                 include: "Food",
             });
             if (!res_) {

@@ -19,7 +19,7 @@ router.put("/location", UserController.saveCurrentUserLocation);
 
 router.get("/search/history", UserController.getSearchHistory);
 
-router.get("/restaurantfood", UserOrderController.getRestaurantDetails);
+router.get("/foodbyrestaurant/:id", UserOrderController.getRestaurantDetails);
 router.post(
     "/order/",
     UserOrderController.createOrder,
