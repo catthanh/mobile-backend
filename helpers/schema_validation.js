@@ -108,7 +108,11 @@ const userUpdateAddressInfoSchema = Joi.object({
 const userSaveCurrentAddressSchema = Joi.object({
     address: Joi.string().required(),
     latitude: Joi.number().required(),
-    longitude: Joi.number().required()
+    longitude: Joi.number().required(),
+    building: Joi.string(),
+    phoneNumber: Joi.string(),
+    port: Joi.string(),
+    userNote: Joi.string(),
 })
 
 const userGetSearchHistorySchema = Joi.object({
