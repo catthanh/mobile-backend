@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const UserController = require("../controllers/User.controller");
+const UserOrderController = require("../controllers/UserOrder.controller");
 
 router.get("/", UserController.get);
 
@@ -18,5 +19,15 @@ router.put("/location", UserController.saveCurrentUserLocation);
 
 router.get("/search/history", UserController.getSearchHistory);
 
+router.get("/restaurant", UserOrderController.getRestaurantDetails);
+router.post(
+    "/order/",
+    UserOrderController.createOrder,
+    UserOrderController.getOrderDetail
+);
+// router.put("/order/", UserOrderController.updateOrder);
+router.put("/order/confirm", UserOrderController.confirmOrder);
+router.get("/orders", UserOrderController.getOrderList);
+router.get("/order", UserOrderController.getOrderDetail);
 
 module.exports = router;

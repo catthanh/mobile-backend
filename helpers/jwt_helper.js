@@ -36,7 +36,9 @@ module.exports = {
                         : "Invalid token";
                 return next(CreateError.Unauthorized(message));
             }
+            console.log(payload);
             req.payload = payload;
+            req.userId = payload?.aud;
             next();
         });
     },
