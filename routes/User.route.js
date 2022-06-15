@@ -35,6 +35,11 @@ router.put(
     UserOrderController.confirmOrder,
     UserOrderController.getOrderDetail
 );
+router.put(
+    "/order/cancel",
+    UserOrderController.cancelOrder,
+    UserOrderController.getOrderDetail
+);
 // router.get("/orders", UserOrderController.getOrderList);
 router.get("/order", UserOrderController.getOrderDetail);
 

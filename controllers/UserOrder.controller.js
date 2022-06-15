@@ -12,6 +12,11 @@ const {
 const OrderFood = require("../models/OrderFood");
 
 const internalError = createError.internalError;
+
+/**
+ *
+ * Order status {"Pending", "Confirmed", "Cancelled", "Preparing", "Delivering", "Completed"}
+ */
 module.exports = {
     getRestaurantDetails: async (req, res, next) => {
         try {
@@ -167,6 +172,10 @@ module.exports = {
             next(internalError);
         }
     },
+    /**
+     * TODO:
+     * trigger notification to restaurant
+     */
     confirmOrder: async (req, res, next) => {
         try {
             // await orderGetReqSchema.validateAsync(req.query);
@@ -193,6 +202,32 @@ module.exports = {
             next(internalError);
         }
     },
+    cancelOrder: async (req, res, next) => {
+        try {
+            // await orderGetReqSchema.validateAsync(req.query);
+            const { idOrder } = req.body;
+            const order = await Order.findOne({
+                where: {
+                    id: idOrder,
+                },
+                include: {
+                    model: db.Food,
+                    through: db.OrderFood,
+                    as: "food_order",
+                },
+            });
+            if (!order) {
+                return next(createError(404, "Order not found"));
+            }
+            order.status = "Cancelled";
+            await order.save();
+            next();
+        } catch (error) {
+            console.log(error);
+            if (error.isJoi === true) next(createError.BadRequest());
+            next(internalError);
+        }
+    },
     updateOrder: async (req, res, next) => {
         try {
             // await orderGetReqSchema.validateAsync(req.query);
@@ -208,6 +243,11 @@ module.exports = {
                     as: "food_order",
                 },
             });
+            if (order.status !== "Pending") {
+                return next(
+                    createError(400, "Only pending order can be updated")
+                );
+            }
             if (!order) {
                 return next(createError(404, "Order not found"));
             }
