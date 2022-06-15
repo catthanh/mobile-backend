@@ -25,9 +25,17 @@ router.post(
     UserOrderController.createOrder,
     UserOrderController.getOrderDetail
 );
-// router.put("/order/", UserOrderController.updateOrder);
-router.put("/order/confirm", UserOrderController.confirmOrder);
-router.get("/orders", UserOrderController.getOrderList);
+router.put(
+    "/order/",
+    UserOrderController.updateOrder,
+    UserOrderController.getOrderDetail
+);
+router.put(
+    "/order/confirm",
+    UserOrderController.confirmOrder,
+    UserOrderController.getOrderDetail
+);
+// router.get("/orders", UserOrderController.getOrderList);
 router.get("/order", UserOrderController.getOrderDetail);
 
 module.exports = router;

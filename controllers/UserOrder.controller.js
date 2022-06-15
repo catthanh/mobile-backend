@@ -167,19 +167,96 @@ module.exports = {
             next(internalError);
         }
     },
-    // confirmOrder: async (req, res, next) => {
-    //     try {
-    //         // await orderGetReqSchema.validateAsync(req.query);
-    //         const { idOrder } = req.body;
-    //         const order = await Order.findOne({
-    //             where: {
-    //                 id: idOrder,
-    //             },
-    //         });
-    //     } catch (error) {
-    //         console.log(error);
-    //         if (error.isJoi === true) next(createError.BadRequest());
-    //         next(internalError);
-    //     }
-    // },
+    confirmOrder: async (req, res, next) => {
+        try {
+            // await orderGetReqSchema.validateAsync(req.query);
+            const { idOrder } = req.body;
+            const order = await Order.findOne({
+                where: {
+                    id: idOrder,
+                },
+                include: {
+                    model: db.Food,
+                    through: db.OrderFood,
+                    as: "food_order",
+                },
+            });
+            if (!order) {
+                return next(createError(404, "Order not found"));
+            }
+            order.status = "Confirmed";
+            await order.save();
+            next();
+        } catch (error) {
+            console.log(error);
+            if (error.isJoi === true) next(createError.BadRequest());
+            next(internalError);
+        }
+    },
+    updateOrder: async (req, res, next) => {
+        try {
+            // await orderGetReqSchema.validateAsync(req.query);
+            const idUser = req.payload.aud;
+
+            const order = await Order.findOne({
+                where: {
+                    id: req.body.idOrder,
+                },
+                include: {
+                    model: db.Food,
+                    through: db.OrderFood,
+                    as: "food_order",
+                },
+            });
+            if (!order) {
+                return next(createError(404, "Order not found"));
+            }
+            const { idRes, foods, discount } = req.body;
+            // {
+            //     idRes: 1,
+            //     foods: [{idFood: 12876, quantity: 10}];
+            // }
+            let foodIds = foods.map((food) => food.idFood);
+            let t = await db.Food.findAll({
+                where: {
+                    id: {
+                        [Op.in]: foodIds,
+                    },
+                },
+            });
+            for (let i = 0; i < t.length; i++) {
+                foods[i].price = t[i].price;
+            }
+            console.log(foods);
+
+            let tt = foods.reduce((total, food) => {
+                return total + food.price * food.quantity;
+            }, 0);
+
+            order.shippingFee = 15000;
+            order.tax = 0;
+            order.subTotal = tt;
+            order.total = tt + order.shippingFee + order.tax;
+            order.grandTotal = order.total - discount * order.total;
+            for (let i = 0; i < foods.length; i++) {
+                await db.OrderFood.update(
+                    {
+                        quantity: foods[i].quantity,
+                    },
+                    {
+                        where: {
+                            idOrder: order.id,
+                            idFood: foods[i].idFood,
+                        },
+                    }
+                );
+            }
+            await order.save();
+            next();
+        } catch (error) {
+            console.log(error);
+            if (error.isJoi === true) next(createError.BadRequest());
+            next(internalError);
+        }
+    },
 };
