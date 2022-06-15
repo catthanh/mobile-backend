@@ -66,8 +66,8 @@ const getRestaurantbyDistance = async (req, res, next) => {
                 "restaurantImage": element.coverImageLink,
                 "restaurantId": element.id,
                 "restaurantAddress": element.address,
-                "avgRating": parseFloat(element.avgRating),
-                "Distance": distance ? parseFloat(distance.toFixed(1)) : 0,
+                "avgRating": element.avgRating,
+                "Distance": distance ? distance.toFixed(1) : "0",
                 "shippingTime": parseInt(totalTime),
                 "Vouchers": element.Vouchers,
                 "restaurantBranch": resGroup[element.groupName]
@@ -127,8 +127,8 @@ const getRestaurantsbyId = async (req, res, next) => {
                 "restaurantImage": element.coverImageLink,
                 "restaurantId": element.id,
                 "restaurantAddress": element.address,
-                "avgRating": parseFloat(element.avgRating),
-                "Distance": distance ? parseFloat(distance.toFixed(1)) : 0,
+                "avgRating": element.avgRating,
+                "Distance": distance ? distance.toFixed(1) : "0",
                 "shippingTime": parseInt(totalTime),
                 "Vouchers": element.Vouchers
             };
@@ -299,14 +299,14 @@ module.exports = {
         // format return results
         const targetLoc = [resResult.latitude, resResult.longtitude];
         resResult.Distance = Utilizer.calDistanceByLatLong(userLoc, targetLoc).toFixed(1);
-        resResult.shippingTime = Utilizer.getShippingTime(resResult.Distance, resResult.preparationTime);
+        resResult.shippingTime = parseInt(Utilizer.getShippingTime(resResult.Distance, resResult.preparationTime));
         resResult.totalOrders = resResult.totalReviews + Math.floor(Math.random() * 400);
         resResult.isLike = favResult;
 
         delete resResult["longtitude"];
         delete resResult["latitude"];
         delete resResult["preparationTime"];
-
+        
         res.send(resResult);
 
     } catch (error) {
@@ -326,7 +326,6 @@ module.exports = {
         
         const userId = req.payload.aud;
         const resId = req.params.id;
-
 
 
     } catch (error) {

@@ -99,6 +99,7 @@ module.exports = {
                 const targetLoc = [element.latitude, element.longtitude];
                 const distance = Utilizer.calDistanceByLatLong(userLoc, targetLoc);
 
+                console.log(userLoc);
                 const currentTime = Utilizer.getCurrentTime();
 
                 // handle if this restaurant not have open time and close time
@@ -111,8 +112,8 @@ module.exports = {
                     "restaurantId": element.id,
                     "restaurantAddress": element.address,
                     "totalReviews": element.totalReviews,
-                    "avgRating": parseFloat(element.avgRating),
-                    "Distance": distance ? parseFloat(distance.toFixed(1)) : 0,
+                    "avgRating": element.avgRating,
+                    "Distance": distance ? distance.toFixed(1) : "0",
                     "category": element.category,
                     "isOpen": (currentTime > element.openTime && currentTime < element.closeTime) ? true : false
                 };
