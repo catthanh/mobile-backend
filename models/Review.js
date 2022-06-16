@@ -27,6 +27,14 @@ module.exports = class Review extends Model {
                         key: "id",
                     },
                 },
+                idOrder: {
+                    type: DataTypes.INTEGER,
+                    allowNull: true,
+                    references: {
+                        model: "reviews",
+                        key: "id",
+                    },
+                },
                 description: {
                     type: DataTypes.STRING(255),
                     allowNull: true,

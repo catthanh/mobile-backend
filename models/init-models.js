@@ -22,7 +22,6 @@ const _UserRole = require("./UserRole.js");
 const _User = require("./User.js");
 const _Voucher = require("./Voucher.js");
 const _Favourite = require("./Favourite.js");
-const _UserSearchHistory = require("./UserSearchHistory.js");
 
 module.exports = function initModels(sequelize) {
     const Cuisine = _Cuisine.init(sequelize, DataTypes);
@@ -47,100 +46,99 @@ module.exports = function initModels(sequelize) {
     const User = _User.init(sequelize, DataTypes);
     const Voucher = _Voucher.init(sequelize, DataTypes);
     const Favourite = _Favourite.init(sequelize, DataTypes);
-    const UserSearchHistory = _UserSearchHistory.init(sequelize, DataTypes);
 
     Cuisine.belongsToMany(Restaurant, {
-        as: "restaurant_cuisine",
+        as: "idRes_restaurants_res_cuisines",
         through: ResCuisine,
         foreignKey: "idCuisine",
         otherKey: "idRes",
     });
     Food.belongsToMany(Order, {
-        as: "order_food",
+        as: "idOrder_orders",
         through: OrderFood,
         foreignKey: "idFood",
         otherKey: "idOrder",
     });
     Fuitable.belongsToMany(Restaurant, {
-        as: "restaurant_fuitable",
+        as: "idRes_restaurants_res_fuitables",
         through: ResFuitable,
         foreignKey: "idFuitable",
         otherKey: "idRes",
     });
     LocationCategory.belongsToMany(Restaurant, {
-        as: "restaurant_locationCategory",
+        as: "idRes_restaurants",
         through: ResCategory,
         foreignKey: "idCategory",
         otherKey: "idRes",
     });
     Order.belongsToMany(Food, {
-        as: "food_order",
+        as: "idFood_foods",
         through: OrderFood,
         foreignKey: "idOrder",
         otherKey: "idFood",
     });
     Order.belongsToMany(Voucher, {
-        as: "voucher_order",
+        as: "idVoucher_vouchers",
         through: OrderVoucher,
         foreignKey: "idOrder",
         otherKey: "idVoucher",
     });
     Restaurant.belongsToMany(Cuisine, {
-        as: "cuisine_restaurant",
+        as: "idCuisine_cuisines",
         through: ResCuisine,
         foreignKey: "idRes",
         otherKey: "idCuisine",
     });
     Restaurant.belongsToMany(Fuitable, {
-        as: "fuitable_restaurant",
+        as: "idFuitable_fuitables",
         through: ResFuitable,
         foreignKey: "idRes",
         otherKey: "idFuitable",
     });
     Restaurant.belongsToMany(LocationCategory, {
-        as: "locationCategory_restaurant",
+        as: "idCategory_location_categories",
         through: ResCategory,
         foreignKey: "idRes",
         otherKey: "idCategory",
     });
     Restaurant.belongsToMany(ServingTime, {
-        as: "servingTime_restaurant",
+        as: "idServingTime_serving_times",
         through: ResServingTime,
         foreignKey: "idRes",
         otherKey: "idServingTime",
     });
     Restaurant.belongsToMany(Suitable, {
-        as: "suitable_restaurant",
+        as: "idSuitable_suitables",
         through: ResSuitable,
         foreignKey: "idRes",
         otherKey: "idSuitable",
     });
     Role.belongsToMany(User, {
-        as: "user_role",
+        as: "idUser_users",
         through: UserRole,
         foreignKey: "idRole",
         otherKey: "idUser",
     });
     ServingTime.belongsToMany(Restaurant, {
-        as: "restaurant_servingTime",
+        as: "idRes_restaurants_res_serving_times",
         through: ResServingTime,
         foreignKey: "idServingTime",
         otherKey: "idRes",
     });
     Suitable.belongsToMany(Restaurant, {
-        as: "restaurant_suitable",
+        as: "idRes_restaurants_res_suitables",
         through: ResSuitable,
         foreignKey: "idSuitable",
         otherKey: "idRes",
     });
     User.belongsToMany(Role, {
-        as: "role_user",
+        as: "idRole_roles",
         through: UserRole,
         foreignKey: "idUser",
         otherKey: "idRole",
     });
     Voucher.belongsToMany(Order, {
-        as: "order_voucher",
+        as: "idOrder_orders_order_vouchers",
         through: OrderVoucher,
         foreignKey: "idVoucher",
         otherKey: "idOrder",
@@ -186,15 +184,13 @@ module.exports = function initModels(sequelize) {
     User.hasMany(Order, { foreignKey: "idUser" });
     Review.belongsTo(User, { foreignKey: "idUser" });
     Favourite.belongsTo(User, { foreignKey: "idUser" });
-    User.hasMany(Favourite, { foreignKey: "idUser" });
     User.hasMany(Review, { foreignKey: "idUser" });
     UserRole.belongsTo(User, { foreignKey: "idUser" });
     User.hasMany(UserRole, { foreignKey: "idUser" });
     OrderVoucher.belongsTo(Voucher, { foreignKey: "idVoucher" });
     Voucher.hasMany(OrderVoucher, { foreignKey: "idVoucher" });
-    UserSearchHistory.belongsTo(User, { foreignKey: "idUser" });
-    User.hasMany(UserSearchHistory, { foreignKey: "idUser" });
-
+    Order.hasOne(Review, { foreignKey: "idOrder" });
+    Review.belongsTo(Order);
     return {
         Cuisine,
         Food,
@@ -218,6 +214,5 @@ module.exports = function initModels(sequelize) {
         User,
         Voucher,
         Favourite,
-        UserSearchHistory,
     };
 };
