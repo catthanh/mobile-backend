@@ -15,7 +15,7 @@ const internalError = createError.internalError;
 
 /**
  *
- * Order status {"Pending", "Confirmed", "Cancelled", "Preparing", "Delivering", "Completed"}
+ * Order status {"Pending", "Confirmed", "Cancelled", "Preparing", "Delivering", "Completed", "Reviewed"}
  * trigger notification to restaurant when order status is "Confirmed" or "Cancellled"
  *
  */
@@ -344,7 +344,7 @@ module.exports = {
         try {
             // await orderGetReqSchema.validateAsync(req.query);
             const idUser = req.payload.aud;
-            const status = req.params.status;
+            const status = req.body.status;
             const orders = await Order.findAll({
                 where: {
                     idUser: idUser,
@@ -360,6 +360,40 @@ module.exports = {
                 return next(createError(404, "Order not found"));
             }
             res.send(orders);
+        } catch (error) {
+            console.log(error);
+            if (error.isJoi === true) next(createError.BadRequest());
+            next(internalError);
+        }
+    },
+    addReview: async (req, res, next) => {
+        try {
+            // await orderGetReqSchema.validateAsync(req.query);
+            const idUser = req.payload.aud;
+            const idOrder = req.params.id;
+            const order = await Order.findOne({
+                where: {
+                    id: idOrder,
+                },
+                include: {
+                    model: db.Food,
+                    through: db.OrderFood,
+                    as: "food_order",
+                },
+            });
+            if (!order) {
+                return next(createError(404, "Order not found"));
+            }
+            if (order.status !== "Confirmed") {
+                return next(
+                    createError(400, "Only confirmed order can be reviewed")
+                );
+            }
+            const { rating, review } = req.body;
+            order.rating = rating;
+            order.review = review;
+            await order.save();
+            next();
         } catch (error) {
             console.log(error);
             if (error.isJoi === true) next(createError.BadRequest());

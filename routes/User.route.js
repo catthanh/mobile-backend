@@ -41,7 +41,7 @@ router.put(
     UserOrderController.cancelOrder,
     UserOrderController.getOrderDetail
 );
-// router.get("/orders", UserOrderController.getOrderList);
+router.get("/orders", UserOrderController.getOrderByStatus);
 router.get("/order/:id", UserOrderController.getOrderDetail);
 
 module.exports = router;
