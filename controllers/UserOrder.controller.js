@@ -272,9 +272,10 @@ module.exports = {
             // await orderGetReqSchema.validateAsync(req.query);
             const idUser = req.payload.aud;
 
+            const idOrder = req.params.id;
             const order = await Order.findOne({
                 where: {
-                    id: req.body.idOrder,
+                    id: idOrder,
                 },
                 include: {
                     model: db.Food,
@@ -282,13 +283,14 @@ module.exports = {
                     as: "food_order",
                 },
             });
+            if (!order) {
+                return next(createError(404, "Order not found"));
+            }
+
             if (order.status !== "Pending") {
                 return next(
                     createError(400, "Only pending order can be updated")
                 );
-            }
-            if (!order) {
-                return next(createError(404, "Order not found"));
             }
             const { idRes, foods, discount } = req.body;
             // {
@@ -296,6 +298,7 @@ module.exports = {
             //     foods: [{idFood: 12876, quantity: 10}];
             // }
             let foodIds = foods.map((food) => food.idFood);
+            console.log(foods);
             let t = await db.Food.findAll({
                 where: {
                     id: {
@@ -306,7 +309,6 @@ module.exports = {
             for (let i = 0; i < t.length; i++) {
                 foods[i].price = t[i].price;
             }
-            console.log(foods);
 
             let tt = foods.reduce((total, food) => {
                 return total + food.price * food.quantity;
@@ -332,6 +334,32 @@ module.exports = {
             }
             await order.save();
             next();
+        } catch (error) {
+            console.log(error);
+            if (error.isJoi === true) next(createError.BadRequest());
+            next(internalError);
+        }
+    },
+    getOrderByStatus: async (req, res, next) => {
+        try {
+            // await orderGetReqSchema.validateAsync(req.query);
+            const idUser = req.payload.aud;
+            const status = req.params.status;
+            const orders = await Order.findAll({
+                where: {
+                    idUser: idUser,
+                    status: status,
+                },
+                include: {
+                    model: db.Food,
+                    through: db.OrderFood,
+                    as: "food_order",
+                },
+            });
+            if (!orders) {
+                return next(createError(404, "Order not found"));
+            }
+            res.send(orders);
         } catch (error) {
             console.log(error);
             if (error.isJoi === true) next(createError.BadRequest());
