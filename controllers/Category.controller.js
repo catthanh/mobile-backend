@@ -1,5 +1,6 @@
 const _sequelize = require("sequelize");
 const { Model, Sequelize } = _sequelize;
+const Op = Sequelize.Op;
 
 const createError = require('http-errors');
 const Fuitable = require('../models').Fuitable;
@@ -66,6 +67,11 @@ module.exports = {
 
             const results = await ResFuitable.findAll({
                 include: [{
+                        where: {
+                            imageLink: {
+                                [Op.not]: null
+                            }
+                        },
                         model: Fuitable,
                         attributes: ["id", "name", "imageLink"],
                         required: true
