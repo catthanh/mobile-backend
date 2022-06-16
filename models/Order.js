@@ -81,6 +81,11 @@ module.exports = class Order extends Model {
                         using: "BTREE",
                         fields: [{ name: "idUser" }],
                     },
+                    {
+                        name: "idReview",
+                        using: "BTREE",
+                        fields: [{ name: "idReview" }],
+                    },
                 ],
             }
         );
