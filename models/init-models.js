@@ -189,8 +189,8 @@ module.exports = function initModels(sequelize) {
     User.hasMany(UserRole, { foreignKey: "idUser" });
     OrderVoucher.belongsTo(Voucher, { foreignKey: "idVoucher" });
     Voucher.hasMany(OrderVoucher, { foreignKey: "idVoucher" });
-    Order.hasOne(Review, { foreignKey: "idOrder" });
-    Review.belongsTo(Order);
+    Review.hasOne(Order, { foreignKey: "idOrder" });
+    Order.belongsTo(Review, { foreignKey: "idOrder" });
     return {
         Cuisine,
         Food,
