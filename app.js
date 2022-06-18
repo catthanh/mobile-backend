@@ -64,13 +64,11 @@ app.use("/restaurant", verifyAccessToken, RestaurantRoute);
 app.use("/user", verifyAccessToken, UserRoute);
 app.use("/homepage", verifyAccessToken, HpRoute);
 
-app.use((err, req, res, next) => {
-  if (err) {
-    next(err);
-  } else next(createError.NotFound());
+app.all("*", (req, res, next) => {
+  next(createError.NotFound("Not found"));
 });
 
-app.use(async (err, req, res, next) => {
+app.use((err, req, res, next) => {
   res.status(err.status || 500);
   res.json({
     error: {

@@ -37,7 +37,7 @@ module.exports = {
       res.send(res_.toJSON());
     } catch (error) {
       if (error.isJoi === true) next(createError.BadRequest());
-      next(internalError);
+      next(error);
     }
   },
   createOrder: async (req, res, next) => {
@@ -118,7 +118,7 @@ module.exports = {
     } catch (error) {
       console.log(error);
       if (error.isJoi === true) next(createError.BadRequest());
-      next(internalError);
+      next(error);
     }
   },
   // getOrderList: async (req, res, next) => {
@@ -184,7 +184,7 @@ module.exports = {
     } catch (error) {
       console.log(error);
       if (error.isJoi === true) next(createError.BadRequest());
-      next(internalError);
+      next(error);
     }
   },
   deleteOrder: async (req, res, next) => {
@@ -220,7 +220,7 @@ module.exports = {
     } catch (error) {
       console.log(error);
       if (error.isJoi === true) next(createError.BadRequest());
-      next(internalError);
+      next(error);
     }
   },
   confirmOrder: async (req, res, next) => {
@@ -246,7 +246,7 @@ module.exports = {
     } catch (error) {
       console.log(error);
       if (error.isJoi === true) next(createError.BadRequest());
-      next(internalError);
+      next(error);
     }
   },
   cancelOrder: async (req, res, next) => {
@@ -272,7 +272,7 @@ module.exports = {
     } catch (error) {
       console.log(error);
       if (error.isJoi === true) next(createError.BadRequest());
-      next(internalError);
+      next(error);
     }
   },
   updateOrder: async (req, res, next) => {
@@ -343,7 +343,7 @@ module.exports = {
     } catch (error) {
       console.log(error);
       if (error.isJoi === true) next(createError.BadRequest());
-      next(internalError);
+      next(error);
     }
   },
   getOrderByStatus: async (req, res, next) => {
@@ -374,7 +374,7 @@ module.exports = {
     } catch (error) {
       console.log(error);
       if (error.isJoi === true) next(createError.BadRequest());
-      next(internalError);
+      next(error);
     }
   },
   getOrderInComing: async (req, res, next) => {
@@ -407,7 +407,7 @@ module.exports = {
     } catch (error) {
       console.log(error);
       if (error.isJoi === true) next(createError.BadRequest());
-      next(internalError);
+      next(error);
     }
   },
   getOrderHistory: async (req, res, next) => {
@@ -440,7 +440,7 @@ module.exports = {
     } catch (error) {
       console.log(error);
       if (error.isJoi === true) next(createError.BadRequest());
-      next(internalError);
+      next(error);
     }
   },
   getOrderToReview: async (req, res, next) => {
@@ -473,7 +473,7 @@ module.exports = {
     } catch (error) {
       console.log(error);
       if (error.isJoi === true) next(createError.BadRequest());
-      next(internalError);
+      next(error);
     }
   },
   reviewOrder: async (req, res, next) => {
@@ -512,7 +512,7 @@ module.exports = {
     } catch (error) {
       console.log(error);
       if (error.isJoi === true) next(createError.BadRequest());
-      next(internalError);
+      next(error);
     }
   },
 };
