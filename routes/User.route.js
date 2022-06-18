@@ -42,6 +42,9 @@ router.put(
   UserOrderController.getOrderDetail
 );
 router.get("/orders", UserOrderController.getOrderByStatus);
+router.get("/orders/incoming", UserOrderController.getOrderInComing);
+router.get("/orders/history", UserOrderController.getOrderHistory);
+router.get("/orders/toreview", UserOrderController.getOrderToReview);
 router.get("/order/:id", UserOrderController.getOrderDetail);
 router.post(
   "/order/review/:id",

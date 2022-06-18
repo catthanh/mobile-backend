@@ -165,6 +165,9 @@ module.exports = {
           {
             model: db.Review,
           },
+          {
+            model: db.Restaurant,
+          },
         ],
       });
       if (!order) {
@@ -353,11 +356,115 @@ module.exports = {
           idUser: idUser,
           status: status,
         },
-        include: {
-          model: db.Food,
-          through: db.OrderFood,
-          as: "food_order",
+        include: [
+          {
+            model: db.Food,
+            through: db.OrderFood,
+            as: "food_order",
+          },
+          {
+            model: db.Restaurant,
+          },
+        ],
+      });
+      if (!orders) {
+        return next(createError(404, "Order not found"));
+      }
+      res.send(orders);
+    } catch (error) {
+      console.log(error);
+      if (error.isJoi === true) next(createError.BadRequest());
+      next(internalError);
+    }
+  },
+  getOrderInComing: async (req, res, next) => {
+    try {
+      // await orderGetReqSchema.validateAsync(req.query);
+      const idUser = req.payload.aud;
+      const status = req.body.status;
+      const orders = await Order.findAll({
+        where: {
+          idUser: idUser,
+          status: {
+            [Op.in]: ["Confirmed", "Preparing", "Delivering"],
+          },
         },
+        include: [
+          {
+            model: db.Food,
+            through: db.OrderFood,
+            as: "food_order",
+          },
+          {
+            model: db.Restaurant,
+          },
+        ],
+      });
+      if (!orders) {
+        return next(createError(404, "Order not found"));
+      }
+      res.send(orders);
+    } catch (error) {
+      console.log(error);
+      if (error.isJoi === true) next(createError.BadRequest());
+      next(internalError);
+    }
+  },
+  getOrderHistory: async (req, res, next) => {
+    try {
+      // await orderGetReqSchema.validateAsync(req.query);
+      const idUser = req.payload.aud;
+      const status = req.body.status;
+      const orders = await Order.findAll({
+        where: {
+          idUser: idUser,
+          status: {
+            [Op.in]: ["Completed", "Reviewed"],
+          },
+        },
+        include: [
+          {
+            model: db.Food,
+            through: db.OrderFood,
+            as: "food_order",
+          },
+          {
+            model: db.Restaurant,
+          },
+        ],
+      });
+      if (!orders) {
+        return next(createError(404, "Order not found"));
+      }
+      res.send(orders);
+    } catch (error) {
+      console.log(error);
+      if (error.isJoi === true) next(createError.BadRequest());
+      next(internalError);
+    }
+  },
+  getOrderToReview: async (req, res, next) => {
+    try {
+      // await orderGetReqSchema.validateAsync(req.query);
+      const idUser = req.payload.aud;
+      const status = req.body.status;
+      const orders = await Order.findAll({
+        where: {
+          idUser: idUser,
+          status: {
+            [Op.in]: ["Completed"],
+          },
+        },
+        include: [
+          {
+            model: db.Food,
+            through: db.OrderFood,
+            as: "food_order",
+          },
+          {
+            model: db.Restaurant,
+          },
+        ],
       });
       if (!orders) {
         return next(createError(404, "Order not found"));
