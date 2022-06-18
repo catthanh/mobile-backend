@@ -14,38 +14,38 @@ const db = require("./models");
 const app = express();
 
 const options = {
-    definition: {
-        openapi: "3.0.0",
-        info: {
-            title: "Mobile API Documentation",
-            version: "1.0.0",
-        },
-        components: {
-            securitySchemes: {
-                bearerAuth: {
-                    type: "http",
-                    scheme: "bearer",
-                    bearerFormat: "JWT",
-                },
-            },
-        },
-        security: [
-            {
-                bearerAuth: [],
-            },
-        ],
-        servers: [
-            {
-                url: "https://shopee-food-mobile.herokuapp.com/",
-                description: "The production API server",
-            },
-            {
-                url: "http://localhost:3000/",
-                description: "development",
-            },
-        ],
+  definition: {
+    openapi: "3.0.0",
+    info: {
+      title: "Mobile API Documentation",
+      version: "1.0.0",
     },
-    apis: ["./routes/*.route.js"], // files containing annotations as above
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
+    },
+    security: [
+      {
+        bearerAuth: [],
+      },
+    ],
+    servers: [
+      {
+        url: "https://shopee-food-mobile.herokuapp.com/",
+        description: "The production API server",
+      },
+      {
+        url: "http://localhost:3000/",
+        description: "development",
+      },
+    ],
+  },
+  apis: ["./routes/*.route.js"], // files containing annotations as above
 };
 const specs = swaggerJsdoc(options);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
@@ -56,7 +56,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.get("/", verifyAccessToken, async (req, res, next) => {
-    res.send("Hello World");
+  res.send("Hello World");
 });
 
 app.use("/auth", AuthRoute);
@@ -65,20 +65,19 @@ app.use("/user", verifyAccessToken, UserRoute);
 app.use("/homepage", verifyAccessToken, HpRoute);
 
 app.use((err, req, res, next) => {
-    if (err) {
-        next(err);
-    }
-    next(createError.NotFound());
+  if (err) {
+    next(err);
+  } else next(createError.NotFound());
 });
 
 app.use(async (err, req, res, next) => {
-    res.status(err.status || 500);
-    res.json({
-        error: {
-            status: err.status || 500,
-            message: err.message || "Internal server error",
-        },
-    });
+  res.status(err.status || 500);
+  res.json({
+    error: {
+      status: err.status || 500,
+      message: err.message || "Internal server error",
+    },
+  });
 });
 
 const PORT = process.env.PORT || 3000;
@@ -89,5 +88,5 @@ const PORT = process.env.PORT || 3000;
 // });
 
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });
