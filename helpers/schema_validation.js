@@ -158,7 +158,7 @@ const categoryGetPopularSchema = Joi.object({
  * Order section *
  *****************/
 const orderGetReqSchema = Joi.object({
-    idRes: Joi.number().required()
+    id: Joi.number().required()
 })
 const orderUpdateReqSchema = Joi.object({
     idRes: Joi.number().required()
