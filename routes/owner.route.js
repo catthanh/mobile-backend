@@ -10,7 +10,11 @@ const { extractRestaurantId } = require("../helpers/permission");
 router.get("/restaurant", extractRestaurantId, RestaurantController.get);
 router.post("/restaurant", extractRestaurantId, RestaurantController.add);
 router.put("/restaurant", extractRestaurantId, RestaurantController.modify);
-router.get("/restaurant/review", extractRestaurantId, RestaurantController.getResReviews);
+router.get(
+  "/restaurant/review",
+  extractRestaurantId,
+  RestaurantController.getResReviews
+);
 
 router.get("/food", extractRestaurantId, FoodController.get);
 router.post("/food", extractRestaurantId, FoodController.add);
@@ -24,10 +28,22 @@ router.post("/voucher", extractRestaurantId, VoucherController.add);
 router.delete("/voucher/:id", extractRestaurantId, VoucherController.delete);
 
 router.get("/order", extractRestaurantId, OrderController.get);
-router.put("/order", extractRestaurantId, OrderController.modify);
+// router.put("/order", extractRestaurantId, OrderController.modify); // update order status
 router.get("/order/:id", extractRestaurantId, OrderController.getDetail);
-router.put("/order/:id/to-confirmed", extractRestaurantId, OrderController.confirmOrder);
-router.put("/order/:id/to-preparing", extractRestaurantId, OrderController.prepareOrder);
-router.put("/order/:id/to-delivering", extractRestaurantId, OrderController.deliverOrder);
+router.put(
+  "/order/:id/to-confirmed",
+  extractRestaurantId,
+  OrderController.confirmOrder
+);
+router.put(
+  "/order/:id/to-preparing",
+  extractRestaurantId,
+  OrderController.prepareOrder
+);
+router.put(
+  "/order/:id/to-delivering",
+  extractRestaurantId,
+  OrderController.deliverOrder
+);
 
 module.exports = router;

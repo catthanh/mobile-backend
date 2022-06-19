@@ -1,11 +1,11 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const RestaurantController = require('../controllers/Restaurant.controller');
-const { restaurantOwner } = require('../helpers/permission');
-const FoodRoute = require('./Food.route');
-const CategoryRoute = require('./Category.route');
-const VoucherRoute = require('./Voucher.route');
-const { route } = require('./User.route');
+const RestaurantController = require("../controllers/Restaurant.controller");
+const { restaurantOwner } = require("../helpers/permission");
+const FoodRoute = require("./Food.route");
+const CategoryRoute = require("./Category.route");
+// const VoucherRoute = require('./Voucher.route');
+const { route } = require("./User.route");
 /**
  * @swagger
  * tags:
@@ -52,7 +52,7 @@ const { route } = require('./User.route');
  *             type: string
  *
  */
-router.get('/', RestaurantController.get);
+router.get("/", RestaurantController.get);
 /**
  * @swagger
  * /restaurant:
@@ -71,7 +71,7 @@ router.get('/', RestaurantController.get);
  *          type: string
  *
  */
-router.post('/', RestaurantController.add);
+router.post("/", RestaurantController.add);
 /**
  * @swagger
  * /restaurant:
@@ -95,7 +95,7 @@ router.post('/', RestaurantController.add);
  *          type: string
  *
  */
-router.put('/', restaurantOwner, RestaurantController.modify);
+router.put("/", restaurantOwner, RestaurantController.modify);
 /**
  * @swagger
  * /restaurant:
@@ -109,12 +109,12 @@ router.put('/', restaurantOwner, RestaurantController.modify);
  *          type: integer
  *
  */
-router.delete('/', restaurantOwner, RestaurantController.remove);
+router.delete("/", restaurantOwner, RestaurantController.remove);
 
-router.get('/:id/details', RestaurantController.getResDetails);
-router.get('/:id/reviews', RestaurantController.getResReviews);
+router.get("/:id/details", RestaurantController.getResDetails);
+router.get("/:id/reviews", RestaurantController.getResReviews);
 router.get("/:id/merchant-info", RestaurantController.getMerchantInfo);
 
-router.use('/food', FoodRoute);
-router.use('/category', CategoryRoute);
+router.use("/food", FoodRoute);
+router.use("/category", CategoryRoute);
 module.exports = router;
