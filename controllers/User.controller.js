@@ -130,11 +130,11 @@ module.exports = {
 
             const userId = req.payload.aud;
 
-            const isExist = Restaurant.findOne({ where: { id: req.body.idRes } })
+            const isExist = await Restaurant.findOne({ where: { id: req.body.idRes } })
                                     .then(token => token !== null)
                                     .then(isUnique => isUnique);
 
-            if (!isExist) console.log("Restaurant id not exist");
+            if (!isExist) next(createError.BadRequest("Restaurant id is not exist"));
 
             await Favourite.create({
                 idRes: req.body.idRes,
@@ -159,11 +159,11 @@ module.exports = {
 
             const userId = req.payload.aud;
 
-            const isExist = Favourite.findOne({ where: { idRes: req.body.idRes } })
+            const isExist = await Favourite.findOne({ where: { idRes: req.body.idRes } })
                                     .then(token => token !== null)
                                     .then(isUnique => isUnique);
 
-            if (!isExist) console.log("Restaurant id not exist in favourite list");
+            if (!isExist) next(createError.BadRequest("Restaurant id not exist in favourite list"));
 
             await Favourite.destroy({
                 where: {
