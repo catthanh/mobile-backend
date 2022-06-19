@@ -3,6 +3,27 @@ const Food = require('../models').Food;
 const createError = require('http-errors');
 
 module.exports = {
+  extractRestaurantId: async (req, res, next) => {
+    try {
+      const { aud: idUser } = req.payload;
+
+      const restaurant = await Restaurant.findOne({
+        where: {
+          idUser: idUser
+        }
+      });
+      if(!restaurant) {
+        next(createError.NotFound("restaurant've not created yet"));
+      }
+      req.payload = {
+        ...req.payload,
+        restaurant: restaurant
+      }
+      next()
+    } catch (error) {
+      next(createError.internalError);
+    }
+  },
   restaurantOwner: async (req, res, next) => {
     try {
       const { aud: idUser } = req.payload;

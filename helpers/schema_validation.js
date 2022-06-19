@@ -23,13 +23,18 @@ const restaurantGetReqSchema = Joi.object({
 const restaurantAddReqSchema = Joi.object({
     name: Joi.string().required(),
     address: Joi.string().required(),
-    category: Joi.array().required()
+    category: Joi.array().required(),
+    openTime: Joi.string(),
+    closeTime: Joi.string(),
+    coverImageLink: Joi.string()
 })
 const restaurantModifyReqSchema = Joi.object({
-    id: Joi.number().required()
-})
-const restaurantRemoveReqSchema = Joi.object({
-    id: Joi.number().required(),
+    name: Joi.string(),
+    address: Joi.string(),
+    category: Joi.array(),
+    openTime: Joi.string(),
+    closeTime: Joi.string(),
+    coverImageLink: Joi.string()
 })
 
 const restaurantGetByFiltered = Joi.object({
@@ -58,13 +63,17 @@ const foodGetReqSchema = Joi.object({
 const foodAddReqSchema = Joi.object({
     idRes: Joi.number().required(),
     name: Joi.string().required(),
-    price: Joi.number().required()
+    price: Joi.number().required(),
+    prepareTime: Joi.number(),
+    imageLink: Joi.string()
 })
 const foodModifyReqSchema = Joi.object({
     id: Joi.number().required(),
-    idRes: Joi.number().required(),
-    name: Joi.string().required(),
-    price: Joi.number().required()
+    idRes: Joi.number(),
+    name: Joi.string(),
+    price: Joi.number(),
+    prepareTime: Joi.string(),
+    imageLink: Joi.string()
 })
 const foodRemoveReqSchema = Joi.object({
     id: Joi.number().required(),
@@ -76,14 +85,12 @@ const foodRemoveReqSchema = Joi.object({
     idRes: Joi.number()
 })
 const voucherAddReqSchema = Joi.object({
-    idRes: Joi.number().required(),
     name: Joi.string().required(),
     paymentMethod: Joi.string().required(),
     totalPay: Joi.number().required()
 })
 const voucherRemoveReqSchema = Joi.object({
-    id: Joi.number().required(),
-    idRes: Joi.number().required()
+    id: Joi.number().required()
 })
 
 /*******************
@@ -163,7 +170,6 @@ module.exports = {
     restaurantGetReqSchema,
     restaurantAddReqSchema,
     restaurantModifyReqSchema,
-    restaurantRemoveReqSchema,
     restaurantGetByIdSchema,
     restaurantGetByDistance,
     restaurantGetByFiltered,
