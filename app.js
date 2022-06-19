@@ -5,6 +5,7 @@ const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 const createError = require("http-errors");
 const AuthRoute = require("./routes/auth.route");
+const OwnerRoute = require("./routes/owner.route");
 const RestaurantRoute = require("./routes/Restaurant.route");
 const UserRoute = require("./routes/User.route");
 const HpRoute = require("./routes/HomePage.route");
@@ -60,6 +61,7 @@ app.get("/", verifyAccessToken, async (req, res, next) => {
 });
 
 app.use("/auth", AuthRoute);
+app.use("/owner", verifyAccessToken, OwnerRoute);
 app.use("/restaurant", verifyAccessToken, RestaurantRoute);
 app.use("/user", verifyAccessToken, UserRoute);
 app.use("/homepage", verifyAccessToken, HpRoute);

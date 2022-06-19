@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const FoodController = require("../controllers/Food.controller");
-const { restaurantOwner, foodOfRestaurant } = require("../helpers/permission");
 
 
 /**
@@ -38,67 +37,4 @@ const { restaurantOwner, foodOfRestaurant } = require("../helpers/permission");
  *       		
  */
 router.get("/", FoodController.get);
-/**
- * @swagger
- * /restaurant/food:
- *   post:
- *     tags: [Food]
- *     parameters:
- *      - in: path
- *        name: idRes
- *        required: true
- *        schema: 
- *          type: integer
- *      - in: path
- *        name: name
- *        required: true
- *        schema: 
- *          type: string
- *      - in: path
- *        name: price
- *        required: true
- *        schema: 
- *          type: integer     
- *       		
- */
-router.post("/", FoodController.add);
-/**
- * @swagger
- * /restaurant/food:
- *   put:
- *     tags: [Food]
- *     parameters:
- *      - in: path
- *        name: id
- *        required: true
- *        schema: 
- *          type: integer
- *      - in: path
- *        name: name
- *        required: true
- *        schema: 
- *          type: string
- *      - in: path
- *        name: price
- *        required: true
- *        schema: 
- *          type: integer     
- *       		
- */
-router.put("/", restaurantOwner, foodOfRestaurant, FoodController.modify);
-/**
- * @swagger
- * /restaurant/food:
- *   delete:
- *     tags: [Food]
- *     parameters:
- *      - in: path
- *        name: id
- *        required: true
- *        schema: 
- *          type: integer    
- *       		
- */
-router.delete("/", restaurantOwner, foodOfRestaurant, FoodController.remove);
-
 module.exports = router;

@@ -160,17 +160,12 @@ module.exports = {
     try {
       await restaurantGetReqSchema.validateAsync(req.query);
 
-      if (req.query?.id) {
-        const restaurants = await Restaurant.findByPk(req.query?.id);
-        res.send(restaurants);
-      } else {
-        const { pageNumber = 1, pageSize = 100 } = req.query;
-        const restaurants = await Restaurant.findAndCountAll({
-          offset: (pageNumber - 1) * pageSize,
-          limit: pageSize * 1,
-        });
-        res.send(restaurants);
-      }
+      const { pageNumber = 1, pageSize = 100 } = req.query;
+      const restaurants = await Restaurant.findAndCountAll({
+        offset: (pageNumber - 1) * pageSize,
+        limit: pageSize * 1,
+      });
+      res.send(restaurants);
     } catch (error) {
       if (error.isJoi === true) next(createError.BadRequest());
       next(internalError);

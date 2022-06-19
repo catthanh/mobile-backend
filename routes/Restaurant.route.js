@@ -117,5 +117,4 @@ router.get("/:id/merchant-info", RestaurantController.getMerchantInfo);
 
 router.use('/food', FoodRoute);
 router.use('/category', CategoryRoute);
-router.use('/voucher', VoucherRoute);
 module.exports = router;

@@ -38,7 +38,8 @@ module.exports = {
         try {
             await foodAddReqSchema.validateAsync(req.body)
             const { restaurant } = req.payload(!restaurant)
-            const result = await Food.create({...req.body})
+            const food = await Food.build({...req.body})
+            const result = await Restaurant.addFood(food)
             res.send(result)
         } catch (error) {
             if (error.isJoi === true)
