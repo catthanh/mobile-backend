@@ -507,6 +507,7 @@ module.exports = {
       });
       console.log(review);
       order.idReview = review.id;
+      order.status = "Reviewed";
       await order.save();
       next();
     } catch (error) {
