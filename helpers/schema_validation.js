@@ -99,6 +99,14 @@ const jwtPayloadSchema = Joi.object({
 const userGetFavouriteSchema = Joi.object({
 })
 
+const userAddFavouriteSchema = Joi.object({
+    idRes: Joi.number(),
+})
+
+const userDeleteFavouriteSchema = Joi.object({
+    idRes: Joi.number(),
+})
+
 const userUpdateInfoSchema = Joi.object({
     column: Joi.string().required(),
     updateValue: Joi.string().required(),
@@ -184,6 +192,8 @@ module.exports = {
     userUpdateAddressInfoSchema,
     userSaveCurrentAddressSchema,
     userGetSearchHistorySchema,
+    userAddFavouriteSchema,
+    userDeleteFavouriteSchema,
 
     homePageSearchSchema,
     

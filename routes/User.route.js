@@ -8,6 +8,8 @@ router.get("/", UserController.get);
 router.get("/notification", UserController.getNotification);
 
 router.get("/favourite", UserController.getFavouritesList);
+router.post("/favourite", UserController.addFavouritesList);
+router.delete("/favourite", UserController.deleteFavouritesList);
 
 router.get("/profile", UserController.profile);
 

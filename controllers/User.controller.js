@@ -14,7 +14,9 @@ const {
     userUpdateInfoSchema,
     userUpdateAddressInfoSchema,
     userSaveCurrentAddressSchema,
-    userGetSearchHistorySchema
+    userGetSearchHistorySchema,
+    userAddFavouriteSchema,
+    userDeleteFavouriteSchema
 } = require("../helpers/schema_validation");
 const Utilizer = require("../helpers/utils");
 
@@ -103,13 +105,74 @@ module.exports = {
                     "restaurantName": element.Restaurant.name,
                     "restaurantImage": element.Restaurant.coverImageLink,
                     "restaurantId": element.Restaurant.id,
-                    "Vouchers": element.Restaurant.Vouchers
+                    "Vouchers": element.Restaurant.Vouchers,
+                    "avgRating": element.Restaurant.avgRating ? element.Restaurant.avgRating.toString() : 0
                 };
 
                 favourites[index] = returnElement;
             })
 
             res.send(favourites);
+
+        } catch (error) {
+            if (error.isJoi === true) next(createError.BadRequest());
+            console.log(error);
+            next(internalError);
+        }
+    },
+    /**
+     * tested
+     * son
+     */
+    addFavouritesList: async (req, res, next) => {
+        try {
+            await userAddFavouriteSchema.validateAsync(req.body);
+
+            const userId = req.payload.aud;
+
+            const isExist = Restaurant.findOne({ where: { id: req.body.idRes } })
+                                    .then(token => token !== null)
+                                    .then(isUnique => isUnique);
+
+            if (!isExist) console.log("Restaurant id not exist");
+
+            await Favourite.create({
+                idRes: req.body.idRes,
+                idUser: userId
+            })
+            
+            res.send(200);
+
+        } catch (error) {
+            if (error.isJoi === true) next(createError.BadRequest());
+            console.log(error);
+            next(internalError);
+        }
+    },
+    /**
+     * tested
+     * son
+     */
+    deleteFavouritesList: async (req, res, next) => {
+        try {
+            await userDeleteFavouriteSchema.validateAsync(req.body);
+
+            const userId = req.payload.aud;
+
+            const isExist = Favourite.findOne({ where: { idRes: req.body.idRes } })
+                                    .then(token => token !== null)
+                                    .then(isUnique => isUnique);
+
+            if (!isExist) console.log("Restaurant id not exist in favourite list");
+
+            await Favourite.destroy({
+                where: {
+                    idRes: req.body.idRes,
+                    idUser: userId
+                }
+            })
+            
+            res.send(200);
 
         } catch (error) {
             if (error.isJoi === true) next(createError.BadRequest());
