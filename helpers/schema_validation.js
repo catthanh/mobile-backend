@@ -48,6 +48,10 @@ const restaurantGetByIdSchema = Joi.object({
     restaurantsId: Joi.string().required(),
 })
 
+const restaurantGetByCategorySchema = Joi.object({
+    categoryId: Joi.number().required(),
+})
+
 const restaurantGetDetailsSchema = Joi.object({
     id: Joi.number().required(),
 })
@@ -182,6 +186,7 @@ module.exports = {
     restaurantGetByDistance,
     restaurantGetByFiltered,
     restaurantGetDetailsSchema,
+    restaurantGetByCategorySchema,
 
     foodGetReqSchema,
     foodAddReqSchema,
