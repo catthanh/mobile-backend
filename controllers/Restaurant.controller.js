@@ -28,6 +28,15 @@ const Utilizer = require("../helpers/utils");
 
 const internalError = createError.InternalServerError;
 
+const foodTopping = {
+  "chè": [
+    "Topping Trân Châu Nhân Dừa",
+    "Topping Sương Sa hạt Lựu",
+    "Topping Sợi Thái", 
+    "Topping Sầu Riêng"
+  ]
+}
+
 /**
  * tested
  * son
@@ -278,8 +287,8 @@ module.exports = {
             model: Food,
             attributes: {
               exclude: ["createdAt", "updatedAt", "idRes", "prepareTime"]
-            }
-          }]
+            },
+          }],
         });
 
         if (!resResult) {
@@ -306,6 +315,31 @@ module.exports = {
         resResult.totalOrders = resResult.totalOrders > 100 ? `${Math.floor(resResult.totalOrders / 100) * 100}+` : resResult.totalOrders.toString(); 
 
         resResult.isLike = favResult;
+
+        // add category to food list 
+        resResult.Food = resResult.Food.map((element, index) => {
+            const category = element.name.toLowerCase().split(" ")[0];
+            var toppingInfo = foodTopping[category] ? foodTopping[category] : [];
+
+            console.log(category);
+            console.log(foodTopping[category]);
+
+            toppingInfo = toppingInfo.map((element, index) => {
+              const returnVal = {
+                "name": element,
+                "limit": Math.floor(Math.random() * 10),
+                "price": (Math.floor(Math.random() * 10) + 5) * 1000
+              }
+
+              return returnVal;
+            })
+
+            return {
+              ...element.dataValues,
+              "category": category,
+              "toppings": toppingInfo
+            }
+        })
 
         delete resResult["longtitude"];
         delete resResult["latitude"];
