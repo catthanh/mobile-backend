@@ -16,7 +16,8 @@ const {
     userSaveCurrentAddressSchema,
     userGetSearchHistorySchema,
     userAddFavouriteSchema,
-    userDeleteFavouriteSchema
+    userDeleteFavouriteSchema,
+    userDeleteSearchHistoryByIdSchema
 } = require("../helpers/schema_validation");
 const Utilizer = require("../helpers/utils");
 
@@ -368,7 +369,7 @@ module.exports = {
             const userId = req.payload.aud;
 
             const searchHistories = await UserSearchHistory.findAll({
-                attributes: ["idUser", "searchText"],
+                attributes: ["id", "idUser", "searchText"],
                 where: {
                     idUser: userId,
                 },
@@ -384,4 +385,65 @@ module.exports = {
             next(internalError);
         }
     },
+    /**
+     * tested
+     * son
+     */
+    deleteSearchHistoryById: async (req, res, next) => {
+        try {            
+            await userDeleteSearchHistoryByIdSchema.validateAsync(req.params);
+
+            const userId = req.payload.aud;
+
+            const row = await UserSearchHistory.findOne({ 
+                where: {
+                    id: req.params.id, 
+                }
+            });
+
+            if(row) {
+                await row.destroy();
+            } else {
+                next(createError.BadRequest("Id not exists"));
+            }
+
+            res.sendStatus(200);
+            
+        } catch (error) {
+            if (error.isJoi === true) next(createError.BadRequest());
+            console.log(error);
+            next(internalError);
+        }
+    },
+
+    /**
+     * tested
+     * son
+     */
+    deleteAllSearchHistory: async (req, res, next) => {
+        try {            
+            const userId = req.payload.aud;
+
+            const count = await UserSearchHistory.destroy({ 
+                where: {
+                    idUser: userId, 
+                }
+            });
+
+            if(count) {
+                console.log("Success");
+            } else {
+                next(createError.BadRequest("This user dont have search history"));
+            }
+
+            res.sendStatus(200);
+            
+        } catch (error) {
+            if (error.isJoi === true) next(createError.BadRequest());
+            console.log(error);
+            next(internalError);
+        }
+    },
+
+
 };
