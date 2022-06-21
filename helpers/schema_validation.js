@@ -142,6 +142,10 @@ const userGetSearchHistorySchema = Joi.object({
     limit: Joi.number().required()
 })
 
+const userDeleteSearchHistoryByIdSchema = Joi.object({
+    id: Joi.number().required()
+})
+
 /*******************
  * Homepage section *
  *******************/
@@ -205,6 +209,7 @@ module.exports = {
     userGetSearchHistorySchema,
     userAddFavouriteSchema,
     userDeleteFavouriteSchema,
+    userDeleteSearchHistoryByIdSchema,
 
     homePageSearchSchema,
     

@@ -20,6 +20,8 @@ router.put("/update-info/address", UserController.updateAddressInfo);
 router.put("/location", UserController.saveCurrentUserLocation);
 
 router.get("/search/history", UserController.getSearchHistory);
+router.delete("/search/history", UserController.deleteAllSearchHistory);
+router.delete("/search/history/:id", UserController.deleteSearchHistoryById);
 
 router.get("/foodbyrestaurant/:id", UserOrderController.getRestaurantDetails);
 router.post(
