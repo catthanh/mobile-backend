@@ -80,7 +80,7 @@ module.exports = {
         try {
             await foodModifyReqSchema.validateAsync(req.body);
             const { restaurant } = req.payload;
-            const { id, ...rest } = req.body;
+            const {id} = req.params;
             const food = await Food.findOne({
                 where: {
                     id: id,
@@ -90,7 +90,7 @@ module.exports = {
             if(!food){
                 next(createError.BadRequest("food not found"));
             }
-            await food.update({ ...rest, id: id, idRes: restaurant.id });
+            await food.update({ ...req.body, id: id, idRes: restaurant.id });
             res.send(food);
         } catch (error) {
             console.log(error);

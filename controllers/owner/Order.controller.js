@@ -2,8 +2,9 @@ const createError = require("http-errors");
 
 const Order = require("../../models").Order;
 const {
-  orderGetReqSchema,
+  orderUpdateStatusReqSchema
 } = require("../../helpers/schema_validation");
+const User = require("../../models/User");
 
 const internalError = createError.internalError;
 const STATUS = {
@@ -19,55 +20,44 @@ module.exports = {
   get: async (req, res, next) => {
     try {
       const { restaurant } = req.payload;
-      const orders = await Order.findAndCountAll({
-        where: {
-          idRes: restaurant.id,
-        },
-      });
-      res.send(orders || []);
+      const { id, status } = req.query;
+      if(id) {
+        const order = await Order.findByPk(id, {
+          include: User
+        });
+        res.send(order);
+      } else if (status) {
+        const statusToChange = status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
+        const orders = await Order.findAndCountAll({
+          where: {
+            idRes: restaurant.id,
+            status: statusToChange
+          },
+          include: User,
+          order: [['createdAt', 'DESC']]
+        });
+        res.send(orders || []);
+      } else {
+        const orders = await Order.findAndCountAll({
+          where: {
+            idRes: restaurant.id,
+          },
+          include: User,
+          order: [['createdAt', 'DESC']]
+        });
+        res.send(orders || []);
+      }
     } catch (error) {
       if (error.isJoi === true) next(createError.BadRequest());
       next(internalError);
     }
-  },
-  getDetail: async (req, res, next) => {
-    try {
-      await orderGetReqSchema.validateAsync(req.params);
-      const { id } = req.params;
-      const order = await Order.findByPK(id);
-      res.send(order);
-    } catch (error) {
-      if (error.isJoi === true) next(createError.BadRequest());
-      next(internalError);
-    }
-  },
-  confirmOrder: async (req, res, next) => {
-    req.payload = {
-      ...req.payload,
-      statusToChange: STATUS.CONFIRMED,
-    };
-    updateStatus(req, res, next);
-  },
-  prepareOrder: async (req, res, next) => {
-    req.payload = {
-      ...req.payload,
-      statusToChange: STATUS.PREPARING,
-    };
-    updateStatus(req, res, next);
-  },
-  deliverOrder: async (req, res, next) => {
-    req.payload = {
-      ...req.payload,
-      statusToChange: STATUS.DELIVERING,
-    };
-    updateStatus(req, res, next);
   },
   updateStatus: async (req, res, next) => {
     try {
-      await orderGetReqSchema.validateAsync(req.params);
-      const { id } = req.params;
-      const { restaurant, statusToChange } = req.payload;
-
+      await orderUpdateStatusReqSchema.validateAsync(req.params);
+      const { id, status } = req.params;
+      const { restaurant } = req.payload;
+      const statusToChange = status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
       const order = await Order.findOne({
         where: {
           id: id,
@@ -93,6 +83,7 @@ module.exports = {
               )
             );
           }
+          break;
         case STATUS.PREPARING:
           if (order?.status === STATUS.CONFIRMED) {
             await order.update({
@@ -105,6 +96,7 @@ module.exports = {
               )
             );
           }
+          break;
         case STATUS.DELIVERING:
           if (order?.status === STATUS.PREPARING) {
             await order.update({
@@ -117,6 +109,7 @@ module.exports = {
               )
             );
           }
+          break;
         default:
           next(createError.BadRequest("status not supported"));
       }

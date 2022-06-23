@@ -71,8 +71,6 @@ const foodAddReqSchema = Joi.object({
     imageLink: Joi.string()
 })
 const foodModifyReqSchema = Joi.object({
-    id: Joi.number().required(),
-    idRes: Joi.number(),
     name: Joi.string(),
     price: Joi.number(),
     prepareTime: Joi.string(),
@@ -175,8 +173,15 @@ const categoryGetPopularSchema = Joi.object({
 const orderGetReqSchema = Joi.object({
     id: Joi.number().required()
 })
+const orderGetByStatusReqSchema = Joi.object({
+    status: Joi.string().required()
+})
 const orderUpdateReqSchema = Joi.object({
     idRes: Joi.number().required()
+})
+const orderUpdateStatusReqSchema = Joi.object({
+    id: Joi.string().required(),
+    status: Joi.string().required()
 })
 module.exports = { 
     authSchema, 
@@ -217,5 +222,7 @@ module.exports = {
     categoryGetPopularSchema,
 
     orderGetReqSchema,
-    orderUpdateReqSchema
+    orderUpdateReqSchema,
+    orderGetByStatusReqSchema,
+    orderUpdateStatusReqSchema
 };
