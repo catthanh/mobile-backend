@@ -48,6 +48,10 @@ const restaurantGetByIdSchema = Joi.object({
     restaurantsId: Joi.string().required(),
 })
 
+const restaurantGetByCategorySchema = Joi.object({
+    categoryId: Joi.number().required(),
+})
+
 const restaurantGetDetailsSchema = Joi.object({
     id: Joi.number().required(),
 })
@@ -138,6 +142,10 @@ const userGetSearchHistorySchema = Joi.object({
     limit: Joi.number().required()
 })
 
+const userDeleteSearchHistoryByIdSchema = Joi.object({
+    id: Joi.number().required()
+})
+
 /*******************
  * Homepage section *
  *******************/
@@ -182,6 +190,7 @@ module.exports = {
     restaurantGetByDistance,
     restaurantGetByFiltered,
     restaurantGetDetailsSchema,
+    restaurantGetByCategorySchema,
 
     foodGetReqSchema,
     foodAddReqSchema,
@@ -200,6 +209,7 @@ module.exports = {
     userGetSearchHistorySchema,
     userAddFavouriteSchema,
     userDeleteFavouriteSchema,
+    userDeleteSearchHistoryByIdSchema,
 
     homePageSearchSchema,
     

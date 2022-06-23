@@ -5,6 +5,7 @@ const { Model, Sequelize } = _sequelize;
 
 const Restaurant = require("../models").Restaurant;
 const UserSearchHistory = require("../models").UserSearchHistory;
+const Voucher = require("../models").Voucher;
 
 const {
     jwtPayloadSchema,
@@ -68,12 +69,17 @@ module.exports = {
             
             const restaurantResults = await Restaurant.findAll({
                 attributes: { 
-                    exclude: [`idUser`, `totalFavourites`, `totalViews`, `priceRange`, `qualityScore`, `serviceScore`, `spaceScore`, `priceScore`, `locationScore`, `fit`, `capacity`, `cuisines`, `suitable`, `fuitable`, `groupName`, `createdAt`, `updatedAt`],
+                    exclude: [`idUser`, `totalFavourites`, `totalViews`, `priceRange`, `qualityScore`, `serviceScore`, `spaceScore`, `priceScore`, `locationScore`, `fit`, `capacity`, `cuisines`, `suitable`, `fuitable`, `createdAt`, `updatedAt`],
                     include: [
                         [Sequelize.literal(`"restaurant"`), 'type'],
                         [Sequelize.literal(`MATCH (name) AGAINST("${searchValue}" IN NATURAL LANGUAGE MODE)`), 'score']
                     ]
                 },
+                include: [{
+                    model: Voucher,
+                    required: true,
+                    attributes: ['id', 'idRes', 'name']
+                }],
                 where: Sequelize.literal(`MATCH (name) AGAINST("${searchValue}" IN NATURAL LANGUAGE MODE)`),
                 order: [[Sequelize.literal('score'), 'DESC']],
                 limit: limit,
@@ -92,6 +98,15 @@ module.exports = {
             //     order: [[Sequelize.literal('score'), 'DESC']],
             //     limit: limit,
             // })
+
+            var resGroup = {};
+            for(const val of restaurantResults) {
+                if (!(val.groupName in resGroup)) {
+                    resGroup[val.groupName] = [val.id];
+                } else {
+                    resGroup[val.groupName].push(val.id);
+                }
+            }
             
             const finalResults = [...restaurantResults]
 
@@ -115,7 +130,9 @@ module.exports = {
                     "avgRating": element.avgRating,
                     "Distance": distance ? distance.toFixed(1) : "0",
                     "category": element.category,
-                    "isOpen": (currentTime > element.openTime && currentTime < element.closeTime) ? true : false
+                    "isOpen": (currentTime > element.openTime && currentTime < element.closeTime) ? true : false,
+                    "Vouchers": element.Vouchers,
+                    "restaurantBranch": resGroup[element.groupName]
                 };
 
                 finalResults[index] = returnElement;
@@ -129,4 +146,6 @@ module.exports = {
             next(internalError);
         }
     },
+
+    
 };

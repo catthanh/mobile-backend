@@ -12,6 +12,7 @@ const Favourite = require("../models").Favourite;
 const Food = require("../models").Food;
 const Review = require("../models").Review;
 const User = require("../models").User;
+const ResFuitable = require("../models").ResFuitable;
 
 const {
     restaurantAddReqSchema,
@@ -21,12 +22,22 @@ const {
     restaurantGetByIdSchema,
     restaurantGetByDistance,
     restaurantGetByFiltered,
-    restaurantGetDetailsSchema
+    restaurantGetDetailsSchema,
+    restaurantGetByCategorySchema
 } = require("../helpers/schema_validation");
 
 const Utilizer = require("../helpers/utils");
 
 const internalError = createError.InternalServerError;
+
+const foodTopping = {
+  "chè": [
+    "Topping Trân Châu Nhân Dừa",
+    "Topping Sương Sa hạt Lựu",
+    "Topping Sợi Thái", 
+    "Topping Sầu Riêng"
+  ]
+}
 
 /**
  * tested
@@ -151,6 +162,61 @@ const getRestaurantsbyId = async (req, res, next) => {
     }
 };
 
+const getRestaurantsbyCategory = async (req, res, next) => {
+  try {
+      await restaurantGetByCategorySchema.validateAsync(req.query, {
+          allowUnknown: true,
+      });
+      
+      const userId = req.payload.aud;
+      var userLoc = await Utilizer.getUserCurrentLocation(userId);
+      userLoc = [userLoc.latitude, userLoc.longitude];
+
+      const categoryId = req.query.categoryId;
+
+      const restaurantResults = await ResFuitable.findAll({
+          attributes: [],
+          where: {
+              idFuitable: categoryId,
+          },
+          include: [{
+              model: Restaurant,
+              required: true,
+              attributes: ['id', 'name', 'coverImageLink', 'address', 'avgRating', 'latitude', 'longtitude', 'preparationTime']
+          }]
+      })
+
+      restaurantResults.forEach((element, index) => {
+          element = element.Restaurant;
+          const targetLoc = [element.latitude, element.longtitude];
+          const distance = Utilizer.calDistanceByLatLong(userLoc, targetLoc);
+
+          // calculate total time to ship
+          const totalTime = Utilizer.getShippingTime(distance, element.preparationTime);
+
+          returnElement = {
+              "restaurantName": element.name,
+              "restaurantImage": element.coverImageLink,
+              "restaurantId": element.id,
+              "restaurantAddress": element.address,
+              "avgRating": element.avgRating,
+              "Distance": distance ? distance.toFixed(1) : "0",
+              "shippingTime": parseInt(totalTime),
+              "Vouchers": element.Vouchers
+          };
+
+          restaurantResults[index] = returnElement;
+      });
+
+      return restaurantResults;
+      
+  } catch (error) {
+      if (error.isJoi === true) next(createError.BadRequest());
+      console.log(error);
+      next(internalError);
+  }
+};
+
 module.exports = {
   /**
    * tested
@@ -248,6 +314,8 @@ module.exports = {
             restaurantResults = await getRestaurantbyDistance(req, res, next);
         } else if (filter == "id") {
             restaurantResults = await getRestaurantsbyId(req, res, next);
+        } else if (filter == "category") {
+            restaurantResults = await getRestaurantsbyCategory(req, res, next);
         }
 
         res.send(restaurantResults);
@@ -278,8 +346,8 @@ module.exports = {
             model: Food,
             attributes: {
               exclude: ["createdAt", "updatedAt", "idRes", "prepareTime"]
-            }
-          }]
+            },
+          }],
         });
 
         if (!resResult) {
@@ -306,6 +374,31 @@ module.exports = {
         resResult.totalOrders = resResult.totalOrders > 100 ? `${Math.floor(resResult.totalOrders / 100) * 100}+` : resResult.totalOrders.toString(); 
 
         resResult.isLike = favResult;
+
+        // add category to food list 
+        resResult.Food = resResult.Food.map((element, index) => {
+            const category = element.name.toLowerCase().split(" ")[0];
+            var toppingInfo = foodTopping[category] ? foodTopping[category] : [];
+
+            console.log(category);
+            console.log(foodTopping[category]);
+
+            toppingInfo = toppingInfo.map((element, index) => {
+              const returnVal = {
+                "name": element,
+                "limit": Math.floor(Math.random() * 10),
+                "price": (Math.floor(Math.random() * 10) + 5) * 1000
+              }
+
+              return returnVal;
+            })
+
+            return {
+              ...element.dataValues,
+              "category": category,
+              "toppings": toppingInfo
+            }
+        })
 
         delete resResult["longtitude"];
         delete resResult["latitude"];
