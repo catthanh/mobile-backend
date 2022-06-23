@@ -30,6 +30,10 @@ module.exports = {
             next(internalError);
         }
     },
+    /**
+     * tested
+     * phuc
+     */
     getById: async (req, res, next) => {
         try {
             const { restaurant } = req.payload;
@@ -68,6 +72,10 @@ module.exports = {
             next(internalError);
         }
     },
+    /**
+     * tested
+     * phuc
+     */
     modify: async (req, res, next) => {
         try {
             await foodModifyReqSchema.validateAsync(req.body);
@@ -90,6 +98,10 @@ module.exports = {
             next(internalError);
         }
     },
+    /**
+     * tested
+     * phuc
+     */
     delete: async (req, res, next) => {
         try {
             await foodRemoveReqSchema.validateAsync(req.params);
@@ -101,7 +113,11 @@ module.exports = {
                     idRes: restaurant.id
                 }
             })
-            res.send(result)
+            if(result) {
+                res.send("success");
+            } else {
+                next(createError.NotFound("food not found"));
+            }
         } catch (error) {
             if (error.isJoi === true)
                 next(createError.BadRequest());

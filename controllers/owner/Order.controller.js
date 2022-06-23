@@ -1,10 +1,7 @@
 const createError = require("http-errors");
 
 const Order = require("../../models").Order;
-const User = require("../../models").User;
 const {
-  orderAddReqSchema,
-  orderRemoveReqSchema,
   orderGetReqSchema,
 } = require("../../helpers/schema_validation");
 

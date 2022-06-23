@@ -65,7 +65,6 @@ const foodGetReqSchema = Joi.object({
     pageSize: Joi.number().min(1)
 })
 const foodAddReqSchema = Joi.object({
-    idRes: Joi.number().required(),
     name: Joi.string().required(),
     price: Joi.number().required(),
     prepareTime: Joi.number(),
