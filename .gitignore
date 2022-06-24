@@ -5,3 +5,7 @@ node_modules/
 
 npm-debug.log
 .DS_Store
+
+*.swp
+
+mobile-shoppeefood-firebase-adminsdk.json
