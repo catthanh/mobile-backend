@@ -31,7 +31,6 @@ const restaurantAddReqSchema = Joi.object({
 const restaurantModifyReqSchema = Joi.object({
     name: Joi.string(),
     address: Joi.string(),
-    category: Joi.array(),
     openTime: Joi.string(),
     closeTime: Joi.string(),
     coverImageLink: Joi.string()

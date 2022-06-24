@@ -1,3 +1,4 @@
+const e = require("express");
 const createError = require("http-errors");
 
 const Order = require("../../models").Order;
@@ -27,16 +28,41 @@ module.exports = {
         });
         res.send(order);
       } else if (status) {
-        const statusToChange = status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
-        const orders = await Order.findAndCountAll({
-          where: {
-            idRes: restaurant.id,
-            status: statusToChange
-          },
-          include: User,
-          order: [['createdAt', 'DESC']]
-        });
-        res.send(orders || []);
+        let result = {
+          count: 0,
+          rows: []
+        };
+        if(typeof status === 'string') {
+          const statusToGet = status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
+          const orders = await Order.findAndCountAll({
+            where: {
+              idRes: restaurant.id,
+              status: statusToGet
+            },
+            include: User,
+            order: [['createdAt', 'DESC']]
+          });
+          result = orders;
+        } else if( typeof status === 'object') {
+          for( const [, value] of Object.entries(status)) {
+            const statusToGet = value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+            const orders = await Order.findAndCountAll({
+              where: {
+                idRes: restaurant.id,
+                status: statusToGet
+              },
+              include: User,
+              order: [['createdAt', 'DESC']]
+            });
+  
+            result.count += orders.count;
+            result.rows = [
+              ...result.rows,
+              ...orders.rows
+            ]
+          }
+        }
+        res.send(result);
       } else {
         const orders = await Order.findAndCountAll({
           where: {
