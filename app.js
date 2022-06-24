@@ -4,6 +4,8 @@ const cors = require("cors");
 const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 const createError = require("http-errors");
+const initializeFirebaseSDK = require("./database/firebase");
+
 const AuthRoute = require("./routes/auth.route");
 const OwnerRoute = require("./routes/owner.route");
 const RestaurantRoute = require("./routes/Restaurant.route");
@@ -13,6 +15,9 @@ const { verifyAccessToken } = require("./helpers/jwt_helper");
 require("dotenv").config();
 const db = require("./models");
 const app = express();
+
+// initialize firebase -> global scope
+initializeFirebaseSDK();
 
 const options = {
   definition: {
