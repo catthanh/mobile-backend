@@ -27,14 +27,19 @@ module.exports = {
         const order = await Order.findByPk(id, {
           include: [
             User,
-            'food_order'
+            'food_order',
+            'voucher_order'
           ]
         });
-        const { food_order, ...rest } = order.toJSON();
+        const { food_order, voucher_order, ...rest } = order.toJSON();
         const foods = food_order.map((e) => {
-          return _.omit(e, ['OrderFood']);
+          const { quantity } = e.OrderFood;
+          return _.assign(_.omit(e, ['OrderFood']), {quantity});
         })
-        res.send({...rest, foods});
+        const vouchers = voucher_order.map((e) => {
+          return _.omit(e, ['OrderVoucher']);
+        })
+        res.send({...rest, foods, vouchers});
       } else if (status) {
         let result = {
           count: 0,
