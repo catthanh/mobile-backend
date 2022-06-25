@@ -41,40 +41,20 @@ module.exports = {
         })
         res.send({...rest, foods, vouchers});
       } else if (status) {
-        let result = {
-          count: 0,
-          rows: []
-        };
+        let statusToGet;
         if(typeof status === 'string') {
-          const statusToGet = status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
-          const orders = await Order.findAndCountAll({
-            where: {
-              idRes: restaurant.id,
-              status: statusToGet
-            },
-            include: User,
-            order: [['createdAt', 'DESC']]
-          });
-          result = orders;
+          statusToGet = status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
         } else if( typeof status === 'object') {
-          for( const [, value] of Object.entries(status)) {
-            const statusToGet = value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
-            const orders = await Order.findAndCountAll({
-              where: {
-                idRes: restaurant.id,
-                status: statusToGet
-              },
-              include: User,
-              order: [['createdAt', 'DESC']]
-            });
-  
-            result.count += orders.count;
-            result.rows = [
-              ...result.rows,
-              ...orders.rows
-            ]
-          }
+          statusToGet = status.map(e => e.charAt(0).toUpperCase() + e.slice(1).toLowerCase());
         }
+        const result = await Order.findAndCountAll({
+          where: {
+            idRes: restaurant.id,
+            status: statusToGet
+          },
+          include: User,
+          order: [['createdAt', 'DESC']]
+        });
         res.send(result);
       } else {
         const orders = await Order.findAndCountAll({
