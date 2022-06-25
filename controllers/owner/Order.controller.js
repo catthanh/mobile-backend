@@ -116,7 +116,7 @@ module.exports = {
               status: STATUS.CONFIRMED,
             });
           } else {
-            next(
+            return next(
               createError.BadRequest(
                 "order must be pending before switch to confirmed"
               )
@@ -129,7 +129,7 @@ module.exports = {
               status: STATUS.PREPARING,
             });
           } else {
-            next(
+            return next(
               createError.BadRequest(
                 "you must confirm order before switch to preparing step"
               )
@@ -142,7 +142,7 @@ module.exports = {
               status: STATUS.DELIVERING,
             });
           } else {
-            next(
+            return next(
               createError.BadRequest(
                 "you must complete preparing order before switch to delivering step"
               )
