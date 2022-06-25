@@ -36,5 +36,6 @@ const FoodController = require("../controllers/Food.controller");
  *          type: integer     
  *       		
  */
-router.get("/", FoodController.get);
+ router.get("/", FoodController.get);
+router.get("/:id", FoodController.getById);
 module.exports = router;

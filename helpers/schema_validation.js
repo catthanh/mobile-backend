@@ -31,7 +31,6 @@ const restaurantAddReqSchema = Joi.object({
 const restaurantModifyReqSchema = Joi.object({
     name: Joi.string(),
     address: Joi.string(),
-    category: Joi.array(),
     openTime: Joi.string(),
     closeTime: Joi.string(),
     coverImageLink: Joi.string()
@@ -60,20 +59,15 @@ const restaurantGetDetailsSchema = Joi.object({
  * Food section *
  ****************/
 const foodGetReqSchema = Joi.object({
-    idRes: Joi.number(),
-    pageNumber: Joi.number().min(1),
-    pageSize: Joi.number().min(1)
+    id: Joi.number().required()
 })
 const foodAddReqSchema = Joi.object({
-    idRes: Joi.number().required(),
     name: Joi.string().required(),
     price: Joi.number().required(),
     prepareTime: Joi.number(),
     imageLink: Joi.string()
 })
 const foodModifyReqSchema = Joi.object({
-    id: Joi.number().required(),
-    idRes: Joi.number(),
     name: Joi.string(),
     price: Joi.number(),
     prepareTime: Joi.string(),
@@ -176,8 +170,15 @@ const categoryGetPopularSchema = Joi.object({
 const orderGetReqSchema = Joi.object({
     id: Joi.number().required()
 })
+const orderGetByStatusReqSchema = Joi.object({
+    status: Joi.string().required()
+})
 const orderUpdateReqSchema = Joi.object({
     idRes: Joi.number().required()
+})
+const orderUpdateStatusReqSchema = Joi.object({
+    id: Joi.string().required(),
+    status: Joi.string().required()
 })
 module.exports = { 
     authSchema, 
@@ -218,5 +219,7 @@ module.exports = {
     categoryGetPopularSchema,
 
     orderGetReqSchema,
-    orderUpdateReqSchema
+    orderUpdateReqSchema,
+    orderGetByStatusReqSchema,
+    orderUpdateStatusReqSchema
 };

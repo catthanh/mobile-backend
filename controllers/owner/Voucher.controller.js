@@ -1,11 +1,9 @@
 const createError = require('http-errors');
 
-const Restaurant = require('../../models').Restaurant
 const Voucher = require('../../models').Voucher
 const {
     voucherAddReqSchema,
-    voucherRemoveReqSchema,
-    voucherGetReqSchema
+    voucherRemoveReqSchema
 } = require('../../helpers/schema_validation')
 
 const internalError = createError.InternalServerError()
@@ -31,6 +29,10 @@ module.exports = {
             next(internalError);
         }
     },
+    /**
+     * tested
+     * phuc
+     */
     getById: async (req, res, next) => {
         try {
             const { restaurant } = req.payload;
@@ -83,7 +85,11 @@ module.exports = {
                     idRes: restaurant.id
                 }
             })
-            res.send(result)
+            if(result) {
+                res.send("success");
+            } else {
+                next(createError.NotFound("food not found"));
+            }
         } catch (error) {
             if (error.isJoi === true)
                 next(createError.BadRequest());

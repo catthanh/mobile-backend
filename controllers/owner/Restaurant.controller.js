@@ -26,7 +26,7 @@ const internalError = createError.InternalServerError;
 module.exports = {
   /**
   * tested
-  * son
+  * phuc
   */
   get: async (req, res, next) => {
     try {
@@ -64,11 +64,6 @@ module.exports = {
       next(internalError);
     }
   },
-  
-  /**
-  * tested
-  * phuc
-  */
   add: async (req, res, next) => {
     try {
       await restaurantAddReqSchema.validateAsync(req.body);

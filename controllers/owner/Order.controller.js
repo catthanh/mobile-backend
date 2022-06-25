@@ -1,12 +1,12 @@
+const e = require("express");
 const createError = require("http-errors");
-
+const _ = require('lodash');
 const Order = require("../../models").Order;
-const User = require("../../models").User;
 const {
-  orderAddReqSchema,
-  orderRemoveReqSchema,
-  orderGetReqSchema,
+  orderUpdateStatusReqSchema
 } = require("../../helpers/schema_validation");
+const Food = require("../../models/Food");
+const User = require("../../models/User");
 
 const internalError = createError.internalError;
 const STATUS = {
@@ -22,55 +22,76 @@ module.exports = {
   get: async (req, res, next) => {
     try {
       const { restaurant } = req.payload;
-      const orders = await Order.findAndCountAll({
-        where: {
-          idRes: restaurant.id,
-        },
-      });
-      res.send(orders || []);
+      const { id, status } = req.query;
+      if(id) {
+        const order = await Order.findByPk(id, {
+          include: [
+            User,
+            'food_order'
+          ]
+        });
+        const { food_order, ...rest } = order.toJSON();
+        const foods = food_order.map((e) => {
+          return _.omit(e, ['OrderFood']);
+        })
+        res.send({...rest, foods});
+      } else if (status) {
+        let result = {
+          count: 0,
+          rows: []
+        };
+        if(typeof status === 'string') {
+          const statusToGet = status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
+          const orders = await Order.findAndCountAll({
+            where: {
+              idRes: restaurant.id,
+              status: statusToGet
+            },
+            include: User,
+            order: [['createdAt', 'DESC']]
+          });
+          result = orders;
+        } else if( typeof status === 'object') {
+          for( const [, value] of Object.entries(status)) {
+            const statusToGet = value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+            const orders = await Order.findAndCountAll({
+              where: {
+                idRes: restaurant.id,
+                status: statusToGet
+              },
+              include: User,
+              order: [['createdAt', 'DESC']]
+            });
+  
+            result.count += orders.count;
+            result.rows = [
+              ...result.rows,
+              ...orders.rows
+            ]
+          }
+        }
+        res.send(result);
+      } else {
+        const orders = await Order.findAndCountAll({
+          where: {
+            idRes: restaurant.id,
+          },
+          include: User,
+          order: [['createdAt', 'DESC']]
+        });
+        res.send(orders || []);
+      }
     } catch (error) {
       if (error.isJoi === true) next(createError.BadRequest());
       next(internalError);
     }
-  },
-  getDetail: async (req, res, next) => {
-    try {
-      await orderGetReqSchema.validateAsync(req.params);
-      const { id } = req.params;
-      const order = await Order.findByPK(id);
-      res.send(order);
-    } catch (error) {
-      if (error.isJoi === true) next(createError.BadRequest());
-      next(internalError);
-    }
-  },
-  confirmOrder: async (req, res, next) => {
-    req.payload = {
-      ...req.payload,
-      statusToChange: STATUS.CONFIRMED,
-    };
-    updateStatus(req, res, next);
-  },
-  prepareOrder: async (req, res, next) => {
-    req.payload = {
-      ...req.payload,
-      statusToChange: STATUS.PREPARING,
-    };
-    updateStatus(req, res, next);
-  },
-  deliverOrder: async (req, res, next) => {
-    req.payload = {
-      ...req.payload,
-      statusToChange: STATUS.DELIVERING,
-    };
-    updateStatus(req, res, next);
   },
   updateStatus: async (req, res, next) => {
     try {
-      await orderGetReqSchema.validateAsync(req.params);
-      const { id } = req.params;
-      const { restaurant, statusToChange } = req.payload;
-
+      await orderUpdateStatusReqSchema.validateAsync(req.params);
+      const { id, status } = req.params;
+      const { restaurant } = req.payload;
+      const statusToChange = status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
       const order = await Order.findOne({
         where: {
           id: id,
@@ -96,6 +117,7 @@ module.exports = {
               )
             );
           }
+          break;
         case STATUS.PREPARING:
           if (order?.status === STATUS.CONFIRMED) {
             await order.update({
@@ -108,6 +130,7 @@ module.exports = {
               )
             );
           }
+          break;
         case STATUS.DELIVERING:
           if (order?.status === STATUS.PREPARING) {
             await order.update({
@@ -120,6 +143,7 @@ module.exports = {
               )
             );
           }
+          break;
         default:
           next(createError.BadRequest("status not supported"));
       }

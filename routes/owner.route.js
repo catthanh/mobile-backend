@@ -18,7 +18,7 @@ router.get(
 
 router.get("/food", extractRestaurantId, FoodController.get);
 router.post("/food", extractRestaurantId, FoodController.add);
-router.put("/food", extractRestaurantId, FoodController.modify);
+router.put("/food/:id", extractRestaurantId, FoodController.modify);
 router.get("/food/:id", extractRestaurantId, FoodController.getById);
 router.delete("/food/:id", extractRestaurantId, FoodController.delete);
 
@@ -28,22 +28,5 @@ router.post("/voucher", extractRestaurantId, VoucherController.add);
 router.delete("/voucher/:id", extractRestaurantId, VoucherController.delete);
 
 router.get("/order", extractRestaurantId, OrderController.get);
-// router.put("/order", extractRestaurantId, OrderController.modify); // update order status
-router.get("/order/:id", extractRestaurantId, OrderController.getDetail);
-router.put(
-  "/order/:id/to-confirmed",
-  extractRestaurantId,
-  OrderController.confirmOrder
-);
-router.put(
-  "/order/:id/to-preparing",
-  extractRestaurantId,
-  OrderController.prepareOrder
-);
-router.put(
-  "/order/:id/to-delivering",
-  extractRestaurantId,
-  OrderController.deliverOrder
-);
-
+router.put("/order/:id/:status", extractRestaurantId, OrderController.updateStatus); // update order status
 module.exports = router;
