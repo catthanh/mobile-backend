@@ -1,10 +1,11 @@
 const e = require("express");
 const createError = require("http-errors");
-
+const _ = require('lodash');
 const Order = require("../../models").Order;
 const {
   orderUpdateStatusReqSchema
 } = require("../../helpers/schema_validation");
+const Food = require("../../models/Food");
 const User = require("../../models/User");
 
 const internalError = createError.internalError;
@@ -24,9 +25,16 @@ module.exports = {
       const { id, status } = req.query;
       if(id) {
         const order = await Order.findByPk(id, {
-          include: User
+          include: [
+            User,
+            'food_order'
+          ]
         });
-        res.send(order);
+        const { food_order, ...rest } = order.toJSON();
+        const foods = food_order.map((e) => {
+          return _.omit(e, ['OrderFood']);
+        })
+        res.send({...rest, foods});
       } else if (status) {
         let result = {
           count: 0,

@@ -7,6 +7,7 @@ const createError = require("http-errors");
 const AuthRoute = require("./routes/auth.route");
 const OwnerRoute = require("./routes/owner.route");
 const RestaurantRoute = require("./routes/Restaurant.route");
+const FoodRoute = require("./routes/Food.route");
 const UserRoute = require("./routes/User.route");
 const HpRoute = require("./routes/HomePage.route");
 const { verifyAccessToken } = require("./helpers/jwt_helper");
@@ -63,6 +64,7 @@ app.get("/", verifyAccessToken, async (req, res, next) => {
 app.use("/auth", AuthRoute);
 app.use("/owner", verifyAccessToken, OwnerRoute);
 app.use("/restaurant", verifyAccessToken, RestaurantRoute);
+app.use("/food", FoodRoute);
 app.use("/user", verifyAccessToken, UserRoute);
 app.use("/homepage", verifyAccessToken, HpRoute);
 
