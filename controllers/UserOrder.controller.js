@@ -7,7 +7,7 @@ const User = require("../models").User;
 const OrderFood = require("../models/OrderFood");
 
 const internalError = createError.internalError;
-const NotiHelper = require("../../helpers/notification");
+const NotiHelper = require("../helpers/notification");
 /**
  *
  * Order status {"Pending", "Confirmed", "Cancelled", "Preparing", "Delivering", "Completed", "Reviewed"}
