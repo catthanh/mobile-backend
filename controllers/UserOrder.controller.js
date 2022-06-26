@@ -39,11 +39,17 @@ let this_ = (module.exports = {
       // // validate
       // await orderGetReqSchema.validateAsync(req.query);
       const idUser = req.payload.aud;
-      const { idRes, foods, address } = req.body;
+      const { idRes, foods } = req.body;
+
       // {
       //     idRes: 1,
       //     foods: [{idFood: 12876, quantity: 10}];
       // }
+      const user = await User.findByPk(idUser);
+      if (!user) {
+        return next(createError(404, "User not found"));
+      }
+      const address = user.toJSON().currentAddress;
       let foodIds = foods.map((food) => food.idFood);
       let t = await db.Food.findAll({
         where: {
@@ -281,6 +287,11 @@ let this_ = (module.exports = {
       //     idRes: 1,
       //     foods: [{idFood: 12876, quantity: 10}];
       // }
+      const user = await User.findByPk(idUser);
+      if (!user) {
+        return next(createError(404, "User not found"));
+      }
+      const address = user.toJSON().currentAddress;
       let foodIds = foods.map((food) => food.idFood);
       console.log(foods);
       let t = await db.Food.findAll({
@@ -297,6 +308,7 @@ let this_ = (module.exports = {
       let tt = foods.reduce((total, food) => {
         return total + food.price * food.quantity;
       }, 0);
+      
 
       order.shippingFee = 15000;
       order.tax = 0;

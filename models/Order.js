@@ -72,7 +72,7 @@ module.exports = class Order extends Model {
           },
         },
         address: {
-          type: DataTypes.STRING(255),
+          type: DataTypes.JSON,
           allowNull: true,
         },
         orderedAt: {
