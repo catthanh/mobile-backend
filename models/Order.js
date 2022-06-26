@@ -63,6 +63,14 @@ module.exports = class Order extends Model {
           type: DataTypes.FLOAT,
           allowNull: true,
         },
+        idShipper: {
+          type: DataTypes.INTEGER,
+          allowNull: true,
+          references: {
+            model: "users",
+            key: "id",
+          },
+        },
       },
       {
         sequelize,
@@ -89,6 +97,11 @@ module.exports = class Order extends Model {
             name: "idReview",
             using: "BTREE",
             fields: [{ name: "idReview" }],
+          },
+          {
+            name: "idShipper",
+            using: "BTREE",
+            fields: [{ name: "idShipper" }],
           },
         ],
       }
