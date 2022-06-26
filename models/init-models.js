@@ -23,6 +23,7 @@ const _User = require("./User.js");
 const _Voucher = require("./Voucher.js");
 const _Favourite = require("./Favourite.js");
 const _UserSearchHistory = require("./UserSearchHistory.js");
+const _FcmToken = require("./FcmToken.js");
 
 module.exports = function initModels(sequelize) {
   const Cuisine = _Cuisine.init(sequelize, DataTypes);
@@ -48,6 +49,7 @@ module.exports = function initModels(sequelize) {
   const Voucher = _Voucher.init(sequelize, DataTypes);
   const Favourite = _Favourite.init(sequelize, DataTypes);
   const UserSearchHistory = _UserSearchHistory.init(sequelize, DataTypes);
+  const FcmToken = _FcmToken.init(sequelize, DataTypes);
 
   Cuisine.belongsToMany(Restaurant, {
     as: "restaurant_cuisine",
@@ -196,6 +198,7 @@ module.exports = function initModels(sequelize) {
   User.hasMany(UserSearchHistory, { foreignKey: "idUser" });
   //Review.hasOne(Order, { foreignKey: "idReview" });
   Order.belongsTo(Review, { foreignKey: "idReview" });
+  FcmToken.belongsTo(User, { foreignKey: "idUser" });
   Order.belongsTo(User, { as: 'Shipper', foreignKey: "idShipper" });
   return {
     Cuisine,
@@ -221,5 +224,6 @@ module.exports = function initModels(sequelize) {
     Voucher,
     Favourite,
     UserSearchHistory,
+    FcmToken,
   };
 };

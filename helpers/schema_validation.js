@@ -140,6 +140,10 @@ const userDeleteSearchHistoryByIdSchema = Joi.object({
   id: Joi.number().required(),
 });
 
+const addFcmTokenSchema = Joi.object({
+    token: Joi.string().required()
+})
+
 /*******************
  * Homepage section *
  *******************/
@@ -191,45 +195,46 @@ const shipperUpdateStatusReqSchema = Joi.object({
 module.exports = { 
     authSchema, 
     logInSchema, 
+  
+    restaurantGetReqSchema,
+    restaurantAddReqSchema,
+    restaurantModifyReqSchema,
+    restaurantGetByIdSchema,
+    restaurantGetByDistance,
+    restaurantGetByFiltered,
+    restaurantGetDetailsSchema,
+    restaurantGetByCategorySchema,
 
-  restaurantGetReqSchema,
-  restaurantAddReqSchema,
-  restaurantModifyReqSchema,
-  restaurantGetByIdSchema,
-  restaurantGetByDistance,
-  restaurantGetByFiltered,
-  restaurantGetDetailsSchema,
-  restaurantGetByCategorySchema,
+    foodGetReqSchema,
+    foodAddReqSchema,
+    foodModifyReqSchema,
+    foodRemoveReqSchema,
 
-  foodGetReqSchema,
-  foodAddReqSchema,
-  foodModifyReqSchema,
-  foodRemoveReqSchema,
+    voucherGetReqSchema,
+    voucherAddReqSchema,
+    voucherRemoveReqSchema,
 
-  voucherGetReqSchema,
-  voucherAddReqSchema,
-  voucherRemoveReqSchema,
+    jwtPayloadSchema,
+    userGetFavouriteSchema,
+    userUpdateInfoSchema,
+    userUpdateAddressInfoSchema,
+    userSaveCurrentAddressSchema,
+    userGetSearchHistorySchema,
+    userAddFavouriteSchema,
+    userDeleteFavouriteSchema,
+    userDeleteSearchHistoryByIdSchema,
+    addFcmTokenSchema,
 
-  jwtPayloadSchema,
-  userGetFavouriteSchema,
-  userUpdateInfoSchema,
-  userUpdateAddressInfoSchema,
-  userSaveCurrentAddressSchema,
-  userGetSearchHistorySchema,
-  userAddFavouriteSchema,
-  userDeleteFavouriteSchema,
-  userDeleteSearchHistoryByIdSchema,
+    homePageSearchSchema,
 
-  homePageSearchSchema,
+    categoryGetReqSchema,
+    categoryAddReqSchema,
+    categoryGetPopularSchema,
 
-  categoryGetReqSchema,
-  categoryAddReqSchema,
-  categoryGetPopularSchema,
+    orderGetReqSchema,
+    orderUpdateReqSchema,
+    orderGetByStatusReqSchema,
+    orderUpdateStatusReqSchema,
 
-  orderGetReqSchema,
-  orderUpdateReqSchema,
-  orderGetByStatusReqSchema,
-  orderUpdateStatusReqSchema,
-
-  shipperUpdateStatusReqSchema
+    shipperUpdateStatusReqSchema
 };
