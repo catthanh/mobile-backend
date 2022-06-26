@@ -58,10 +58,12 @@ const getRestaurantbyDistance = async (req, res, next) => {
             attributes: ['id', 'name', 'coverImageLink', 'address', 'avgRating', 'latitude', 'longtitude', 'preparationTime', 'groupName'],
             include: [{
                 model: Voucher,
-                required: true,
+                required: false,
                 attributes: ['id', 'idRes', 'name']
             }]
         })
+
+        console.log(restaurantResults);
 
         var resGroup = {};
         for(const val of restaurantResults) {
@@ -128,7 +130,7 @@ const getRestaurantsbyId = async (req, res, next) => {
             },
             include: [{
                 model: Voucher,
-                required: true,
+                required: false,
                 attributes: ['id', 'idRes', 'name']
             }]
         })
@@ -194,7 +196,7 @@ const getRestaurantsbyCategory = async (req, res, next) => {
               attributes: ['id', 'name', 'coverImageLink', 'address', 'avgRating', 'latitude', 'longtitude', 'preparationTime'],
               include: [{
                 model: Voucher,
-                required: true,
+                required: false,
                 attributes: ['id', 'idRes', 'name']
             }]
           }]

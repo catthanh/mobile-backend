@@ -79,7 +79,7 @@ module.exports = {
                 },
                 include: [{
                     model: Voucher,
-                    required: true,
+                    required: false,
                     attributes: ['id', 'idRes', 'name']
                 }],
                 limit: limit,
