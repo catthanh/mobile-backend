@@ -24,6 +24,7 @@ module.exports = {
     getNotiSpecificDevice: async (notiData, userId) => {
         const firebaseToken = await getUserFcmToken(userId);
         console.log(firebaseToken);
+
         // Create title and body
         const body = notiData.body;
         const title = notiData.title;
@@ -48,8 +49,8 @@ module.exports = {
         return notificationData;
     },
 
-    getNotiMultipleDevice: (notiData, userIds) => {
-      const firebaseTokens = getMultiUserFcmToken(userIds);
+    getNotiMultipleDevice: async (notiData, userIds) => {
+      const firebaseTokens = await getMultiUserFcmToken(userIds);
 
       // Create title and body
       const body = notiData.body;
@@ -75,7 +76,7 @@ module.exports = {
       return notificationData;
     },
 
-    getNotiTopic: (notiData, topic) => {
+    getNotiTopic: async (notiData, topic) => {
       const notificationData = {
         message: {
           data: notiData.data, // payload data

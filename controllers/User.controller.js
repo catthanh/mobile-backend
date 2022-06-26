@@ -478,7 +478,7 @@ module.exports = {
             });
             
             if (userRole === "shipper") {
-                NotiHelper.setSubscribeToTopic("shipperOrder", userId)
+                await NotiHelper.setSubscribeToTopic("shipperOrder", userId)
             }
 
             res.sendStatus(200);

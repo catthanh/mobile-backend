@@ -48,7 +48,7 @@ module.exports = {
                                     'food_order'
                                 ]
                             })
-                            const notiData = NotiHelper.getNotiTopic({
+                            const notiData = await NotiHelper.getNotiTopic({
                                 data: {
                                     id: id,
                                     status: result.status
@@ -69,7 +69,7 @@ module.exports = {
                             status: STATUS.DELIVERING,
                         });
                         if(result) {
-                            const notiData = NotiHelper.getNotiSpecificDevice({
+                            const notiData = await NotiHelper.getNotiSpecificDevice({
                                 title: "Eat247",
                                 body: "Chờ chút shipper tới liền",
                                 data: {

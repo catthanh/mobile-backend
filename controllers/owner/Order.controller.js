@@ -7,6 +7,7 @@ const {
 } = require("../../helpers/schema_validation");
 const Food = require("../../models/Food");
 const User = require("../../models/User");
+const NotiHelper = require("../../helpers/notification");
 
 const internalError = createError.internalError;
 const STATUS = {
@@ -82,6 +83,7 @@ module.exports = {
           id: id,
           idRes: restaurant.id,
         },
+        include: User
       });
       if (!order) {
         next(createError.BadRequest("order not found"));
@@ -90,24 +92,34 @@ module.exports = {
         next(createError.BadRequest("can't update a cancelled order"));
       }
       switch (statusToChange) {
-        case STATUS.CONFIRMED:
-          if (order?.status === STATUS.PENDING) {
-            await order.update({
-              status: STATUS.CONFIRMED,
-            });
-          } else {
-            return next(
-              createError.BadRequest(
-                "order must be pending before switch to confirmed"
-              )
-            );
-          }
-          break;
+        // case STATUS.CONFIRMED:
+        //   if (order?.status === STATUS.PENDING) {
+        //     await order.update({
+        //       status: STATUS.CONFIRMED,
+        //     });
+        //   } else {
+        //     return next(
+        //       createError.BadRequest(
+        //         "order must be pending before switch to confirmed"
+        //       )
+        //     );
+        //   }
+        //   break;
         case STATUS.PREPARING:
           if (order?.status === STATUS.CONFIRMED) {
             await order.update({
               status: STATUS.PREPARING,
             });
+            const notiData = await NotiHelper.getNotiSpecificDevice({
+              title: "Eat247",
+              body: "Món ăn nóng hổi, vừa ăn vừa thổi sắp xong rồi đâyyy",
+              data: {
+                id: order.id,
+                status: order.status
+              }
+            }, order.User.id);
+            req.notificationData = notiData;
+            next();
           } else {
             return next(
               createError.BadRequest(
@@ -116,19 +128,19 @@ module.exports = {
             );
           }
           break;
-        case STATUS.DELIVERING:
-          if (order?.status === STATUS.PREPARING) {
-            await order.update({
-              status: STATUS.DELIVERING,
-            });
-          } else {
-            return next(
-              createError.BadRequest(
-                "you must complete preparing order before switch to delivering step"
-              )
-            );
-          }
-          break;
+        // case STATUS.DELIVERING:
+        //   if (order?.status === STATUS.PREPARING) {
+        //     await order.update({
+        //       status: STATUS.DELIVERING,
+        //     });
+        //   } else {
+        //     return next(
+        //       createError.BadRequest(
+        //         "you must complete preparing order before switch to delivering step"
+        //       )
+        //     );
+        //   }
+        //   break;
         default:
           return next(createError.BadRequest("status not supported"));
       }

@@ -91,7 +91,7 @@ module.exports = {
 
       // res.send(order);
       req.params.id = order.toJSON().id;
-      const notiData = NotiHelper.getNotiTopic({
+      const notiData = await NotiHelper.getNotiTopic({
         data: {
           id: order.id,
           status: order.status
@@ -231,7 +231,7 @@ module.exports = {
       }
       order.status = "Cancelled";
       await order.save();
-      const notiData = NotiHelper.getNotiMultipleDevice({
+      const notiData = await NotiHelper.getNotiMultipleDevice({
         data: {
           id: order.id,
           status: "Cancelled"
