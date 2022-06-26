@@ -12,6 +12,7 @@ const RestaurantRoute = require("./routes/Restaurant.route");
 const FoodRoute = require("./routes/Food.route");
 const UserRoute = require("./routes/User.route");
 const HpRoute = require("./routes/HomePage.route");
+const ShipperRoute = require("./routes/Shipper.route");
 const { verifyAccessToken } = require("./helpers/jwt_helper");
 require("dotenv").config();
 const db = require("./models");
@@ -72,7 +73,7 @@ app.use("/restaurant", verifyAccessToken, RestaurantRoute);
 app.use("/food", FoodRoute);
 app.use("/user", verifyAccessToken, UserRoute);
 app.use("/homepage", verifyAccessToken, HpRoute);
-
+app.use("/shipper", verifyAccessToken, ShipperRoute);
 app.all("*", (req, res, next) => {
   next(createError.NotFound("Not found"));
 });

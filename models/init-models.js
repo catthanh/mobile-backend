@@ -198,9 +198,8 @@ module.exports = function initModels(sequelize) {
   User.hasMany(UserSearchHistory, { foreignKey: "idUser" });
   //Review.hasOne(Order, { foreignKey: "idReview" });
   Order.belongsTo(Review, { foreignKey: "idReview" });
-  Order.belongsTo(User, { foreignKey: "idShipper" });
   FcmToken.belongsTo(User, { foreignKey: "idUser" });
-  
+  Order.belongsTo(User, { as: 'Shipper', foreignKey: "idShipper" });
   return {
     Cuisine,
     Food,
