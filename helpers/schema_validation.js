@@ -140,6 +140,10 @@ const userDeleteSearchHistoryByIdSchema = Joi.object({
     id: Joi.number().required()
 })
 
+const addFcmTokenSchema = Joi.object({
+    token: Joi.string().required()
+})
+
 /*******************
  * Homepage section *
  *******************/
@@ -211,6 +215,7 @@ module.exports = {
     userAddFavouriteSchema,
     userDeleteFavouriteSchema,
     userDeleteSearchHistoryByIdSchema,
+    addFcmTokenSchema,
 
     homePageSearchSchema,
     
