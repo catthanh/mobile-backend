@@ -1,6 +1,6 @@
 const createError = require('http-errors');
 
-const Food = require('../../models').Food
+const User = require('../../models').User
 const {
     shipperUpdateStatusReqSchema,
 } = require('../../helpers/schema_validation');
@@ -28,29 +28,42 @@ module.exports = {
             switch(statusToChange) {
                 case STATUS.CONFIRMED:
                     if(jsonedOrder.status != STATUS.PENDING){
-                        next(createError.BadRequest('you cant confirmed a order not in pending status'))
+                        return next(createError.BadRequest('you cant confirmed a order not in pending status'))
                     } else {
-                        const result = await order.update({
+                        const result = await Order.update({
                             status: STATUS.CONFIRMED,
-                            shipperId: userId
+                            idShipper: userId
+                        }, {
+                            where: {
+                                id: id,
+                                status: STATUS.PENDING
+                            }
                         });
-                        res.send(result);
+                        if(result) {
+                            const newOrder = Order.findByPk(id, {
+                                include: [
+                                    User,
+                                    'food_order'
+                                ]
+                            })
+                            return res.send(newOrder);
+                        }else {
+                            return next(createError.NotFound('order is not available for update status'));
+                        }
                     }
-                    break;
                 case STATUS.DELIVERING:
                     if(jsonedOrder.status != STATUS.PREPARING){
-                        next(createError.BadRequest('you cant deliver a order not in preparing status'))
-                    } else {
+                        return next(createError.BadRequest('you cant deliver a order not in preparing status'))
+                    } else if(jsonedOrder.idShipper === userId) {
                         const result = await order.update({
                             status: STATUS.DELIVERING,
-                            shipperId: userId
                         });
-                        res.send(result);
+                        return res.send(result);
+                    } else {
+                        return next(createError.BadRequest('you must be shipper of this order to update status'))
                     }
-                    break;
                 default: 
-                    next(createError.BadRequest('status not supported'));
-                    break;
+                    return next(createError.BadRequest('status not supported'));
             }
         } catch (error) {
             console.log(error);

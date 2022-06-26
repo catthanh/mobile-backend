@@ -130,7 +130,7 @@ module.exports = {
           }
           break;
         default:
-          next(createError.BadRequest("status not supported"));
+          return next(createError.BadRequest("status not supported"));
       }
       res.send(order);
     } catch (error) {
