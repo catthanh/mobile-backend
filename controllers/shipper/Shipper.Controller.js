@@ -1,8 +1,10 @@
 const createError = require('http-errors');
 
 const User = require('../../models').User
+const Restaurant = require('../../models').Restaurant
 const {
     shipperUpdateStatusReqSchema,
+    shipperGetReqSchema
 } = require('../../helpers/schema_validation');
 const Order = require('../../models/Order');
 const NotiHelper = require("../../helpers/notification");
@@ -19,6 +21,27 @@ const STATUS = {
 const internalError = createError.InternalServerError()
 
 module.exports = {
+    getById: async (req, res, next) => {
+        try {
+            await shipperGetReqSchema.validateAsync(req.params);
+            const { id } = req.params;
+            const order = await Order.findByPk(id, {
+                include: [
+                    User,
+                    Restaurant
+                ]
+            })
+            if(!order) {
+                next(createError.NotFound("order not found"));
+            } else {
+                res.send(order);
+            }
+        } catch (error) {
+            console.log(error);
+            if (error.isJoi === true) next(createError.BadRequest());
+            next(internalError);
+        }
+    },
     updateStatus: async (req, res, next) => {
         try {
             await shipperUpdateStatusReqSchema.validateAsync(req.params);

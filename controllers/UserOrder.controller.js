@@ -232,6 +232,8 @@ let this_ = (module.exports = {
       order.status = "Cancelled";
       await order.save();
       const notiData = await NotiHelper.getNotiMultipleDevice({
+        title: "Eat247",
+        body: `Đơn hàng ${order.id} đã bị hủy `,
         data: {
           id: order.id,
           status: "Cancelled"

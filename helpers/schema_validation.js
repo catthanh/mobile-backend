@@ -189,6 +189,9 @@ const orderUpdateStatusReqSchema = Joi.object({
 /*******************
  * shipper section *
  *******************/
+const shipperGetReqSchema = Joi.object({
+  id: Joi.number().required()
+})
 const shipperUpdateStatusReqSchema = Joi.object({
     id: Joi.number().required(),
     status: Joi.string().required()
@@ -237,5 +240,6 @@ module.exports = {
     orderGetByStatusReqSchema,
     orderUpdateStatusReqSchema,
 
-    shipperUpdateStatusReqSchema
+    shipperUpdateStatusReqSchema,
+    shipperGetReqSchema
 };
