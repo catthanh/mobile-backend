@@ -56,4 +56,6 @@ router.post(
   UserOrderController.getOrderDetail
 );
 
+router.post("/fcm-token", UserController.addFcmToken);
+ 
 module.exports = router;
