@@ -7,6 +7,7 @@ const Favourite = require("../models").Favourite;
 const User = require("../models").User;
 const Voucher = require("../models").Voucher;
 const UserSearchHistory = require("../models").UserSearchHistory;
+const FcmToken = require("../models").FcmToken;
 
 const {
     jwtPayloadSchema,
@@ -17,9 +18,11 @@ const {
     userGetSearchHistorySchema,
     userAddFavouriteSchema,
     userDeleteFavouriteSchema,
-    userDeleteSearchHistoryByIdSchema
+    userDeleteSearchHistoryByIdSchema,
+    addFcmTokenSchema
 } = require("../helpers/schema_validation");
 const Utilizer = require("../helpers/utils");
+const NotiHelper = require("../helpers/notification");
 
 const internalError = createError.InternalServerError;
 module.exports = {
@@ -444,6 +447,47 @@ module.exports = {
             next(internalError);
         }
     },
+    /**
+     * tested
+     * son
+     */
+    addFcmToken: async (req, res, next) => {
+        try {            
+            await addFcmTokenSchema.validateAsync(req.body);
 
+            console.log(req.payload);
+            const userRole = req.payload.role;
+            const userId = req.payload.aud;
+            const token = req.body.token;
+
+            await FcmToken.findOrCreate({
+                where: {
+                    idUser: userId,
+                },
+                defaults: {
+                    idUser: userId,
+                    token: token
+                }
+            }).then(function(result) {
+                const created = result[1]; // boolean stating if it was created or not
+          
+                if (!created) { // false if author already exists and was not created.
+                  console.log('User already have token');
+                  next(createError.BadRequest("User already have token"));
+                }
+            });
+            
+            if (userRole === "shipper") {
+                NotiHelper.setSubscribeToTopic("shipperOrder", userId)
+            }
+
+            res.sendStatus(200);
+            
+        } catch (error) {
+            if (error.isJoi === true) next(createError.BadRequest());
+            console.log(error);
+            next(internalError);
+        }
+    },
 
 };
