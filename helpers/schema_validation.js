@@ -100,6 +100,7 @@ const jwtPayloadSchema = Joi.object({
   iat: Joi.number(),
   exp: Joi.number(),
   aud: Joi.number().required(),
+  role: Joi.string().required()
 });
 
 const userGetFavouriteSchema = Joi.object({});
