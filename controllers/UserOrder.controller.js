@@ -38,7 +38,7 @@ module.exports = {
       // // validate
       // await orderGetReqSchema.validateAsync(req.query);
       const idUser = req.payload.aud;
-      const { idRes, foods, discount } = req.body;
+      const { idRes, foods, address } = req.body;
       // {
       //     idRes: 1,
       //     foods: [{idFood: 12876, quantity: 10}];
@@ -64,7 +64,7 @@ module.exports = {
       const tax = 0;
       const subTotal = tt;
       const total = tt + shippingFee + tax;
-      const grandTotal = total - discount * total;
+      const grandTotal = total;
 
       const order = await db.Order.create(
         {
@@ -76,9 +76,10 @@ module.exports = {
           tax: 0,
           subTotal: subTotal,
           total: tt + shippingFee,
-          discount: discount,
+          discount: 0,
           grandTotal: grandTotal,
           OrderFoods: [...foods],
+          address: address,
         },
         {
           include: {
