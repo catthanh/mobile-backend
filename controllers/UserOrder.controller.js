@@ -145,6 +145,7 @@ let this_ = (module.exports = {
         food.quantity = food.OrderFood.quantity;
         delete food.OrderFood;
       });
+      order_.voucher_order = order_.voucher_order[0];
       res.send(order_);
       next();
     } catch (error) {
