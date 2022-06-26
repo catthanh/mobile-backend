@@ -71,6 +71,22 @@ module.exports = class Order extends Model {
             key: "id",
           },
         },
+        address: {
+          type: DataTypes.STRING(255),
+          allowNull: true,
+        },
+        orderedAt: {
+          type: DataTypes.DATE,
+          allowNull: true,
+        },
+        deliveredAt: {
+          type: DataTypes.DATE,
+          allowNull: true,
+        },
+        pickedAt: {
+          type: DataTypes.DATE,
+          allowNull: true,
+        },
       },
       {
         sequelize,
