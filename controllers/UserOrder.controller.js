@@ -97,12 +97,15 @@ let this_ = (module.exports = {
 
       // res.send(order);
       req.params.id = order.toJSON().id;
-      const notiData = await NotiHelper.getNotiTopic({
-        data: {
-          id: order.id.toString(),
-          status: order.status
-        }
-      }, "shipperOrder");
+      const notiData = await NotiHelper.getNotiTopic(
+        {
+          data: {
+            id: order.id.toString(),
+            status: order.status,
+          },
+        },
+        "shipperOrder"
+      );
       req.notificationData = notiData;
       next();
     } catch (error) {
@@ -237,14 +240,17 @@ let this_ = (module.exports = {
       }
       order.status = "Cancelled";
       await order.save();
-      const notiData = await NotiHelper.getNotiMultipleDevice({
-        title: "Eat247",
-        body: `Đơn hàng ${order.id} đã bị hủy `,
-        data: {
-          id: order.id,
-          status: "Cancelled"
-        }
-      }, [order.idRes, order.idShipper])
+      const notiData = await NotiHelper.getNotiMultipleDevice(
+        {
+          title: "Eat247",
+          body: `Đơn hàng ${order.id} đã bị hủy `,
+          data: {
+            id: order.id,
+            status: "Cancelled",
+          },
+        },
+        [order.idRes, order.idShipper]
+      );
       req.notificationData = notiData;
       next();
     } catch (error) {
@@ -282,7 +288,7 @@ let this_ = (module.exports = {
       if (order.status !== "Pending") {
         return next(createError(400, "Only pending order can be updated"));
       }
-      const { idRes, foods, address } = req.body;
+      const { idRes, foods } = req.body;
       // {
       //     idRes: 1,
       //     foods: [{idFood: 12876, quantity: 10}];
@@ -308,7 +314,6 @@ let this_ = (module.exports = {
       let tt = foods.reduce((total, food) => {
         return total + food.price * food.quantity;
       }, 0);
-      
 
       order.shippingFee = 15000;
       order.tax = 0;
