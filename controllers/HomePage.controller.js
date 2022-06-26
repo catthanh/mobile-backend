@@ -2,6 +2,7 @@ const createError = require("http-errors");
 const { options } = require("joi");
 const _sequelize = require('sequelize');
 const { Model, Sequelize } = _sequelize;
+const Op = Sequelize.Op;
 
 const Restaurant = require("../models").Restaurant;
 const UserSearchHistory = require("../models").UserSearchHistory;
@@ -70,18 +71,17 @@ module.exports = {
             const restaurantResults = await Restaurant.findAll({
                 attributes: { 
                     exclude: [`idUser`, `totalFavourites`, `totalViews`, `priceRange`, `qualityScore`, `serviceScore`, `spaceScore`, `priceScore`, `locationScore`, `fit`, `capacity`, `cuisines`, `suitable`, `fuitable`, `createdAt`, `updatedAt`],
-                    include: [
-                        [Sequelize.literal(`"restaurant"`), 'type'],
-                        [Sequelize.literal(`MATCH (name) AGAINST("${searchValue}" IN NATURAL LANGUAGE MODE)`), 'score']
-                    ]
+                },
+                where: {
+                    name: {
+                      [Op.like]: `% ${searchValue} %`
+                    }
                 },
                 include: [{
                     model: Voucher,
                     required: true,
                     attributes: ['id', 'idRes', 'name']
                 }],
-                where: Sequelize.literal(`MATCH (name) AGAINST("${searchValue}" IN NATURAL LANGUAGE MODE)`),
-                order: [[Sequelize.literal('score'), 'DESC']],
                 limit: limit,
                 offset: offset
             })
