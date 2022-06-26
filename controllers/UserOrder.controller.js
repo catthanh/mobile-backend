@@ -6,6 +6,7 @@ const Order = require("../models").Order;
 const User = require("../models").User;
 const OrderFood = require("../models/OrderFood");
 
+const _ = require('lodash');
 const internalError = createError.internalError;
 const NotiHelper = require("../helpers/notification");
 /**
@@ -148,7 +149,8 @@ let this_ = (module.exports = {
         food.quantity = food.OrderFood.quantity;
         delete food.OrderFood;
       });
-      res.send(order_);
+      order_.voucher = order_.voucher_order[0] || null;
+      res.send(_.omit(order_, 'voucher_order'));
       next();
     } catch (error) {
       console.log(error);

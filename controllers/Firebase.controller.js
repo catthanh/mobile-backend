@@ -6,7 +6,9 @@ module.exports = {
           Check whether the data is present, 
           if not call next()
           */
-        if (!req.notificationData) next();
+        if (!req.notificationData) {
+          return next();
+        }
         let notificationData = req.notificationData;
         const msg = notificationData.message;
 
