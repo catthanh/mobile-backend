@@ -73,7 +73,8 @@ const AuthController = require("../controllers/Auth.controller");
  *                   example: Invalid username or password
  *                   type: string
  */
-router.post("/login", AuthController.login);
+router.post("/login/", AuthController.login);
+router.post("/login/:role", AuthController.login);
 
 /**
  * @swagger
