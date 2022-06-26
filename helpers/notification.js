@@ -79,6 +79,10 @@ module.exports = {
     getNotiTopic: async (notiData, topic) => {
       const notificationData = {
         message: {
+          notification: {
+            title: "test", // title of notification 
+            body: "backend dep zai", // describe of notification
+          },
           data: notiData.data, // payload data
           topic: topic // topic that we push message to
         },

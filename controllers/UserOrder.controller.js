@@ -93,10 +93,10 @@ let this_ = (module.exports = {
       req.params.id = order.toJSON().id;
       const notiData = await NotiHelper.getNotiTopic({
         data: {
-          id: order.id,
+          id: order.id.toString(),
           status: order.status
         }
-      });
+      }, "shipperOrder");
       req.notificationData = notiData;
       next();
     } catch (error) {
