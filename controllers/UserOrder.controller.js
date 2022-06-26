@@ -130,12 +130,6 @@ let this_ = (module.exports = {
             as: "food_order",
           },
           {
-            model: db.Review,
-          },
-          {
-            model: db.Restaurant,
-          },
-          {
             model: db.Voucher,
             as: "voucher_order",
           },
