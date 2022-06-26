@@ -14,6 +14,7 @@ const UserRoute = require("./routes/User.route");
 const HpRoute = require("./routes/HomePage.route");
 const ShipperRoute = require("./routes/Shipper.route");
 const { verifyAccessToken } = require("./helpers/jwt_helper");
+const { notifyHandler } = require("./controllers/Firebase.controller");
 require("dotenv").config();
 const db = require("./models");
 const app = express();
@@ -68,12 +69,12 @@ app.get("/", verifyAccessToken, async (req, res, next) => {
 });
 
 app.use("/auth", AuthRoute);
-app.use("/owner", verifyAccessToken, OwnerRoute);
-app.use("/restaurant", verifyAccessToken, RestaurantRoute);
-app.use("/food", FoodRoute);
-app.use("/user", verifyAccessToken, UserRoute);
-app.use("/homepage", verifyAccessToken, HpRoute);
-app.use("/shipper", verifyAccessToken, ShipperRoute);
+app.use("/owner", verifyAccessToken, OwnerRoute, notifyHandler);
+app.use("/restaurant", verifyAccessToken, RestaurantRoute, notifyHandler);
+app.use("/food", FoodRoute, notifyHandler);
+app.use("/user", verifyAccessToken, UserRoute, notifyHandler);
+app.use("/homepage", verifyAccessToken, HpRoute, notifyHandler);
+app.use("/shipper", verifyAccessToken, ShipperRoute, notifyHandler);
 app.all("*", (req, res, next) => {
   next(createError.NotFound("Not found"));
 });

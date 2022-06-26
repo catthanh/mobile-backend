@@ -6,6 +6,8 @@ const Order = require("../models").Order;
 const User = require("../models").User;
 const OrderFood = require("../models/OrderFood");
 
+const internalError = createError.internalError;
+const NotiHelper = require("../../helpers/notification");
 /**
  *
  * Order status {"Pending", "Confirmed", "Cancelled", "Preparing", "Delivering", "Completed", "Reviewed"}
@@ -89,7 +91,13 @@ module.exports = {
 
       // res.send(order);
       req.params.id = order.toJSON().id;
-
+      const notiData = NotiHelper.getNotiTopic({
+        data: {
+          id: order.id,
+          status: order.status
+        }
+      });
+      req.notificationData = notiData;
       next();
     } catch (error) {
       console.log(error);
@@ -135,6 +143,7 @@ module.exports = {
         delete food.OrderFood;
       });
       res.send(order_);
+      next();
     } catch (error) {
       console.log(error);
       if (error.isJoi === true) next(createError.BadRequest());
@@ -222,6 +231,13 @@ module.exports = {
       }
       order.status = "Cancelled";
       await order.save();
+      const notiData = NotiHelper.getNotiMultipleDevice({
+        data: {
+          id: order.id,
+          status: "Cancelled"
+        }
+      }, [order.idRes, order.idShipper])
+      req.notificationData = notiData;
       next();
     } catch (error) {
       console.log(error);

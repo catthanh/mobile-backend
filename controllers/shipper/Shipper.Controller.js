@@ -5,6 +5,7 @@ const {
     shipperUpdateStatusReqSchema,
 } = require('../../helpers/schema_validation');
 const Order = require('../../models/Order');
+const NotiHelper = require("../../helpers/notification");
 
 const STATUS = {
     PENDING: "Pending",
@@ -16,6 +17,7 @@ const STATUS = {
     REVIEWED: "Reviewed",
   };
 const internalError = createError.InternalServerError()
+
 module.exports = {
     updateStatus: async (req, res, next) => {
         try {
@@ -46,7 +48,15 @@ module.exports = {
                                     'food_order'
                                 ]
                             })
-                            return res.send(newOrder);
+                            const notiData = NotiHelper.getNotiTopic({
+                                data: {
+                                    id: id,
+                                    status: result.status
+                                }
+                            }, "shipperOrder")
+                            req.notificationData = notiData;
+                            res.send(newOrder);
+                            next();
                         }else {
                             return next(createError.NotFound('order is not available for update status'));
                         }
@@ -58,7 +68,21 @@ module.exports = {
                         const result = await order.update({
                             status: STATUS.DELIVERING,
                         });
-                        return res.send(result);
+                        if(result) {
+                            const notiData = NotiHelper.getNotiSpecificDevice({
+                                title: "Eat247",
+                                body: "Chờ chút shipper tới liền",
+                                data: {
+                                    id: id,
+                                    status: result.status
+                                }
+                            }, order.User.id)
+                            req.notificationData = notiData;
+                            res.send(order);
+                            next();
+                        }else {
+                            return next(createError.NotFound('order is not available for update status'));
+                        }
                     } else {
                         return next(createError.BadRequest('you must be shipper of this order to update status'))
                     }

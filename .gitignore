@@ -1,6 +1,6 @@
 .env
 config/config.json
-
+config/mobile-shoppeefood-firebase-adminsdk.json
 node_modules/
 
 npm-debug.log
