@@ -55,6 +55,17 @@ router.post(
   UserOrderController.reviewOrder,
   UserOrderController.getOrderDetail
 );
+router.get("/vouchers/:idRes", UserOrderController.getApplicableVoucher);
+router.post(
+  "/order/:idOrder/apply-voucher/:idVoucher",
+  UserOrderController.applyVoucher,
+  UserOrderController.getOrderDetail
+);
+router.delete(
+  "/order/:idOrder/remove-voucher/:idVoucher",
+  UserOrderController.removeVoucher,
+  UserOrderController.getOrderDetail
+);
 
 router.post("/fcm-token", UserController.addFcmToken);
  

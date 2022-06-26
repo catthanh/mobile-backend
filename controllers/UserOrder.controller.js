@@ -4,14 +4,7 @@ const db = require("../models");
 const Restaurant = require("../models").Restaurant;
 const Order = require("../models").Order;
 const User = require("../models").User;
-const {
-  orderAddReqSchema,
-  orderRemoveReqSchema,
-  orderGetReqSchema,
-} = require("../helpers/schema_validation");
 const OrderFood = require("../models/OrderFood");
-
-const internalError = createError.internalError;
 
 /**
  *
@@ -98,51 +91,17 @@ module.exports = {
       req.params.id = order.toJSON().id;
 
       next();
-      // const order_ = await db.Order.findOne({
-      //     where: { id: 24 },
-      //     include: {
-      //         model: db.Food,
-      //         through: db.OrderFood,
-      //         as: "food_order",
-      //     },
-      // })
     } catch (error) {
       console.log(error);
       if (error.isJoi === true) next(createError.BadRequest());
       next(error);
     }
   },
-  // getOrderList: async (req, res, next) => {
-  //     try {
-  //         // await orderGetReqSchema.validateAsync(req.query);
-  //         const { idUser, orderStatus } = req.payload;
-  //         const orders = await Order.findAll({
-  //             where: {
-  //                 idUser,
-  //                 status: orderStatus,
-  //             },
-  //             include: "Food",
-  //         });
-  //     } catch (error) {
-  //         if (error.isJoi === true) next(createError.BadRequest());
-  //         next(internalError);
-  //     }
-  // },
-  // addReview: async (req, res, next) => {
-  //     try {
-  //         //await orderGetReqSchema.validateAsync(req.query);
-  //         const { idUser } = req.payload;
-  //     } catch (error) {
-  //         if (error.isJoi === true) next(createError.BadRequest());
-  //         next(internalError);
-  //     }
-  // },
   getOrderDetail: async (req, res, next) => {
     try {
       // await orderGetReqSchema.validateAsync(req.query);
       // const { idUser } = req.payload;
       const idOrder = req.params.id;
-
       const order = await Order.findOne({
         where: {
           id: idOrder,
@@ -158,6 +117,10 @@ module.exports = {
           },
           {
             model: db.Restaurant,
+          },
+          {
+            model: db.Voucher,
+            as: "voucher_order",
           },
         ],
       });
@@ -519,6 +482,101 @@ module.exports = {
         },
       });
       res.send(applicableVoucher);
+    } catch (error) {
+      console.log(error);
+      if (error.isJoi === true) next(createError.BadRequest());
+      next(error);
+    }
+  },
+  applyVoucher: async (req, res, next) => {
+    try {
+      const idUser = req.payload.aud;
+      const idVoucher = req.params.idVoucher;
+      const idOrder = req.params.idOrder;
+      console.log(req.params);
+      const voucher = await db.Voucher.findOne({
+        where: {
+          id: idVoucher,
+        },
+      });
+      if (!voucher) {
+        return next(createError(404, "Voucher not found"));
+      }
+      console.log(voucher);
+      const order = await Order.findOne({
+        where: {
+          id: idOrder,
+          status: "Pending",
+        },
+        include: {
+          model: db.Food,
+          through: db.OrderFood,
+          as: "food_order",
+        },
+      });
+      console.log(order);
+      if (!order) {
+        return next(createError(404, "Order not found"));
+      }
+      db.OrderVoucher.findOrCreate({
+        where: {
+          idOrder: idOrder,
+          idVoucher: idVoucher,
+        },
+      });
+      if (voucher.type === "Percentage") {
+        order.discount = (order.total * voucher.value) / 100;
+      } else {
+        order.discount = voucher.value;
+      }
+      order.grandTotal = order.total - order.discount;
+      await order.save();
+      req.params.id = idOrder;
+      next();
+    } catch (error) {
+      console.log(error);
+      if (error.isJoi === true) next(createError.BadRequest());
+      next(error);
+    }
+  },
+  removeVoucher: async (req, res, next) => {
+    try {
+      const idUser = req.payload.aud;
+      const idVoucher = req.params.idVoucher;
+      const idOrder = req.params.idOrder;
+      const voucher = await db.Voucher.findOne({
+        where: {
+          id: idVoucher,
+        },
+      });
+      if (!voucher) {
+        return next(createError(404, "Voucher not found"));
+      }
+      const order = await Order.findOne({
+        where: {
+          id: idOrder,
+          status: "Pending",
+        },
+        include: {
+          model: db.Food,
+          through: db.OrderFood,
+          as: "food_order",
+        },
+      });
+      if (!order) {
+        return next(createError(404, "Order not found"));
+      }
+      db.OrderVoucher.destroy({
+        where: {
+          idOrder: idOrder,
+          idVoucher: idVoucher,
+        },
+      });
+      order.discount = 0;
+      order.grandTotal = order.total;
+      await order.save();
+      req.params.id = idOrder;
+      next();
     } catch (error) {
       console.log(error);
       if (error.isJoi === true) next(createError.BadRequest());
