@@ -213,6 +213,7 @@ let this_ = (module.exports = {
         return next(createError(404, "Order not found"));
       }
       order.status = "Confirmed";
+      order.orderedAt = new Date();
       await order.save();
       next();
     } catch (error) {
