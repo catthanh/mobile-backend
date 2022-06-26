@@ -13,6 +13,7 @@ const Food = require("../models").Food;
 const Review = require("../models").Review;
 const User = require("../models").User;
 const ResFuitable = require("../models").ResFuitable;
+const Fuitable = require("../models").Fuitable;
 
 const {
     restaurantAddReqSchema,
@@ -174,6 +175,14 @@ const getRestaurantsbyCategory = async (req, res, next) => {
 
       const categoryId = req.query.categoryId;
 
+      const categoryInfo = await Fuitable.findOne({
+        attributes: ["name"],
+        where: { 
+          id: categoryId
+        }
+      })
+
+
       const restaurantResults = await ResFuitable.findAll({
           attributes: [],
           where: {
@@ -182,27 +191,32 @@ const getRestaurantsbyCategory = async (req, res, next) => {
           include: [{
               model: Restaurant,
               required: true,
-              attributes: ['id', 'name', 'coverImageLink', 'address', 'avgRating', 'latitude', 'longtitude', 'preparationTime']
+              attributes: ['id', 'name', 'coverImageLink', 'address', 'avgRating', 'latitude', 'longtitude', 'preparationTime'],
+              include: [{
+                model: Voucher,
+                required: true,
+                attributes: ['id', 'idRes', 'name']
+            }]
           }]
       })
 
       restaurantResults.forEach((element, index) => {
-          element = element.Restaurant;
-          const targetLoc = [element.latitude, element.longtitude];
+          const targetLoc = [element.Restaurant.latitude, element.Restaurant.longtitude];
           const distance = Utilizer.calDistanceByLatLong(userLoc, targetLoc);
 
           // calculate total time to ship
-          const totalTime = Utilizer.getShippingTime(distance, element.preparationTime);
+          const totalTime = Utilizer.getShippingTime(distance, element.Restaurant.preparationTime);
 
           returnElement = {
-              "restaurantName": element.name,
-              "restaurantImage": element.coverImageLink,
-              "restaurantId": element.id,
-              "restaurantAddress": element.address,
-              "avgRating": element.avgRating,
+              "category": categoryInfo.name,
+              "restaurantName": element.Restaurant.name,
+              "restaurantImage": element.Restaurant.coverImageLink,
+              "restaurantId": element.Restaurant.id,
+              "restaurantAddress": element.Restaurant.address,
+              "avgRating": element.Restaurant.avgRating,
               "Distance": distance ? distance.toFixed(1) : "0",
               "shippingTime": parseInt(totalTime),
-              "Vouchers": element.Vouchers
+              "Vouchers": element.Restaurant.Vouchers
           };
 
           restaurantResults[index] = returnElement;
