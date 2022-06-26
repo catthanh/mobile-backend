@@ -6,7 +6,7 @@ const authSchema = Joi.object({
   username: Joi.string().required(),
   password: Joi.string().min(6).required(),
   name: Joi.string().required(),
-  role: Joi.string().valid("user", "shipper", "resOwner"),
+  role: Joi.string().required().valid("user", "shipper", "resOwner"),
 });
 
 const logInSchema = Joi.object({
