@@ -177,12 +177,20 @@ const orderUpdateReqSchema = Joi.object({
   idRes: Joi.number().required(),
 });
 const orderUpdateStatusReqSchema = Joi.object({
-  id: Joi.string().required(),
-  status: Joi.string().required(),
-});
-module.exports = {
-  authSchema,
-  logInSchema,
+    id: Joi.number().required(),
+    status: Joi.string().required()
+})
+
+/*******************
+ * shipper section *
+ *******************/
+const shipperUpdateStatusReqSchema = Joi.object({
+    id: Joi.number().required(),
+    status: Joi.string().required()
+})
+module.exports = { 
+    authSchema, 
+    logInSchema, 
 
   restaurantGetReqSchema,
   restaurantAddReqSchema,
@@ -222,4 +230,6 @@ module.exports = {
   orderUpdateReqSchema,
   orderGetByStatusReqSchema,
   orderUpdateStatusReqSchema,
+
+  shipperUpdateStatusReqSchema
 };
