@@ -3,16 +3,17 @@ const firebase = require("firebase-admin");
 
 const getUserFcmToken = async (userId) => {
   const results = await FcmToken.findOne({
-      where: {id: userId},
+      where: {idUser: userId},
+      raw: true
   })
 
-  return results;
+  return results.token;
 }
 
 const getMultiUserFcmToken = async (userIds) => {
   const results = await FcmToken.findAll({
       where: {
-        id: userIds
+        idUser: userIds
       },
   })
 
@@ -20,9 +21,9 @@ const getMultiUserFcmToken = async (userIds) => {
 }
 
 module.exports = {
-    getNotiSpecificDevice: (notiData, userId) => {
-        const firebaseToken = getUserFcmToken(userId);
-
+    getNotiSpecificDevice: async (notiData, userId) => {
+        const firebaseToken = await getUserFcmToken(userId);
+        console.log(firebaseToken);
         // Create title and body
         const body = notiData.body;
         const title = notiData.title;
@@ -91,7 +92,7 @@ module.exports = {
     },
 
     setSubscribeToTopic: async (topic, userId) => {
-      const regisTokens = getUserFcmToken(userId);
+      const regisTokens = await getUserFcmToken(userId);
 
       await firebase.messaging().subscribeToTopic(regisTokens, topic)
         .then((response) => {
