@@ -68,5 +68,5 @@ router.delete(
 );
 
 router.post("/fcm-token", UserController.addFcmToken);
- 
+
 module.exports = router;

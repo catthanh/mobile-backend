@@ -12,8 +12,7 @@ const OrderFood = require("../models/OrderFood");
  * trigger notification to restaurant when order status is "Confirmed" or "Cancellled"
  *
  */
-
-module.exports = {
+let this_ = (module.exports = {
   getRestaurantDetails: async (req, res, next) => {
     try {
       const idRes = req.params.id;
@@ -240,11 +239,17 @@ module.exports = {
         where: {
           id: idOrder,
         },
-        include: {
-          model: db.Food,
-          through: db.OrderFood,
-          as: "food_order",
-        },
+        include: [
+          {
+            model: db.Food,
+            through: db.OrderFood,
+            as: "food_order",
+          },
+          {
+            model: db.Voucher,
+            as: "voucher_order",
+          },
+        ],
       });
       if (!order) {
         return next(createError(404, "Order not found"));
@@ -253,7 +258,7 @@ module.exports = {
       if (order.status !== "Pending") {
         return next(createError(400, "Only pending order can be updated"));
       }
-      const { idRes, foods, discount } = req.body;
+      const { idRes, foods, address } = req.body;
       // {
       //     idRes: 1,
       //     foods: [{idFood: 12876, quantity: 10}];
@@ -279,7 +284,8 @@ module.exports = {
       order.tax = 0;
       order.subTotal = tt;
       order.total = tt + order.shippingFee + order.tax;
-      order.grandTotal = order.total - discount * order.total;
+      order.grandTotal = order.total;
+      order.address = address;
       for (let i = 0; i < foods.length; i++) {
         await db.OrderFood.update(
           {
@@ -294,7 +300,11 @@ module.exports = {
         );
       }
       await order.save();
-      next();
+      if (order.voucher_order && order.voucher_order.length > 0) {
+        req.params.idVoucher = order.voucher_order[0]?.id;
+        req.params.idOrder = order.id;
+        await this_.applyVoucher(req, res, next);
+      } else next();
     } catch (error) {
       console.log(error);
       if (error.isJoi === true) next(createError.BadRequest());
@@ -584,4 +594,4 @@ module.exports = {
       next(error);
     }
   },
-};
+});
