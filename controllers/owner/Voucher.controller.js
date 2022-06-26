@@ -14,15 +14,25 @@ module.exports = {
     get: async (req, res, next) => {
         try {
             const { restaurant } = req.payload;
-            const {pageNumber = 1, pageSize = 100} = req.query
-            const vouchers = await Voucher.findAndCountAll({
-                offset: (pageNumber-1)*pageSize,
-                limit: pageSize*1,
-                where: {
-                    idRes: restaurant.id
-                }
-            })
-            res.send(vouchers)
+            const { id } = req.query;
+            if(id) {
+                const vouchers = await Voucher.findAndCountAll({
+                    where: {
+                        idRes: restaurant.id
+                    }
+                })
+                res.send(vouchers?.rows.find(e => e.dataValues.id === parseInt(id)) || null)
+            } else {
+                const {pageNumber = 1, pageSize = 100} = req.query
+                const vouchers = await Voucher.findAndCountAll({
+                    offset: (pageNumber-1)*pageSize,
+                    limit: pageSize*1,
+                    where: {
+                        idRes: restaurant.id
+                    }
+                })
+                res.send(vouchers)
+            }
         } catch (error) {
             if (error.isJoi === true)
                 next(createError.BadRequest())

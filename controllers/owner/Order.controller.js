@@ -1,10 +1,11 @@
 const e = require("express");
 const createError = require("http-errors");
-
+const _ = require('lodash');
 const Order = require("../../models").Order;
 const {
   orderUpdateStatusReqSchema
 } = require("../../helpers/schema_validation");
+const Food = require("../../models/Food");
 const User = require("../../models/User");
 
 const internalError = createError.internalError;
@@ -24,44 +25,36 @@ module.exports = {
       const { id, status } = req.query;
       if(id) {
         const order = await Order.findByPk(id, {
-          include: User
+          include: [
+            User,
+            'food_order',
+            'voucher_order'
+          ]
         });
-        res.send(order);
+        const { food_order, voucher_order, ...rest } = order.toJSON();
+        const foods = food_order.map((e) => {
+          const { quantity } = e.OrderFood;
+          return _.assign(_.omit(e, ['OrderFood']), {quantity});
+        })
+        const vouchers = voucher_order.map((e) => {
+          return _.omit(e, ['OrderVoucher']);
+        })
+        res.send({...rest, foods, vouchers});
       } else if (status) {
-        let result = {
-          count: 0,
-          rows: []
-        };
+        let statusToGet;
         if(typeof status === 'string') {
-          const statusToGet = status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
-          const orders = await Order.findAndCountAll({
-            where: {
-              idRes: restaurant.id,
-              status: statusToGet
-            },
-            include: User,
-            order: [['createdAt', 'DESC']]
-          });
-          result = orders;
+          statusToGet = status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
         } else if( typeof status === 'object') {
-          for( const [, value] of Object.entries(status)) {
-            const statusToGet = value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
-            const orders = await Order.findAndCountAll({
-              where: {
-                idRes: restaurant.id,
-                status: statusToGet
-              },
-              include: User,
-              order: [['createdAt', 'DESC']]
-            });
-  
-            result.count += orders.count;
-            result.rows = [
-              ...result.rows,
-              ...orders.rows
-            ]
-          }
+          statusToGet = status.map(e => e.charAt(0).toUpperCase() + e.slice(1).toLowerCase());
         }
+        const result = await Order.findAndCountAll({
+          where: {
+            idRes: restaurant.id,
+            status: statusToGet
+          },
+          include: User,
+          order: [['createdAt', 'DESC']]
+        });
         res.send(result);
       } else {
         const orders = await Order.findAndCountAll({
@@ -103,7 +96,7 @@ module.exports = {
               status: STATUS.CONFIRMED,
             });
           } else {
-            next(
+            return next(
               createError.BadRequest(
                 "order must be pending before switch to confirmed"
               )
@@ -116,7 +109,7 @@ module.exports = {
               status: STATUS.PREPARING,
             });
           } else {
-            next(
+            return next(
               createError.BadRequest(
                 "you must confirm order before switch to preparing step"
               )
@@ -129,7 +122,7 @@ module.exports = {
               status: STATUS.DELIVERING,
             });
           } else {
-            next(
+            return next(
               createError.BadRequest(
                 "you must complete preparing order before switch to delivering step"
               )

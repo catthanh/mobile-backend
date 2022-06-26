@@ -85,16 +85,7 @@ module.exports = {
           total: tt + shippingFee,
           discount: discount,
           grandTotal: grandTotal,
-          OrderFoods: [
-            {
-              idFood: 12876,
-              quantity: 1,
-            },
-            {
-              idFood: 12877,
-              quantity: 2,
-            },
-          ],
+          OrderFoods: [...foods],
         },
         {
           include: {
@@ -510,6 +501,24 @@ module.exports = {
       order.status = "Reviewed";
       await order.save();
       next();
+    } catch (error) {
+      console.log(error);
+      if (error.isJoi === true) next(createError.BadRequest());
+      next(error);
+    }
+  },
+  getApplicableVoucher: async (req, res, next) => {
+    try {
+      const idUser = req.payload.aud;
+      const idRes = req.params.idRes;
+      const applicableVoucher = await db.Voucher.findAll({
+        where: {
+          idRes: {
+            [Op.in]: [idRes, "0"],
+          },
+        },
+      });
+      res.send(applicableVoucher);
     } catch (error) {
       console.log(error);
       if (error.isJoi === true) next(createError.BadRequest());

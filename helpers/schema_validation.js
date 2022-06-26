@@ -59,9 +59,7 @@ const restaurantGetDetailsSchema = Joi.object({
  * Food section *
  ****************/
 const foodGetReqSchema = Joi.object({
-    idRes: Joi.number(),
-    pageNumber: Joi.number().min(1),
-    pageSize: Joi.number().min(1)
+    id: Joi.number().required()
 })
 const foodAddReqSchema = Joi.object({
     name: Joi.string().required(),

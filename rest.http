@@ -36,5 +36,9 @@ Content-Type: application/json
     "refreshtoken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NTAzNzQ4NTYsImV4cCI6MTY1Mjk2Njg1NiwiYXVkIjoiMSIsImlzcyI6ImNhdHRoYW5oIGRlcCB0cmFpIHZvIGRvaSIsImp0aSI6ImZhN2VlZmQ2LWQwZjMtNDMzZi04MzkzLWY1YjRjZTAwNzc0NCJ9.W0Fy3z-NY46ISJMAKQBTebN_0_z5Hwn-gkDuHu1luoQ"
 }
 
-### user route
-GET http://localhost:3000/user/restaurants/
+### order to be reviewed
+GET https://shopee-food-mobile.herokuapp.com/user/orders/toreview
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NTU3MzU0NjMsImV4cCI6MTY1NTk5NDY2MywiYXVkIjoiMjA3NiIsImlzcyI6ImNhdHRoYW5oIGRlcCB0cmFpIHZvIGRvaSJ9.qmz2NjMEoUPVpHcHJ2xdlP-E2hv5JMkO1LtAQh_RLds
+
+
