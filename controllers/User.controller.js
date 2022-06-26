@@ -88,7 +88,7 @@ module.exports = {
                         attributes: ['id', 'name', 'avgRating', 'latitude', 'longtitude', 'coverImageLink', 'preparationTime'],
                         include: {
                             model: Voucher,
-                            required: true,
+                            required: false,
                             attributes: ['id', 'idRes', 'name']
                         }
                     }
