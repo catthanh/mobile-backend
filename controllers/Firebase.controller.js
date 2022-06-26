@@ -8,9 +8,11 @@ module.exports = {
           */
         if (!req.notificationData) next();
         let notificationData = req.notificationData;
-      
+        const msg = notificationData.message;
+
         try {
-          response = await firebase.messaging().send(req.notificationData.message);
+          response = await firebase.messaging().send(msg);
+          console.log(response);
           notificationData.sent = true;
         } catch (error) {
           console.log(error);
