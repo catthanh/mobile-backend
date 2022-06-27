@@ -6,7 +6,7 @@ const getUserFcmToken = async (userId) => {
       where: {idUser: userId},
       raw: true
   })
-
+  console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa: ", userId);
   return results.token;
 }
 
