@@ -22,7 +22,7 @@ const STATUS = {
 module.exports = {
   get: async (req, res, next) => {
     try {
-      const { restaurant } = req.payload;
+      const { aud: userId, restaurant } = req.payload;
       const { id, status } = req.query;
       if(id) {
         const order = await Order.findByPk(id, {
@@ -65,6 +65,15 @@ module.exports = {
           include: User,
           order: [['createdAt', 'DESC']]
         });
+        // NotiHelper.sendToUser({
+        //   body: "test msg",
+        //   data: {abc: "test"}
+        // }, userId);
+        await NotiHelper.sendToUser({
+          title: "eat247d",
+          body: "test msg",
+          data: {abc: "test"}
+        }, userId);
         res.send(orders || []);
       }
     } catch (error) {
@@ -110,16 +119,13 @@ module.exports = {
             await order.update({
               status: STATUS.PREPARING,
             });
-            const notiData = await NotiHelper.getNotiSpecificDevice({
-              title: "Eat247",
+            NotiHelper.sendToUser({
               body: "Món ăn nóng hổi, vừa ăn vừa thổi sắp xong rồi đâyyy",
               data: {
                 id: order.id,
                 status: order.status
               }
             }, order.User.id);
-            req.notificationData = notiData;
-            next();
           } else {
             return next(
               createError.BadRequest(

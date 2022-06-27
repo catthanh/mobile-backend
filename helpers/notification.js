@@ -19,7 +19,17 @@ const getMultiUserFcmToken = async (userIds) => {
 
   return results;
 }
-
+const sendToFirebase = async (notificationData) => {
+  try {
+    response = await firebase.messaging().send(notificationData.message);
+    console.log(response);
+    notificationData.sent = true;
+  } catch (error) {
+    console.log(error);
+    notificationData.error = error.message;
+  }
+  console.log("Notification data: ", notificationData);
+}
 module.exports = {
     getNotiSpecificDevice: async (notiData, userId) => {
         const firebaseToken = await getUserFcmToken(userId);
@@ -108,5 +118,86 @@ module.exports = {
         .catch((error) => {
           console.log('Error subscribing to topic:', error);
         });
-    }
+    },
+
+    sendToUser: async (message, userId) => {
+      const firebaseToken = await getUserFcmToken(userId);
+
+      // Create title and body
+      const body = message?.body || "Bạn có thông báo mới";
+      const title = message?.title || "Eat247";
+    
+      let notificationData = {  
+        message: {
+          notification: {
+            title: title, // title of notification 
+            body: body, // describe of notification
+          },
+          data: message.data, // payload data
+          token: firebaseToken, // registration token
+        },
+    
+        // Meta Data for logging (store in database)
+        userId: userId, // User info
+        sent: false, // Notification status
+        error: null, // Errors if present
+        date: new Date(),
+      };
+      //send notification
+      await sendToFirebase(notificationData);
+      return;
+    },
+    sendToMultiUser: async (message, userIds) => {
+      const firebaseTokens = await getMultiUserFcmToken(userIds);
+
+      // Create title and body
+      const body = message?.body || "Bạn có thông báo mới";
+      const title = message?.title || "Eat247";
+    
+      let notificationData = {
+        message: {
+          notification: {
+            title: title, // title of notification 
+            body: body, // describe of notification
+          },
+          data: message.data, // payload data
+          tokens: firebaseTokens, // registration token
+        },
+    
+        // Meta Data for logging (store in database)
+        userId: userIds, // User info
+        sent: false, // Notification status
+        error: null, // Errors if present
+        date: new Date(),
+      };
+      //send notification
+      await sendToFirebase(notificationData);
+      return;
+    },
+    sendToTopic: async (message, topic) => {
+      // Create title and body
+      const body = message?.body || "Bạn có thông báo mới";
+      const title = message?.title || "Eat247";
+    
+      let notificationData = {
+        message: {
+          notification: {
+            title: title, // title of notification 
+            body: body, // describe of notification
+          },
+          data: message.data, // payload data
+          topic: topic || "shipperOrder", // registration topic
+        },
+    
+        // Meta Data for logging (store in database)
+        topic: topic, // User info
+        sent: false, // Notification status
+        error: null, // Errors if present
+        date: new Date(),
+      };
+      //send notification
+      await sendToFirebase(notificationData);
+      
+      return;
+    },
 }

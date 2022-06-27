@@ -460,7 +460,7 @@ module.exports = {
             const userId = req.payload.aud;
             const token = req.body.token;
 
-            await FcmToken.findOrCreate({
+            const result = await FcmToken.findOrCreate({
                 where: {
                     idUser: userId,
                 },
@@ -468,20 +468,22 @@ module.exports = {
                     idUser: userId,
                     token: token
                 }
-            }).then(function(result) {
-                const created = result[1]; // boolean stating if it was created or not
+            })
+            const created = result[1]; // boolean stating if it was created or not
           
-                if (!created) { // false if author already exists and was not created.
-                  console.log('User already have token');
-                  next(createError.BadRequest("User already have token"));
-                }
-            });
+            if (!created) { // false if author already exists and was not created.
+                console.log('User already have token');
+                await FcmToken.update({
+                token: token
+                })
+                res.send("token updated");
+            } else {
+                res.send("token saved");
+            }
             
             if (userRole === "shipper") {
                 await NotiHelper.setSubscribeToTopic("shipperOrder", userId)
             }
-
-            res.sendStatus(200);
             
         } catch (error) {
             if (error.isJoi === true) next(createError.BadRequest());

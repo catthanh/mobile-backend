@@ -98,7 +98,7 @@ let this_ = (module.exports = {
 
       // res.send(order);
       req.params.id = order.toJSON().id;
-      const notiData = await NotiHelper.getNotiTopic(
+      NotiHelper.sendToTopic(
         {
           data: {
             id: order.id.toString(),
@@ -107,7 +107,6 @@ let this_ = (module.exports = {
         },
         "shipperOrder"
       );
-      req.notificationData = notiData;
       next();
     } catch (error) {
       console.log(error);
@@ -236,9 +235,8 @@ let this_ = (module.exports = {
       }
       order.status = "Cancelled";
       await order.save();
-      const notiData = await NotiHelper.getNotiMultipleDevice(
+      NotiHelper.sendToMultiUser(
         {
-          title: "Eat247",
           body: `Đơn hàng ${order.id} đã bị hủy `,
           data: {
             id: order.id,
@@ -247,7 +245,6 @@ let this_ = (module.exports = {
         },
         [order.idRes, order.idShipper]
       );
-      req.notificationData = notiData;
       next();
     } catch (error) {
       console.log(error);

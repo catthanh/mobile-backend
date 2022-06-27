@@ -71,15 +71,13 @@ module.exports = {
                                     'food_order'
                                 ]
                             })
-                            const notiData = await NotiHelper.getNotiTopic({
+                            NotiHelper.sendToTopic({
                                 data: {
                                     id: id,
                                     status: result.status
                                 }
                             }, "shipperOrder")
-                            req.notificationData = notiData;
                             res.send(newOrder);
-                            next();
                         }else {
                             return next(createError.NotFound('order is not available for update status'));
                         }
@@ -92,17 +90,14 @@ module.exports = {
                             status: STATUS.DELIVERING,
                         });
                         if(result) {
-                            const notiData = await NotiHelper.getNotiSpecificDevice({
-                                title: "Eat247",
+                            NotiHelper.sendToUser({
                                 body: "Chờ chút shipper tới liền",
                                 data: {
                                     id: id,
                                     status: result.status
                                 }
                             }, order.User.id)
-                            req.notificationData = notiData;
                             res.send(order);
-                            next();
                         }else {
                             return next(createError.NotFound('order is not available for update status'));
                         }
