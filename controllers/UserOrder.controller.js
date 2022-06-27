@@ -98,15 +98,6 @@ let this_ = (module.exports = {
 
       // res.send(order);
       req.params.id = order.toJSON().id;
-      NotiHelper.sendToTopic(
-        {
-          data: {
-            id: order.id.toString(),
-            status: order.status,
-          },
-        },
-        "shipperOrder"
-      );
       next();
     } catch (error) {
       console.log(error);
@@ -197,11 +188,11 @@ let this_ = (module.exports = {
         where: {
           id: idOrder,
         },
-        include: {
+        include: [{
           model: db.Food,
           through: db.OrderFood,
           as: "food_order",
-        },
+        }, User, Restaurant],
       });
       if (!order) {
         return next(createError(404, "Order not found"));
@@ -209,6 +200,21 @@ let this_ = (module.exports = {
       order.status = "Confirmed";
       order.orderedAt = new Date();
       await order.save();
+      //send notification
+      const orderItem = {
+        id: order.id,
+        address: order.Restaurant.address,
+        orderedAt: order.orderedAt,
+        userName: order.User.name.split(' ')[0],
+        restaurantName: order.Restaurant.name,
+        status: order.status,
+        grandTotal: order.grandTotal
+      }
+      await NotiHelper.sendToTopic({
+        data: {
+          order: JSON.stringify(orderItem)
+        }
+      }, "shipperOrder");
       next();
     } catch (error) {
       console.log(error);

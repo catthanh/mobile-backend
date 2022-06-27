@@ -21,6 +21,34 @@ const STATUS = {
 const internalError = createError.InternalServerError()
 
 module.exports = {
+    getMyOrder: async (req, res, next) => {
+        try {
+            const { aud: userId } = req.payload;
+            const orders = await Order.findAndCountAll({
+                where: {
+                    idShipper: userId,
+                    status: STATUS.CONFIRMED
+                },
+                include: ["food_order", User, Restaurant],
+            })
+            const orderItems = orders.rows.map(order => {
+                return {
+                    id: order.id,
+                    address: order.Restaurant.address,
+                    orderedAt: order.orderedAt,
+                    userName: order.User.name.split(' ')[0],
+                    restaurantName: order.Restaurant.name,
+                    status: order.status,
+                    grandTotal: order.grandTotal
+                }
+            })
+            res.send(orderItems || []);
+        } catch (error) {
+            console.log(error);
+            if (error.isJoi === true) next(createError.BadRequest());
+            next(internalError);
+        }
+    },
     getById: async (req, res, next) => {
         try {
             await shipperGetReqSchema.validateAsync(req.params);
@@ -34,11 +62,6 @@ module.exports = {
             if(!order) {
                 next(createError.NotFound("order not found"));
             } else {
-                await NotiHelper.sendToTopic({
-                    data: {
-                        phuc: "hello"
-                    }
-                }, "shipperOrder");
                 res.send(order);
             }
         } catch (error) {
@@ -69,12 +92,14 @@ module.exports = {
                             }
                         });
                         if(result) {
-                            const newOrder = Order.findByPk(id, {
+                            const newOrder = await Order.findByPk(id, {
                                 include: [
                                     User,
-                                    'food_order'
+                                    'food_order',
+                                    Restaurant
                                 ]
                             })
+                            newOrder.food_order = {quantity: newOrder.food_order.OrderFood.quantity, ..._.omit(newOrder.food_order, 'OrderFood')}
                             NotiHelper.sendToTopic({
                                 data: {
                                     id: id,
