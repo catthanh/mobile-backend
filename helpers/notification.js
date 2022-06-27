@@ -181,10 +181,10 @@ module.exports = {
     
       let notificationData = {
         message: {
-          // notification: {
-          //   title: title, // title of notification 
-          //   body: body, // describe of notification
-          // },
+          notification: {
+            title: title, // title of notification 
+            body: body, // describe of notification
+          },
           data: message.data, // payload data
           topic: topic || "shipperOrder", // registration topic
         },
