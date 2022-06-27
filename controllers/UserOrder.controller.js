@@ -147,8 +147,7 @@ let this_ = (module.exports = {
         delete food.OrderFood;
       });
       order_.voucher = order_.voucher_order[0] || null;
-      res.send(_.omit(order_, 'voucher_order'));
-      next();
+      res.send(_.omit(order_, "voucher_order"));
     } catch (error) {
       console.log(error);
       if (error.isJoi === true) next(createError.BadRequest());
