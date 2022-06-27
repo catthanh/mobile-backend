@@ -59,13 +59,21 @@ module.exports = {
             const order = await Order.findByPk(id, {
                 include: [
                     User,
+                    'food_order',
                     Restaurant
                 ]
             })
             if(!order) {
                 next(createError.NotFound("order not found"));
             } else {
-                res.send(order);
+                const jsonedOrder = order.toJSON();
+                
+                const food_order = jsonedOrder.food_order.map(food => {
+                    const { quantity } = food.OrderFood;
+                    return {quantity: quantity, ..._.omit(food, 'OrderFood')}
+                })
+                jsonedOrder.food_order = food_order;
+                res.send(jsonedOrder);
             }
         } catch (error) {
             console.log(error);
