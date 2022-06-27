@@ -126,12 +126,12 @@ module.exports = {
                                 }
                             }, "shipperOrder")
                             NotiHelper.sendToUser({
-                                body: `Đơn hàng ${order.id} đã được xác nhận!`,
+                                body: `Đơn hàng ${newOrder.id} đã được xác nhận!`,
                                 data: {
                                     id: id,
                                     status: jsonedOrder.status
                                 }
-                            }, order.Restaurant.idUser)
+                            }, newOrder.Restaurant.idUser)
                             return res.send(jsonedOrder);
                         }else {
                             return next(createError.NotFound('order is not available for update status'));
