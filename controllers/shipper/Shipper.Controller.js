@@ -164,7 +164,7 @@ module.exports = {
                                     status: result.status
                                 }
                             }, order.User.id)
-                            res.send(order);
+                            return res.send(order);
                         }else {
                             return next(createError.NotFound('order is not available for update status'));
                         }
