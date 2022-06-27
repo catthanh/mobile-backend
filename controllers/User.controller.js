@@ -460,7 +460,7 @@ module.exports = {
             const userId = req.payload.aud;
             const token = req.body.token;
 
-            const result = await FcmToken.findOrCreate({
+            const [fcm, created] = await FcmToken.findOrCreate({
                 where: {
                     idUser: userId,
                 },
@@ -469,12 +469,11 @@ module.exports = {
                     token: token
                 }
             })
-            const created = result[1]; // boolean stating if it was created or not
           
             if (!created) { // false if author already exists and was not created.
                 console.log('User already have token');
-                await FcmToken.update({
-                token: token
+                await fcm.update({
+                    token: token
                 })
                 res.send("token updated");
             } else {
