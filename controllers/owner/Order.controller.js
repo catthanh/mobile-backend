@@ -65,15 +65,6 @@ module.exports = {
           include: User,
           order: [['createdAt', 'DESC']]
         });
-        // NotiHelper.sendToUser({
-        //   body: "test msg",
-        //   data: {abc: "test"}
-        // }, userId);
-        await NotiHelper.sendToUser({
-          title: "eat247d",
-          body: "test msg",
-          data: {abc: "test"}
-        }, userId);
         res.send(orders || []);
       }
     } catch (error) {
