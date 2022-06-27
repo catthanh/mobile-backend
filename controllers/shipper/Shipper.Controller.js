@@ -78,7 +78,9 @@ module.exports = {
             await shipperUpdateStatusReqSchema.validateAsync(req.params);
             const { aud: userId } = req.payload;
             const { id, status } = req.params;
-            const order = await Order.findByPk(id);
+            const order = await Order.findByPk(id, {
+                include: User
+            });
             const statusToChange = status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
             switch(statusToChange) {
                 case STATUS.PREPARING:
@@ -138,7 +140,7 @@ module.exports = {
                             NotiHelper.sendToUser({
                                 body: "Chờ chút shipper tới liền",
                                 data: {
-                                    id: id,
+                                    id: result.id,
                                     status: result.status
                                 }
                             }, order.User.id);
