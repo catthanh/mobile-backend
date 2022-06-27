@@ -13,6 +13,7 @@ const FoodRoute = require("./routes/Food.route");
 const UserRoute = require("./routes/User.route");
 const HpRoute = require("./routes/HomePage.route");
 const ShipperRoute = require("./routes/Shipper.route");
+const MediaRoute = require("./routes/media.route");
 const { verifyAccessToken } = require("./helpers/jwt_helper");
 const { notifyHandler } = require("./controllers/Firebase.controller");
 require("dotenv").config();
@@ -75,6 +76,7 @@ app.use("/food", FoodRoute);
 app.use("/user", verifyAccessToken, UserRoute);
 app.use("/homepage", verifyAccessToken, HpRoute);
 app.use("/shipper", verifyAccessToken, ShipperRoute);
+app.use("/media", MediaRoute);
 app.all("*", (req, res, next) => {
   next(createError.NotFound("Not found"));
 });
