@@ -547,15 +547,27 @@ let this_ = (module.exports = {
           id: idOrder,
           status: "Pending",
         },
-        include: {
+        include: [{
           model: db.Food,
           through: db.OrderFood,
           as: "food_order",
-        },
+        },{
+          model: db.Voucher,
+          as: "voucher_order"
+        }],
       });
       console.log(order);
       if (!order) {
         return next(createError(404, "Order not found"));
+      }
+      vouchers = order.toJson().voucher_order;
+      for (voucher of vouchers) {
+        db.OrderVoucher.destroy({
+          where: {
+            idOrder: idOrder,
+            idVoucher: voucher,
+          },
+        })
       }
       db.OrderVoucher.findOrCreate({
         where: {
