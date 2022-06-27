@@ -28,5 +28,5 @@ router.post("/voucher", extractRestaurantId, VoucherController.add);
 router.delete("/voucher/:id", extractRestaurantId, VoucherController.delete);
 
 router.get("/order", extractRestaurantId, OrderController.get);
-router.put("/order/:id/:status", extractRestaurantId, OrderController.updateStatus); // update order status
+// router.put("/order/:id/:status", extractRestaurantId, OrderController.updateStatus); // update order status
 module.exports = router;

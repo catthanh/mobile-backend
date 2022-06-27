@@ -69,12 +69,12 @@ app.get("/", verifyAccessToken, async (req, res, next) => {
 });
 
 app.use("/auth", AuthRoute);
-app.use("/owner", verifyAccessToken, OwnerRoute, notifyHandler);
-app.use("/restaurant", verifyAccessToken, RestaurantRoute, notifyHandler);
-app.use("/food", FoodRoute, notifyHandler);
-app.use("/user", verifyAccessToken, UserRoute, notifyHandler);
-app.use("/homepage", verifyAccessToken, HpRoute, notifyHandler);
-app.use("/shipper", verifyAccessToken, ShipperRoute, notifyHandler);
+app.use("/owner", verifyAccessToken, OwnerRoute);
+app.use("/restaurant", verifyAccessToken, RestaurantRoute);
+app.use("/food", FoodRoute);
+app.use("/user", verifyAccessToken, UserRoute);
+app.use("/homepage", verifyAccessToken, HpRoute);
+app.use("/shipper", verifyAccessToken, ShipperRoute);
 app.all("*", (req, res, next) => {
   next(createError.NotFound("Not found"));
 });
