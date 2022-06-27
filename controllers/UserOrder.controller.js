@@ -6,7 +6,7 @@ const Order = require("../models").Order;
 const User = require("../models").User;
 const OrderFood = require("../models/OrderFood");
 
-const _ = require('lodash');
+const _ = require("lodash");
 const internalError = createError.internalError;
 const NotiHelper = require("../helpers/notification");
 /**
@@ -547,28 +547,34 @@ let this_ = (module.exports = {
           id: idOrder,
           status: "Pending",
         },
-        include: [{
-          model: db.Food,
-          through: db.OrderFood,
-          as: "food_order",
-        },{
-          model: db.Voucher,
-          as: "voucher_order"
-        }],
+        include: [
+          {
+            model: db.Food,
+            through: db.OrderFood,
+            as: "food_order",
+          },
+          {
+            model: db.Voucher,
+            as: "voucher_order",
+          },
+        ],
       });
-      console.log(order);
+
       if (!order) {
         return next(createError(404, "Order not found"));
       }
-      const vouchers = order.toJson().voucher_order;
-      if(vouchers) {
-        for (voucher of vouchers) {
-          db.OrderVoucher.destroy({
-            where: {
-              idOrder: idOrder,
-              idVoucher: voucher,
-            },
-          })
+      let vouchers = order.toJSON().voucher_order;
+      console.log(vouchers);
+      if (vouchers) {
+        for (let voucher_ of vouchers) {
+          console.log(
+            await db.OrderVoucher.destroy({
+              where: {
+                idOrder: idOrder,
+                idVoucher: voucher_,
+              },
+            })
+          );
         }
       }
       db.OrderVoucher.findOrCreate({
