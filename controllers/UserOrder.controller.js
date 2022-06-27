@@ -233,11 +233,11 @@ let this_ = (module.exports = {
         where: {
           id: idOrder,
         },
-        include: {
+        include: [{
           model: db.Food,
           through: db.OrderFood,
           as: "food_order",
-        },
+        }, Restaurant],
       });
       if (!order) {
         return next(createError(404, "Order not found"));
@@ -252,7 +252,7 @@ let this_ = (module.exports = {
             status: "Cancelled",
           },
         },
-        [order.idRes, order.idShipper]
+        [order.Restaurant.idUser, order.idShipper]
       );
       next();
     } catch (error) {

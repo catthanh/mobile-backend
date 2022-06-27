@@ -131,7 +131,7 @@ module.exports = {
                                     id: id,
                                     status: jsonedOrder.status
                                 }
-                            }, order.idRes)
+                            }, order.Restaurant.idUser)
                             return res.send(jsonedOrder);
                         }else {
                             return next(createError.NotFound('order is not available for update status'));
@@ -154,7 +154,7 @@ module.exports = {
                             // }, order.User.id);
                             return res.send(order);
                         }else {
-                            
+
                             return next(createError.NotFound('order is not available for update status'));
                         }
                     } else {
