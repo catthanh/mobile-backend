@@ -25,21 +25,13 @@ module.exports = {
     getMyOrder: async (req, res, next) => {
         try {
             const { aud: userId } = req.payload;
-            const orders1 = await Order.findAndCountAll({
-                where: {
-                    idShipper: userId,
-                    status: STATUS.PREPARING
-                },
-                include: ["food_order", User, Restaurant],
-            })
-            const orders2 = await Order.findAndCountAll({
+            const orders = await Order.findAndCountAll({
                 where: {
                     idShipper: null,
                     status: STATUS.CONFIRMED
                 },
                 include: ["food_order", User, Restaurant],
             })
-            const orders = [...orders1, ...orders2];
             const orderItems = orders.rows.map(order => {
                 return {
                     id: order.id,
