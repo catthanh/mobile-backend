@@ -145,13 +145,13 @@ module.exports = {
                             status: STATUS.DELIVERING,
                         });
                         if(result) {
-                            NotiHelper.sendToUser({
-                                body: "Chờ chút shipper tới liền",
-                                data: {
-                                    id: result.id,
-                                    status: result.status
-                                }
-                            }, order.User.id);
+                            // NotiHelper.sendToUser({
+                            //     body: "Chờ chút shipper tới liền",
+                            //     data: {
+                            //         id: result.id,
+                            //         status: result.status
+                            //     }
+                            // }, order.User.id);
                             return res.send(order);
                         }else {
                             return next(createError.NotFound('order is not available for update status'));
