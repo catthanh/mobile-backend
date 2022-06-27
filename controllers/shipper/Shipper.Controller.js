@@ -8,6 +8,7 @@ const {
 } = require('../../helpers/schema_validation');
 const Order = require('../../models/Order');
 const NotiHelper = require("../../helpers/notification");
+const _ = require('lodash');
 
 const STATUS = {
     PENDING: "Pending",
@@ -39,7 +40,9 @@ module.exports = {
                     userName: order.User.name.split(' ')[0],
                     restaurantName: order.Restaurant.name,
                     status: order.status,
-                    grandTotal: order.grandTotal
+                    grandTotal: order.grandTotal,
+                    restaurantLat: Restaurant.latitude,
+                    restaurantLong: Restaurant.longtitude,
                 }
             })
             res.send(orderItems || []);
@@ -99,22 +102,27 @@ module.exports = {
                                     Restaurant
                                 ]
                             })
-                            const { quantity } = newOrder.food_order.OrderFood;
-                            newOrder.food_order = {quantity: quantity, ..._.omit(newOrder.food_order, 'OrderFood')}
+                            const jsonedOrder = newOrder.toJSON();
+                            
+                            const food_order = jsonedOrder.food_order.map(food => {
+                                const { quantity } = food.OrderFood;
+                                return {quantity: quantity, ..._.omit(food, 'OrderFood')}
+                            })
+                            jsonedOrder.food_order = food_order;
                             NotiHelper.sendToTopic({
                                 data: {
                                     id: id,
-                                    status: result.status
+                                    status: jsonedOrder.status
                                 }
                             }, "shipperOrder")
                             NotiHelper.sendToUser({
                                 body: `Đơn hàng ${order.id} đã được xác nhận`,
                                 data: {
                                     id: id,
-                                    status: result.status
+                                    status: jsonedOrder.status
                                 }
                             }, order.idRes)
-                            res.send(newOrder);
+                            return res.send(jsonedOrder);
                         }else {
                             return next(createError.NotFound('order is not available for update status'));
                         }

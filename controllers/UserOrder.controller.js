@@ -208,7 +208,9 @@ let this_ = (module.exports = {
         userName: order.User.name.split(' ')[0],
         restaurantName: order.Restaurant.name,
         status: order.status,
-        grandTotal: order.grandTotal
+        grandTotal: order.grandTotal,
+        restaurantLat: Restaurant.latitude,
+        restaurantLong: Restaurant.longtitude,
       }
       await NotiHelper.sendToTopic({
         data: {
