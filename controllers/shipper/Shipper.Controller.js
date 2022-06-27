@@ -28,7 +28,7 @@ module.exports = {
             const orders = await Order.findAndCountAll({
                 where: {
                     idShipper: userId,
-                    status: STATUS.PREPARING
+                    status: [STATUS.PREPARING, STATUS.CONFIRMED]
                 },
                 include: ["food_order", User, Restaurant],
             })
