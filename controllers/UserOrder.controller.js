@@ -560,14 +560,16 @@ let this_ = (module.exports = {
       if (!order) {
         return next(createError(404, "Order not found"));
       }
-      vouchers = order.toJson().voucher_order;
-      for (voucher of vouchers) {
-        db.OrderVoucher.destroy({
-          where: {
-            idOrder: idOrder,
-            idVoucher: voucher,
-          },
-        })
+      const vouchers = order.toJson().voucher_order;
+      if(vouchers) {
+        for (voucher of vouchers) {
+          db.OrderVoucher.destroy({
+            where: {
+              idOrder: idOrder,
+              idVoucher: voucher,
+            },
+          })
+        }
       }
       db.OrderVoucher.findOrCreate({
         where: {
