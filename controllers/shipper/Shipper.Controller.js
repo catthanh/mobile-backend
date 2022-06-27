@@ -99,7 +99,8 @@ module.exports = {
                                     Restaurant
                                 ]
                             })
-                            newOrder.food_order = {quantity: newOrder.food_order.OrderFood.quantity, ..._.omit(newOrder.food_order, 'OrderFood')}
+                            const { quantity } = newOrder.food_order.OrderFood;
+                            newOrder.food_order = {quantity: quantity, ..._.omit(newOrder.food_order, 'OrderFood')}
                             NotiHelper.sendToTopic({
                                 data: {
                                     id: id,
