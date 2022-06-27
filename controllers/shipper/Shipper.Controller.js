@@ -130,7 +130,7 @@ module.exports = {
                 case STATUS.DELIVERING:
                     if(order.status != STATUS.PREPARING){
                         return next(createError.BadRequest('you cant deliver a order not in preparing status'))
-                    } else if(order.idShipper === userId) {
+                    } else if(order.idShipper.toString() === userId) {
                         const result = await order.update({
                             status: STATUS.DELIVERING,
                         });
@@ -152,7 +152,7 @@ module.exports = {
                 case STATUS.COMPLETED:
                     if(order.status != STATUS.DELIVERING){
                         return next(createError.BadRequest('you cant complete a order not in delivering status'))
-                    } else if(order.idShipper === userId) {
+                    } else if(order.idShipper.toString() === userId) {
                         const result = await order.update({
                             status: STATUS.COMPLETED,
                         });
