@@ -123,6 +123,7 @@ let this_ = (module.exports = {
           {
             model: db.Voucher,
             as: "voucher_order",
+            require: true
           },
         ],
       });
