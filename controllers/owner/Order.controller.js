@@ -110,13 +110,13 @@ module.exports = {
             await order.update({
               status: STATUS.PREPARING,
             });
-            NotiHelper.sendToUser({
-              body: "Món ăn nóng hổi, vừa ăn vừa thổi sắp xong rồi đâyyy",
-              data: {
-                id: order.id,
-                status: order.status
-              }
-            }, order.User.id);
+            // NotiHelper.sendToUser({
+            //   body: "Món ăn nóng hổi, vừa ăn vừa thổi sắp xong rồi đâyyy",
+            //   data: {
+            //     id: order.id,
+            //     status: order.status
+            //   }
+            // }, order.User.id);
           } else {
             return next(
               createError.BadRequest(

@@ -167,13 +167,13 @@ module.exports = {
                             status: STATUS.COMPLETED,
                         });
                         if(result) {
-                            NotiHelper.sendToUser({
-                                body: "Tài xế đã giao tới rồi",
-                                data: {
-                                    id: id,
-                                    status: result.status
-                                }
-                            }, order.User.id)
+                            // NotiHelper.sendToUser({
+                            //     body: "Tài xế đã giao tới rồi",
+                            //     data: {
+                            //         id: id,
+                            //         status: result.status
+                            //     }
+                            // }, order.User.id)
                             return res.send(order);
                         }else {
                             return next(createError.NotFound('order is not available for update status'));
